@@ -185,5 +185,5 @@ module.exports = __webpack_require__(/*! /home/cs/work/react-wp/wp-content/theme
 
 /***/ })
 
-},[[0,"runtime~main",1]]]);
+},[[0,"runtime~main",0]]]);
 //# sourceMappingURL=main.chunk.js.map

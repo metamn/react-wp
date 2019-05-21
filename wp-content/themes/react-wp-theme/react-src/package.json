@@ -1,37 +1,45 @@
 {
-    "name": "react-wp-theme",
-    "version": "0.1.0",
-    "private": true,
-    "dependencies": {
-        "@devloco\/react-scripts-wptheme": "3.0.1-wptheme-3.0.0",
-        "react": "^16.8.6",
-        "react-dom": "^16.8.6"
-    },
-    "scripts": {
-        "crabuild": "react-scripts build",
-        "craeject": "react-scripts eject",
-        "crastart": "react-scripts start",
-        "cratest": "react-scripts test",
-        "build": "wptheme-scripts build",
-        "start": "wptheme-scripts start",
-        "wpbuild": "wptheme-scripts wpbuild",
-        "wpstart": "wptheme-scripts wpstart"
-    },
-    "eslintConfig": {
-        "extends": "react-app"
-    },
-    "browserslist": {
-        "production": [
-            ">0.2%",
-            "not dead",
-            "not op_mini all"
-        ],
-        "development": [
-            "last 1 chrome version",
-            "last 1 firefox version",
-            "last 1 safari version"
-        ]
-    },
-    "homepage": "\/react-wp\/wp-content\/themes\/react-wp-theme",
-    "browserLaunchTo": "http:\/\/localhost\/react-wp"
+  "name": "react-wp-theme",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@devloco/react-scripts-wptheme": "3.0.1-wptheme-3.0.0",
+    "graphql": "^14.3.0",
+    "graphql-relay": "^0.6.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-relay": "^4.0.0"
+  },
+  "scripts": {
+    "crabuild": "react-scripts build",
+    "craeject": "react-scripts eject",
+    "crastart": "react-scripts start",
+    "cratest": "react-scripts test",
+    "build": "wptheme-scripts build",
+    "start": "wptheme-scripts start",
+    "wpbuild": "wptheme-scripts wpbuild",
+    "wpstart": "wptheme-scripts wpstart",
+    "relay": "relay-compiler --src ./src --schema ./schema.graphql"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "homepage": "/react-wp/wp-content/themes/react-wp-theme",
+  "browserLaunchTo": "http://localhost/react-wp",
+  "devDependencies": {
+    "babel-plugin-relay": "^4.0.0",
+    "relay-compiler": "^4.0.0"
+  }
 }

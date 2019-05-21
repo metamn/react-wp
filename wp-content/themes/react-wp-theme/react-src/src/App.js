@@ -1,13 +1,9 @@
 import React from "react";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Welcome, WP!</h1>
-      </header>
-    </div>
-  );
-}
+import SiteTitle from "./components/SiteTitle";
+
+const App = () => {
+  return <SiteTitle />;
+};
 
 export default App;

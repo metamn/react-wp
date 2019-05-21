@@ -11,34 +11,155 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _components_SiteTitle__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/SiteTitle */ "./src/components/SiteTitle/index.js");
 var _jsxFileName = "/home/cs/work/react-wp/wp-content/themes/react-wp-theme/react-src/src/App.js";
 
 
-function App() {
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "App",
-    __source: {
-      fileName: _jsxFileName,
-      lineNumber: 5
-    },
-    __self: this
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("header", {
-    className: "App-header",
+
+const App = () => {
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_SiteTitle__WEBPACK_IMPORTED_MODULE_1__["default"], {
     __source: {
       fileName: _jsxFileName,
       lineNumber: 6
     },
-    __self: this
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", {
+    __self: undefined
+  });
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (App);
+
+/***/ }),
+
+/***/ "./src/components/SiteTitle/SiteTitle.js":
+/*!***********************************************!*\
+  !*** ./src/components/SiteTitle/SiteTitle.js ***!
+  \***********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _home_cs_work_react_wp_wp_content_themes_react_wp_theme_react_src_node_modules_babel_preset_react_app_node_modules_babel_runtime_helpers_esm_taggedTemplateLiteral__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/babel-preset-react-app/node_modules/@babel/runtime/helpers/esm/taggedTemplateLiteral */ "./node_modules/babel-preset-react-app/node_modules/@babel/runtime/helpers/esm/taggedTemplateLiteral.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react_relay__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-relay */ "./node_modules/react-relay/index.js");
+/* harmony import */ var react_relay__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_relay__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _environment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./../../environment */ "./src/environment.js");
+
+var _jsxFileName = "/home/cs/work/react-wp/wp-content/themes/react-wp-theme/react-src/src/components/SiteTitle/SiteTitle.js";
+
+function _templateObject() {
+  const data = Object(_home_cs_work_react_wp_wp_content_themes_react_wp_theme_react_src_node_modules_babel_preset_react_app_node_modules_babel_runtime_helpers_esm_taggedTemplateLiteral__WEBPACK_IMPORTED_MODULE_0__["default"])(["\n        query SiteTitleQuery {\n          generalSettings {\n            title\n          }\n        }\n      "]);
+
+  _templateObject = function () {
+    return data;
+  };
+
+  return data;
+}
+
+
+
+
+
+const SiteTitle = () => {
+  return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_relay__WEBPACK_IMPORTED_MODULE_2__["QueryRenderer"], {
+    environment: _environment__WEBPACK_IMPORTED_MODULE_3__["default"],
+    query: Object(react_relay__WEBPACK_IMPORTED_MODULE_2__["graphql"])(_templateObject()),
+    variables: {},
+    render: ({
+      error,
+      props
+    }) => {
+      if (error) {
+        return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+          __source: {
+            fileName: _jsxFileName,
+            lineNumber: 19
+          },
+          __self: undefined
+        }, "Error!");
+      }
+
+      if (!props) {
+        return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+          __source: {
+            fileName: _jsxFileName,
+            lineNumber: 22
+          },
+          __self: undefined
+        }, "Loading...");
+      }
+
+      return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 24
+        },
+        __self: undefined
+      }, props.generalSettings.title);
+    },
     __source: {
       fileName: _jsxFileName,
       lineNumber: 7
     },
-    __self: this
-  }, "Welcome, WP!")));
+    __self: undefined
+  });
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (SiteTitle);
+
+/***/ }),
+
+/***/ "./src/components/SiteTitle/index.js":
+/*!*******************************************!*\
+  !*** ./src/components/SiteTitle/index.js ***!
+  \*******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _SiteTitle__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SiteTitle */ "./src/components/SiteTitle/SiteTitle.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _SiteTitle__WEBPACK_IMPORTED_MODULE_0__["default"]; });
+
+
+
+/***/ }),
+
+/***/ "./src/environment.js":
+/*!****************************!*\
+  !*** ./src/environment.js ***!
+  \****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var relay_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! relay-runtime */ "./node_modules/relay-runtime/index.js");
+/* harmony import */ var relay_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(relay_runtime__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function fetchQuery(operation, variables) {
+  return fetch("http://localhost/react-wp/graphql", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      query: operation.text,
+      variables
+    })
+  }).then(response => {
+    return response.json();
+  });
 }
 
-/* harmony default export */ __webpack_exports__["default"] = (App);
+const environment = new relay_runtime__WEBPACK_IMPORTED_MODULE_0__["Environment"]({
+  network: relay_runtime__WEBPACK_IMPORTED_MODULE_0__["Network"].create(fetchQuery),
+  store: new relay_runtime__WEBPACK_IMPORTED_MODULE_0__["Store"](new relay_runtime__WEBPACK_IMPORTED_MODULE_0__["RecordSource"]())
+});
+/* harmony default export */ __webpack_exports__["default"] = (environment);
 
 /***/ }),
 
@@ -185,5 +306,5 @@ module.exports = __webpack_require__(/*! /home/cs/work/react-wp/wp-content/theme
 
 /***/ })
 
-},[[0,"runtime~main",0]]]);
+},[[0,"runtime~main",1]]]);
 //# sourceMappingURL=main.chunk.js.map

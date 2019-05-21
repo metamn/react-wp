@@ -1,0 +1,12 @@
+{
+  "files": {
+    "static/js/0.chunk.js": "/react-wp/wp-content/themes/react-wp-theme/static/js/0.chunk.js",
+    "static/js/0.chunk.js.map": "/react-wp/wp-content/themes/react-wp-theme/static/js/0.chunk.js.map",
+    "main.js": "/react-wp/wp-content/themes/react-wp-theme/static/js/main.chunk.js",
+    "main.js.map": "/react-wp/wp-content/themes/react-wp-theme/static/js/main.chunk.js.map",
+    "runtime~main.js": "/react-wp/wp-content/themes/react-wp-theme/static/js/bundle.js",
+    "runtime~main.js.map": "/react-wp/wp-content/themes/react-wp-theme/static/js/bundle.js.map",
+    "index.php": "/react-wp/wp-content/themes/react-wp-theme/index.php",
+    "static/media/logo.svg": "/react-wp/wp-content/themes/react-wp-theme/static/media/logo.5d5d9eef.svg"
+  }
+}

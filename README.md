@@ -1,8 +1,9 @@
 # React WP
 
-React and WordPress
+React and WordPress.
+
+See the [theme README](wp-content/themes/react-wp-theme/react-src/README.md)
 
 ## Resources
 
-- https://github.com/wp-graphql/wordflix-single-page-app
-- https://github.com/postlight/headless-wp-starter
+- https://github.com/devloco/create-react-wptheme

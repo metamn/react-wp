@@ -12,3 +12,8 @@
 - Plugin docs: https://docs.wpgraphql.com/getting-started/posts
 - Live queries: https://docs.wpgraphql.com/guides/the-graphql-query-language
 - Notable extensions: ACF, WooCommerce,
+- Gutenberg block to GraphQL: yes (!)
+
+## GraphQL clients
+
+- Apollo: on the `apollo` branch

@@ -6,7 +6,7 @@ import { ApolloProvider } from "react-apollo";
 import SiteTitle from "./components/SiteTitle";
 
 const client = new ApolloClient({
-  uri: "/graphql"
+  uri: "http://localhost/react-wp/graphql"
 });
 
 const App = () => (

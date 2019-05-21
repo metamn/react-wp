@@ -20,7 +20,7 @@ var _jsxFileName = "/home/cs/work/react-wp/wp-content/themes/react-wp-theme/reac
 
 
 const client = new apollo_boost__WEBPACK_IMPORTED_MODULE_1__["default"]({
-  uri: "/graphql"
+  uri: "http://localhost/react-wp/graphql"
 });
 
 const App = () => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_apollo__WEBPACK_IMPORTED_MODULE_2__["ApolloProvider"], {
@@ -101,7 +101,7 @@ const SiteTitle = () => {
         lineNumber: 18
       },
       __self: undefined
-    }, "Error");
+    }, "Error: ", error.message);
     return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("h1", {
       __source: {
         fileName: _jsxFileName,

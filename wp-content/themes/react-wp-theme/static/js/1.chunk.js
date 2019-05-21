@@ -11189,120 +11189,6 @@ function getVisitFn(visitor, kind, isLeaving) {
 
 /***/ }),
 
-/***/ "./node_modules/hoist-non-react-statics/dist/hoist-non-react-statics.cjs.js":
-/*!**********************************************************************************!*\
-  !*** ./node_modules/hoist-non-react-statics/dist/hoist-non-react-statics.cjs.js ***!
-  \**********************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * Copyright 2015, Yahoo! Inc.
- * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
- */
-
-var ReactIs = __webpack_require__(/*! react-is */ "./node_modules/react-is/index.js");
-
-var REACT_STATICS = {
-  childContextTypes: true,
-  contextType: true,
-  contextTypes: true,
-  defaultProps: true,
-  displayName: true,
-  getDefaultProps: true,
-  getDerivedStateFromError: true,
-  getDerivedStateFromProps: true,
-  mixins: true,
-  propTypes: true,
-  type: true
-};
-var KNOWN_STATICS = {
-  name: true,
-  length: true,
-  prototype: true,
-  caller: true,
-  callee: true,
-  arguments: true,
-  arity: true
-};
-var FORWARD_REF_STATICS = {
-  '$$typeof': true,
-  render: true,
-  defaultProps: true,
-  displayName: true,
-  propTypes: true
-};
-var MEMO_STATICS = {
-  '$$typeof': true,
-  compare: true,
-  defaultProps: true,
-  displayName: true,
-  propTypes: true,
-  type: true
-};
-var TYPE_STATICS = {};
-TYPE_STATICS[ReactIs.ForwardRef] = FORWARD_REF_STATICS;
-
-function getStatics(component) {
-  if (ReactIs.isMemo(component)) {
-    return MEMO_STATICS;
-  }
-
-  return TYPE_STATICS[component['$$typeof']] || REACT_STATICS;
-}
-
-var defineProperty = Object.defineProperty;
-var getOwnPropertyNames = Object.getOwnPropertyNames;
-var getOwnPropertySymbols = Object.getOwnPropertySymbols;
-var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
-var getPrototypeOf = Object.getPrototypeOf;
-var objectPrototype = Object.prototype;
-
-function hoistNonReactStatics(targetComponent, sourceComponent, blacklist) {
-  if (typeof sourceComponent !== 'string') {
-    // don't hoist over string (html) components
-    if (objectPrototype) {
-      var inheritedComponent = getPrototypeOf(sourceComponent);
-
-      if (inheritedComponent && inheritedComponent !== objectPrototype) {
-        hoistNonReactStatics(targetComponent, inheritedComponent, blacklist);
-      }
-    }
-
-    var keys = getOwnPropertyNames(sourceComponent);
-
-    if (getOwnPropertySymbols) {
-      keys = keys.concat(getOwnPropertySymbols(sourceComponent));
-    }
-
-    var targetStatics = getStatics(targetComponent);
-    var sourceStatics = getStatics(sourceComponent);
-
-    for (var i = 0; i < keys.length; ++i) {
-      var key = keys[i];
-
-      if (!KNOWN_STATICS[key] && !(blacklist && blacklist[key]) && !(sourceStatics && sourceStatics[key]) && !(targetStatics && targetStatics[key])) {
-        var descriptor = getOwnPropertyDescriptor(sourceComponent, key);
-
-        try {
-          // Avoid failures from read-only properties
-          defineProperty(targetComponent, key, descriptor);
-        } catch (e) {}
-      }
-    }
-
-    return targetComponent;
-  }
-
-  return targetComponent;
-}
-
-module.exports = hoistNonReactStatics;
-
-/***/ }),
-
 /***/ "./node_modules/immutable-tuple/dist/tuple.mjs":
 /*!*****************************************************!*\
   !*** ./node_modules/immutable-tuple/dist/tuple.mjs ***!
@@ -11569,927 +11455,40 @@ tuple.prototype.concat = function () {
 
 /***/ }),
 
-/***/ "./node_modules/lodash.isequal/index.js":
-/*!**********************************************!*\
-  !*** ./node_modules/lodash.isequal/index.js ***!
-  \**********************************************/
+/***/ "./node_modules/lodash/_Symbol.js":
+/*!****************************************!*\
+  !*** ./node_modules/lodash/_Symbol.js ***!
+  \****************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(global, module) {/**
- * Lodash (Custom Build) <https://lodash.com/>
- * Build: `lodash modularize exports="npm" -o ./`
- * Copyright JS Foundation and other contributors <https://js.foundation/>
- * Released under MIT license <https://lodash.com/license>
- * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- */
-
-/** Used as the size to enable large array optimizations. */
-var LARGE_ARRAY_SIZE = 200;
-/** Used to stand-in for `undefined` hash values. */
-
-var HASH_UNDEFINED = '__lodash_hash_undefined__';
-/** Used to compose bitmasks for value comparisons. */
-
-var COMPARE_PARTIAL_FLAG = 1,
-    COMPARE_UNORDERED_FLAG = 2;
-/** Used as references for various `Number` constants. */
-
-var MAX_SAFE_INTEGER = 9007199254740991;
-/** `Object#toString` result references. */
-
-var argsTag = '[object Arguments]',
-    arrayTag = '[object Array]',
-    asyncTag = '[object AsyncFunction]',
-    boolTag = '[object Boolean]',
-    dateTag = '[object Date]',
-    errorTag = '[object Error]',
-    funcTag = '[object Function]',
-    genTag = '[object GeneratorFunction]',
-    mapTag = '[object Map]',
-    numberTag = '[object Number]',
-    nullTag = '[object Null]',
-    objectTag = '[object Object]',
-    promiseTag = '[object Promise]',
-    proxyTag = '[object Proxy]',
-    regexpTag = '[object RegExp]',
-    setTag = '[object Set]',
-    stringTag = '[object String]',
-    symbolTag = '[object Symbol]',
-    undefinedTag = '[object Undefined]',
-    weakMapTag = '[object WeakMap]';
-var arrayBufferTag = '[object ArrayBuffer]',
-    dataViewTag = '[object DataView]',
-    float32Tag = '[object Float32Array]',
-    float64Tag = '[object Float64Array]',
-    int8Tag = '[object Int8Array]',
-    int16Tag = '[object Int16Array]',
-    int32Tag = '[object Int32Array]',
-    uint8Tag = '[object Uint8Array]',
-    uint8ClampedTag = '[object Uint8ClampedArray]',
-    uint16Tag = '[object Uint16Array]',
-    uint32Tag = '[object Uint32Array]';
-/**
- * Used to match `RegExp`
- * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
- */
-
-var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
-/** Used to detect host constructors (Safari). */
-
-var reIsHostCtor = /^\[object .+?Constructor\]$/;
-/** Used to detect unsigned integer values. */
-
-var reIsUint = /^(?:0|[1-9]\d*)$/;
-/** Used to identify `toStringTag` values of typed arrays. */
-
-var typedArrayTags = {};
-typedArrayTags[float32Tag] = typedArrayTags[float64Tag] = typedArrayTags[int8Tag] = typedArrayTags[int16Tag] = typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] = typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] = typedArrayTags[uint32Tag] = true;
-typedArrayTags[argsTag] = typedArrayTags[arrayTag] = typedArrayTags[arrayBufferTag] = typedArrayTags[boolTag] = typedArrayTags[dataViewTag] = typedArrayTags[dateTag] = typedArrayTags[errorTag] = typedArrayTags[funcTag] = typedArrayTags[mapTag] = typedArrayTags[numberTag] = typedArrayTags[objectTag] = typedArrayTags[regexpTag] = typedArrayTags[setTag] = typedArrayTags[stringTag] = typedArrayTags[weakMapTag] = false;
-/** Detect free variable `global` from Node.js. */
-
-var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
-/** Detect free variable `self`. */
-
-var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
-/** Used as a reference to the global object. */
-
-var root = freeGlobal || freeSelf || Function('return this')();
-/** Detect free variable `exports`. */
-
-var freeExports =  true && exports && !exports.nodeType && exports;
-/** Detect free variable `module`. */
-
-var freeModule = freeExports && typeof module == 'object' && module && !module.nodeType && module;
-/** Detect the popular CommonJS extension `module.exports`. */
-
-var moduleExports = freeModule && freeModule.exports === freeExports;
-/** Detect free variable `process` from Node.js. */
-
-var freeProcess = moduleExports && freeGlobal.process;
-/** Used to access faster Node.js helpers. */
-
-var nodeUtil = function () {
-  try {
-    return freeProcess && freeProcess.binding && freeProcess.binding('util');
-  } catch (e) {}
-}();
-/* Node.js helper references. */
-
-
-var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
-/**
- * A specialized version of `_.filter` for arrays without support for
- * iteratee shorthands.
- *
- * @private
- * @param {Array} [array] The array to iterate over.
- * @param {Function} predicate The function invoked per iteration.
- * @returns {Array} Returns the new filtered array.
- */
-
-function arrayFilter(array, predicate) {
-  var index = -1,
-      length = array == null ? 0 : array.length,
-      resIndex = 0,
-      result = [];
-
-  while (++index < length) {
-    var value = array[index];
-
-    if (predicate(value, index, array)) {
-      result[resIndex++] = value;
-    }
-  }
-
-  return result;
-}
-/**
- * Appends the elements of `values` to `array`.
- *
- * @private
- * @param {Array} array The array to modify.
- * @param {Array} values The values to append.
- * @returns {Array} Returns `array`.
- */
-
-
-function arrayPush(array, values) {
-  var index = -1,
-      length = values.length,
-      offset = array.length;
-
-  while (++index < length) {
-    array[offset + index] = values[index];
-  }
-
-  return array;
-}
-/**
- * A specialized version of `_.some` for arrays without support for iteratee
- * shorthands.
- *
- * @private
- * @param {Array} [array] The array to iterate over.
- * @param {Function} predicate The function invoked per iteration.
- * @returns {boolean} Returns `true` if any element passes the predicate check,
- *  else `false`.
- */
-
-
-function arraySome(array, predicate) {
-  var index = -1,
-      length = array == null ? 0 : array.length;
-
-  while (++index < length) {
-    if (predicate(array[index], index, array)) {
-      return true;
-    }
-  }
-
-  return false;
-}
-/**
- * The base implementation of `_.times` without support for iteratee shorthands
- * or max array length checks.
- *
- * @private
- * @param {number} n The number of times to invoke `iteratee`.
- * @param {Function} iteratee The function invoked per iteration.
- * @returns {Array} Returns the array of results.
- */
-
-
-function baseTimes(n, iteratee) {
-  var index = -1,
-      result = Array(n);
-
-  while (++index < n) {
-    result[index] = iteratee(index);
-  }
-
-  return result;
-}
-/**
- * The base implementation of `_.unary` without support for storing metadata.
- *
- * @private
- * @param {Function} func The function to cap arguments for.
- * @returns {Function} Returns the new capped function.
- */
-
-
-function baseUnary(func) {
-  return function (value) {
-    return func(value);
-  };
-}
-/**
- * Checks if a `cache` value for `key` exists.
- *
- * @private
- * @param {Object} cache The cache to query.
- * @param {string} key The key of the entry to check.
- * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
- */
-
-
-function cacheHas(cache, key) {
-  return cache.has(key);
-}
-/**
- * Gets the value at `key` of `object`.
- *
- * @private
- * @param {Object} [object] The object to query.
- * @param {string} key The key of the property to get.
- * @returns {*} Returns the property value.
- */
-
-
-function getValue(object, key) {
-  return object == null ? undefined : object[key];
-}
-/**
- * Converts `map` to its key-value pairs.
- *
- * @private
- * @param {Object} map The map to convert.
- * @returns {Array} Returns the key-value pairs.
- */
-
-
-function mapToArray(map) {
-  var index = -1,
-      result = Array(map.size);
-  map.forEach(function (value, key) {
-    result[++index] = [key, value];
-  });
-  return result;
-}
-/**
- * Creates a unary function that invokes `func` with its argument transformed.
- *
- * @private
- * @param {Function} func The function to wrap.
- * @param {Function} transform The argument transform.
- * @returns {Function} Returns the new function.
- */
-
-
-function overArg(func, transform) {
-  return function (arg) {
-    return func(transform(arg));
-  };
-}
-/**
- * Converts `set` to an array of its values.
- *
- * @private
- * @param {Object} set The set to convert.
- * @returns {Array} Returns the values.
- */
-
-
-function setToArray(set) {
-  var index = -1,
-      result = Array(set.size);
-  set.forEach(function (value) {
-    result[++index] = value;
-  });
-  return result;
-}
-/** Used for built-in method references. */
-
-
-var arrayProto = Array.prototype,
-    funcProto = Function.prototype,
-    objectProto = Object.prototype;
-/** Used to detect overreaching core-js shims. */
-
-var coreJsData = root['__core-js_shared__'];
-/** Used to resolve the decompiled source of functions. */
-
-var funcToString = funcProto.toString;
-/** Used to check objects for own properties. */
-
-var hasOwnProperty = objectProto.hasOwnProperty;
-/** Used to detect methods masquerading as native. */
-
-var maskSrcKey = function () {
-  var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || '');
-  return uid ? 'Symbol(src)_1.' + uid : '';
-}();
-/**
- * Used to resolve the
- * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
- * of values.
- */
-
-
-var nativeObjectToString = objectProto.toString;
-/** Used to detect if a method is native. */
-
-var reIsNative = RegExp('^' + funcToString.call(hasOwnProperty).replace(reRegExpChar, '\\$&').replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$');
+var root = __webpack_require__(/*! ./_root */ "./node_modules/lodash/_root.js");
 /** Built-in value references. */
 
-var Buffer = moduleExports ? root.Buffer : undefined,
-    Symbol = root.Symbol,
-    Uint8Array = root.Uint8Array,
-    propertyIsEnumerable = objectProto.propertyIsEnumerable,
-    splice = arrayProto.splice,
-    symToStringTag = Symbol ? Symbol.toStringTag : undefined;
-/* Built-in method references for those with the same name as other `lodash` methods. */
 
-var nativeGetSymbols = Object.getOwnPropertySymbols,
-    nativeIsBuffer = Buffer ? Buffer.isBuffer : undefined,
-    nativeKeys = overArg(Object.keys, Object);
-/* Built-in method references that are verified to be native. */
+var Symbol = root.Symbol;
+module.exports = Symbol;
 
-var DataView = getNative(root, 'DataView'),
-    Map = getNative(root, 'Map'),
-    Promise = getNative(root, 'Promise'),
-    Set = getNative(root, 'Set'),
-    WeakMap = getNative(root, 'WeakMap'),
-    nativeCreate = getNative(Object, 'create');
-/** Used to detect maps, sets, and weakmaps. */
+/***/ }),
 
-var dataViewCtorString = toSource(DataView),
-    mapCtorString = toSource(Map),
-    promiseCtorString = toSource(Promise),
-    setCtorString = toSource(Set),
-    weakMapCtorString = toSource(WeakMap);
-/** Used to convert symbols to primitives and strings. */
+/***/ "./node_modules/lodash/_baseGetTag.js":
+/*!********************************************!*\
+  !*** ./node_modules/lodash/_baseGetTag.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
-var symbolProto = Symbol ? Symbol.prototype : undefined,
-    symbolValueOf = symbolProto ? symbolProto.valueOf : undefined;
-/**
- * Creates a hash object.
- *
- * @private
- * @constructor
- * @param {Array} [entries] The key-value pairs to cache.
- */
+var Symbol = __webpack_require__(/*! ./_Symbol */ "./node_modules/lodash/_Symbol.js"),
+    getRawTag = __webpack_require__(/*! ./_getRawTag */ "./node_modules/lodash/_getRawTag.js"),
+    objectToString = __webpack_require__(/*! ./_objectToString */ "./node_modules/lodash/_objectToString.js");
+/** `Object#toString` result references. */
 
-function Hash(entries) {
-  var index = -1,
-      length = entries == null ? 0 : entries.length;
-  this.clear();
 
-  while (++index < length) {
-    var entry = entries[index];
-    this.set(entry[0], entry[1]);
-  }
-}
-/**
- * Removes all key-value entries from the hash.
- *
- * @private
- * @name clear
- * @memberOf Hash
- */
+var nullTag = '[object Null]',
+    undefinedTag = '[object Undefined]';
+/** Built-in value references. */
 
-
-function hashClear() {
-  this.__data__ = nativeCreate ? nativeCreate(null) : {};
-  this.size = 0;
-}
-/**
- * Removes `key` and its value from the hash.
- *
- * @private
- * @name delete
- * @memberOf Hash
- * @param {Object} hash The hash to modify.
- * @param {string} key The key of the value to remove.
- * @returns {boolean} Returns `true` if the entry was removed, else `false`.
- */
-
-
-function hashDelete(key) {
-  var result = this.has(key) && delete this.__data__[key];
-  this.size -= result ? 1 : 0;
-  return result;
-}
-/**
- * Gets the hash value for `key`.
- *
- * @private
- * @name get
- * @memberOf Hash
- * @param {string} key The key of the value to get.
- * @returns {*} Returns the entry value.
- */
-
-
-function hashGet(key) {
-  var data = this.__data__;
-
-  if (nativeCreate) {
-    var result = data[key];
-    return result === HASH_UNDEFINED ? undefined : result;
-  }
-
-  return hasOwnProperty.call(data, key) ? data[key] : undefined;
-}
-/**
- * Checks if a hash value for `key` exists.
- *
- * @private
- * @name has
- * @memberOf Hash
- * @param {string} key The key of the entry to check.
- * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
- */
-
-
-function hashHas(key) {
-  var data = this.__data__;
-  return nativeCreate ? data[key] !== undefined : hasOwnProperty.call(data, key);
-}
-/**
- * Sets the hash `key` to `value`.
- *
- * @private
- * @name set
- * @memberOf Hash
- * @param {string} key The key of the value to set.
- * @param {*} value The value to set.
- * @returns {Object} Returns the hash instance.
- */
-
-
-function hashSet(key, value) {
-  var data = this.__data__;
-  this.size += this.has(key) ? 0 : 1;
-  data[key] = nativeCreate && value === undefined ? HASH_UNDEFINED : value;
-  return this;
-} // Add methods to `Hash`.
-
-
-Hash.prototype.clear = hashClear;
-Hash.prototype['delete'] = hashDelete;
-Hash.prototype.get = hashGet;
-Hash.prototype.has = hashHas;
-Hash.prototype.set = hashSet;
-/**
- * Creates an list cache object.
- *
- * @private
- * @constructor
- * @param {Array} [entries] The key-value pairs to cache.
- */
-
-function ListCache(entries) {
-  var index = -1,
-      length = entries == null ? 0 : entries.length;
-  this.clear();
-
-  while (++index < length) {
-    var entry = entries[index];
-    this.set(entry[0], entry[1]);
-  }
-}
-/**
- * Removes all key-value entries from the list cache.
- *
- * @private
- * @name clear
- * @memberOf ListCache
- */
-
-
-function listCacheClear() {
-  this.__data__ = [];
-  this.size = 0;
-}
-/**
- * Removes `key` and its value from the list cache.
- *
- * @private
- * @name delete
- * @memberOf ListCache
- * @param {string} key The key of the value to remove.
- * @returns {boolean} Returns `true` if the entry was removed, else `false`.
- */
-
-
-function listCacheDelete(key) {
-  var data = this.__data__,
-      index = assocIndexOf(data, key);
-
-  if (index < 0) {
-    return false;
-  }
-
-  var lastIndex = data.length - 1;
-
-  if (index == lastIndex) {
-    data.pop();
-  } else {
-    splice.call(data, index, 1);
-  }
-
-  --this.size;
-  return true;
-}
-/**
- * Gets the list cache value for `key`.
- *
- * @private
- * @name get
- * @memberOf ListCache
- * @param {string} key The key of the value to get.
- * @returns {*} Returns the entry value.
- */
-
-
-function listCacheGet(key) {
-  var data = this.__data__,
-      index = assocIndexOf(data, key);
-  return index < 0 ? undefined : data[index][1];
-}
-/**
- * Checks if a list cache value for `key` exists.
- *
- * @private
- * @name has
- * @memberOf ListCache
- * @param {string} key The key of the entry to check.
- * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
- */
-
-
-function listCacheHas(key) {
-  return assocIndexOf(this.__data__, key) > -1;
-}
-/**
- * Sets the list cache `key` to `value`.
- *
- * @private
- * @name set
- * @memberOf ListCache
- * @param {string} key The key of the value to set.
- * @param {*} value The value to set.
- * @returns {Object} Returns the list cache instance.
- */
-
-
-function listCacheSet(key, value) {
-  var data = this.__data__,
-      index = assocIndexOf(data, key);
-
-  if (index < 0) {
-    ++this.size;
-    data.push([key, value]);
-  } else {
-    data[index][1] = value;
-  }
-
-  return this;
-} // Add methods to `ListCache`.
-
-
-ListCache.prototype.clear = listCacheClear;
-ListCache.prototype['delete'] = listCacheDelete;
-ListCache.prototype.get = listCacheGet;
-ListCache.prototype.has = listCacheHas;
-ListCache.prototype.set = listCacheSet;
-/**
- * Creates a map cache object to store key-value pairs.
- *
- * @private
- * @constructor
- * @param {Array} [entries] The key-value pairs to cache.
- */
-
-function MapCache(entries) {
-  var index = -1,
-      length = entries == null ? 0 : entries.length;
-  this.clear();
-
-  while (++index < length) {
-    var entry = entries[index];
-    this.set(entry[0], entry[1]);
-  }
-}
-/**
- * Removes all key-value entries from the map.
- *
- * @private
- * @name clear
- * @memberOf MapCache
- */
-
-
-function mapCacheClear() {
-  this.size = 0;
-  this.__data__ = {
-    'hash': new Hash(),
-    'map': new (Map || ListCache)(),
-    'string': new Hash()
-  };
-}
-/**
- * Removes `key` and its value from the map.
- *
- * @private
- * @name delete
- * @memberOf MapCache
- * @param {string} key The key of the value to remove.
- * @returns {boolean} Returns `true` if the entry was removed, else `false`.
- */
-
-
-function mapCacheDelete(key) {
-  var result = getMapData(this, key)['delete'](key);
-  this.size -= result ? 1 : 0;
-  return result;
-}
-/**
- * Gets the map value for `key`.
- *
- * @private
- * @name get
- * @memberOf MapCache
- * @param {string} key The key of the value to get.
- * @returns {*} Returns the entry value.
- */
-
-
-function mapCacheGet(key) {
-  return getMapData(this, key).get(key);
-}
-/**
- * Checks if a map value for `key` exists.
- *
- * @private
- * @name has
- * @memberOf MapCache
- * @param {string} key The key of the entry to check.
- * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
- */
-
-
-function mapCacheHas(key) {
-  return getMapData(this, key).has(key);
-}
-/**
- * Sets the map `key` to `value`.
- *
- * @private
- * @name set
- * @memberOf MapCache
- * @param {string} key The key of the value to set.
- * @param {*} value The value to set.
- * @returns {Object} Returns the map cache instance.
- */
-
-
-function mapCacheSet(key, value) {
-  var data = getMapData(this, key),
-      size = data.size;
-  data.set(key, value);
-  this.size += data.size == size ? 0 : 1;
-  return this;
-} // Add methods to `MapCache`.
-
-
-MapCache.prototype.clear = mapCacheClear;
-MapCache.prototype['delete'] = mapCacheDelete;
-MapCache.prototype.get = mapCacheGet;
-MapCache.prototype.has = mapCacheHas;
-MapCache.prototype.set = mapCacheSet;
-/**
- *
- * Creates an array cache object to store unique values.
- *
- * @private
- * @constructor
- * @param {Array} [values] The values to cache.
- */
-
-function SetCache(values) {
-  var index = -1,
-      length = values == null ? 0 : values.length;
-  this.__data__ = new MapCache();
-
-  while (++index < length) {
-    this.add(values[index]);
-  }
-}
-/**
- * Adds `value` to the array cache.
- *
- * @private
- * @name add
- * @memberOf SetCache
- * @alias push
- * @param {*} value The value to cache.
- * @returns {Object} Returns the cache instance.
- */
-
-
-function setCacheAdd(value) {
-  this.__data__.set(value, HASH_UNDEFINED);
-
-  return this;
-}
-/**
- * Checks if `value` is in the array cache.
- *
- * @private
- * @name has
- * @memberOf SetCache
- * @param {*} value The value to search for.
- * @returns {number} Returns `true` if `value` is found, else `false`.
- */
-
-
-function setCacheHas(value) {
-  return this.__data__.has(value);
-} // Add methods to `SetCache`.
-
-
-SetCache.prototype.add = SetCache.prototype.push = setCacheAdd;
-SetCache.prototype.has = setCacheHas;
-/**
- * Creates a stack cache object to store key-value pairs.
- *
- * @private
- * @constructor
- * @param {Array} [entries] The key-value pairs to cache.
- */
-
-function Stack(entries) {
-  var data = this.__data__ = new ListCache(entries);
-  this.size = data.size;
-}
-/**
- * Removes all key-value entries from the stack.
- *
- * @private
- * @name clear
- * @memberOf Stack
- */
-
-
-function stackClear() {
-  this.__data__ = new ListCache();
-  this.size = 0;
-}
-/**
- * Removes `key` and its value from the stack.
- *
- * @private
- * @name delete
- * @memberOf Stack
- * @param {string} key The key of the value to remove.
- * @returns {boolean} Returns `true` if the entry was removed, else `false`.
- */
-
-
-function stackDelete(key) {
-  var data = this.__data__,
-      result = data['delete'](key);
-  this.size = data.size;
-  return result;
-}
-/**
- * Gets the stack value for `key`.
- *
- * @private
- * @name get
- * @memberOf Stack
- * @param {string} key The key of the value to get.
- * @returns {*} Returns the entry value.
- */
-
-
-function stackGet(key) {
-  return this.__data__.get(key);
-}
-/**
- * Checks if a stack value for `key` exists.
- *
- * @private
- * @name has
- * @memberOf Stack
- * @param {string} key The key of the entry to check.
- * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
- */
-
-
-function stackHas(key) {
-  return this.__data__.has(key);
-}
-/**
- * Sets the stack `key` to `value`.
- *
- * @private
- * @name set
- * @memberOf Stack
- * @param {string} key The key of the value to set.
- * @param {*} value The value to set.
- * @returns {Object} Returns the stack cache instance.
- */
-
-
-function stackSet(key, value) {
-  var data = this.__data__;
-
-  if (data instanceof ListCache) {
-    var pairs = data.__data__;
-
-    if (!Map || pairs.length < LARGE_ARRAY_SIZE - 1) {
-      pairs.push([key, value]);
-      this.size = ++data.size;
-      return this;
-    }
-
-    data = this.__data__ = new MapCache(pairs);
-  }
-
-  data.set(key, value);
-  this.size = data.size;
-  return this;
-} // Add methods to `Stack`.
-
-
-Stack.prototype.clear = stackClear;
-Stack.prototype['delete'] = stackDelete;
-Stack.prototype.get = stackGet;
-Stack.prototype.has = stackHas;
-Stack.prototype.set = stackSet;
-/**
- * Creates an array of the enumerable property names of the array-like `value`.
- *
- * @private
- * @param {*} value The value to query.
- * @param {boolean} inherited Specify returning inherited property names.
- * @returns {Array} Returns the array of property names.
- */
-
-function arrayLikeKeys(value, inherited) {
-  var isArr = isArray(value),
-      isArg = !isArr && isArguments(value),
-      isBuff = !isArr && !isArg && isBuffer(value),
-      isType = !isArr && !isArg && !isBuff && isTypedArray(value),
-      skipIndexes = isArr || isArg || isBuff || isType,
-      result = skipIndexes ? baseTimes(value.length, String) : [],
-      length = result.length;
-
-  for (var key in value) {
-    if ((inherited || hasOwnProperty.call(value, key)) && !(skipIndexes && ( // Safari 9 has enumerable `arguments.length` in strict mode.
-    key == 'length' || // Node.js 0.10 has enumerable non-index properties on buffers.
-    isBuff && (key == 'offset' || key == 'parent') || // PhantomJS 2 has enumerable non-index properties on typed arrays.
-    isType && (key == 'buffer' || key == 'byteLength' || key == 'byteOffset') || // Skip index properties.
-    isIndex(key, length)))) {
-      result.push(key);
-    }
-  }
-
-  return result;
-}
-/**
- * Gets the index at which the `key` is found in `array` of key-value pairs.
- *
- * @private
- * @param {Array} array The array to inspect.
- * @param {*} key The key to search for.
- * @returns {number} Returns the index of the matched value, else `-1`.
- */
-
-
-function assocIndexOf(array, key) {
-  var length = array.length;
-
-  while (length--) {
-    if (eq(array[length][0], key)) {
-      return length;
-    }
-  }
-
-  return -1;
-}
-/**
- * The base implementation of `getAllKeys` and `getAllKeysIn` which uses
- * `keysFunc` and `symbolsFunc` to get the enumerable property names and
- * symbols of `object`.
- *
- * @private
- * @param {Object} object The object to query.
- * @param {Function} keysFunc The function to get the keys of `object`.
- * @param {Function} symbolsFunc The function to get the symbols of `object`.
- * @returns {Array} Returns the array of property names and symbols.
- */
-
-
-function baseGetAllKeys(object, keysFunc, symbolsFunc) {
-  var result = keysFunc(object);
-  return isArray(object) ? result : arrayPush(result, symbolsFunc(object));
-}
+var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
 /**
  * The base implementation of `getTag` without fallbacks for buggy environments.
  *
@@ -12498,7 +11497,6 @@ function baseGetAllKeys(object, keysFunc, symbolsFunc) {
  * @returns {string} Returns the `toStringTag`.
  */
 
-
 function baseGetTag(value) {
   if (value == null) {
     return value === undefined ? undefinedTag : nullTag;
@@ -12506,439 +11504,66 @@ function baseGetTag(value) {
 
   return symToStringTag && symToStringTag in Object(value) ? getRawTag(value) : objectToString(value);
 }
+
+module.exports = baseGetTag;
+
+/***/ }),
+
+/***/ "./node_modules/lodash/_freeGlobal.js":
+/*!********************************************!*\
+  !*** ./node_modules/lodash/_freeGlobal.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
+var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
+module.exports = freeGlobal;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
+
+/***/ }),
+
+/***/ "./node_modules/lodash/_getPrototype.js":
+/*!**********************************************!*\
+  !*** ./node_modules/lodash/_getPrototype.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var overArg = __webpack_require__(/*! ./_overArg */ "./node_modules/lodash/_overArg.js");
+/** Built-in value references. */
+
+
+var getPrototype = overArg(Object.getPrototypeOf, Object);
+module.exports = getPrototype;
+
+/***/ }),
+
+/***/ "./node_modules/lodash/_getRawTag.js":
+/*!*******************************************!*\
+  !*** ./node_modules/lodash/_getRawTag.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Symbol = __webpack_require__(/*! ./_Symbol */ "./node_modules/lodash/_Symbol.js");
+/** Used for built-in method references. */
+
+
+var objectProto = Object.prototype;
+/** Used to check objects for own properties. */
+
+var hasOwnProperty = objectProto.hasOwnProperty;
 /**
- * The base implementation of `_.isArguments`.
- *
- * @private
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an `arguments` object,
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
  */
 
+var nativeObjectToString = objectProto.toString;
+/** Built-in value references. */
 
-function baseIsArguments(value) {
-  return isObjectLike(value) && baseGetTag(value) == argsTag;
-}
-/**
- * The base implementation of `_.isEqual` which supports partial comparisons
- * and tracks traversed objects.
- *
- * @private
- * @param {*} value The value to compare.
- * @param {*} other The other value to compare.
- * @param {boolean} bitmask The bitmask flags.
- *  1 - Unordered comparison
- *  2 - Partial comparison
- * @param {Function} [customizer] The function to customize comparisons.
- * @param {Object} [stack] Tracks traversed `value` and `other` objects.
- * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
- */
-
-
-function baseIsEqual(value, other, bitmask, customizer, stack) {
-  if (value === other) {
-    return true;
-  }
-
-  if (value == null || other == null || !isObjectLike(value) && !isObjectLike(other)) {
-    return value !== value && other !== other;
-  }
-
-  return baseIsEqualDeep(value, other, bitmask, customizer, baseIsEqual, stack);
-}
-/**
- * A specialized version of `baseIsEqual` for arrays and objects which performs
- * deep comparisons and tracks traversed objects enabling objects with circular
- * references to be compared.
- *
- * @private
- * @param {Object} object The object to compare.
- * @param {Object} other The other object to compare.
- * @param {number} bitmask The bitmask flags. See `baseIsEqual` for more details.
- * @param {Function} customizer The function to customize comparisons.
- * @param {Function} equalFunc The function to determine equivalents of values.
- * @param {Object} [stack] Tracks traversed `object` and `other` objects.
- * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
- */
-
-
-function baseIsEqualDeep(object, other, bitmask, customizer, equalFunc, stack) {
-  var objIsArr = isArray(object),
-      othIsArr = isArray(other),
-      objTag = objIsArr ? arrayTag : getTag(object),
-      othTag = othIsArr ? arrayTag : getTag(other);
-  objTag = objTag == argsTag ? objectTag : objTag;
-  othTag = othTag == argsTag ? objectTag : othTag;
-  var objIsObj = objTag == objectTag,
-      othIsObj = othTag == objectTag,
-      isSameTag = objTag == othTag;
-
-  if (isSameTag && isBuffer(object)) {
-    if (!isBuffer(other)) {
-      return false;
-    }
-
-    objIsArr = true;
-    objIsObj = false;
-  }
-
-  if (isSameTag && !objIsObj) {
-    stack || (stack = new Stack());
-    return objIsArr || isTypedArray(object) ? equalArrays(object, other, bitmask, customizer, equalFunc, stack) : equalByTag(object, other, objTag, bitmask, customizer, equalFunc, stack);
-  }
-
-  if (!(bitmask & COMPARE_PARTIAL_FLAG)) {
-    var objIsWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
-        othIsWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
-
-    if (objIsWrapped || othIsWrapped) {
-      var objUnwrapped = objIsWrapped ? object.value() : object,
-          othUnwrapped = othIsWrapped ? other.value() : other;
-      stack || (stack = new Stack());
-      return equalFunc(objUnwrapped, othUnwrapped, bitmask, customizer, stack);
-    }
-  }
-
-  if (!isSameTag) {
-    return false;
-  }
-
-  stack || (stack = new Stack());
-  return equalObjects(object, other, bitmask, customizer, equalFunc, stack);
-}
-/**
- * The base implementation of `_.isNative` without bad shim checks.
- *
- * @private
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a native function,
- *  else `false`.
- */
-
-
-function baseIsNative(value) {
-  if (!isObject(value) || isMasked(value)) {
-    return false;
-  }
-
-  var pattern = isFunction(value) ? reIsNative : reIsHostCtor;
-  return pattern.test(toSource(value));
-}
-/**
- * The base implementation of `_.isTypedArray` without Node.js optimizations.
- *
- * @private
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.
- */
-
-
-function baseIsTypedArray(value) {
-  return isObjectLike(value) && isLength(value.length) && !!typedArrayTags[baseGetTag(value)];
-}
-/**
- * The base implementation of `_.keys` which doesn't treat sparse arrays as dense.
- *
- * @private
- * @param {Object} object The object to query.
- * @returns {Array} Returns the array of property names.
- */
-
-
-function baseKeys(object) {
-  if (!isPrototype(object)) {
-    return nativeKeys(object);
-  }
-
-  var result = [];
-
-  for (var key in Object(object)) {
-    if (hasOwnProperty.call(object, key) && key != 'constructor') {
-      result.push(key);
-    }
-  }
-
-  return result;
-}
-/**
- * A specialized version of `baseIsEqualDeep` for arrays with support for
- * partial deep comparisons.
- *
- * @private
- * @param {Array} array The array to compare.
- * @param {Array} other The other array to compare.
- * @param {number} bitmask The bitmask flags. See `baseIsEqual` for more details.
- * @param {Function} customizer The function to customize comparisons.
- * @param {Function} equalFunc The function to determine equivalents of values.
- * @param {Object} stack Tracks traversed `array` and `other` objects.
- * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
- */
-
-
-function equalArrays(array, other, bitmask, customizer, equalFunc, stack) {
-  var isPartial = bitmask & COMPARE_PARTIAL_FLAG,
-      arrLength = array.length,
-      othLength = other.length;
-
-  if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
-    return false;
-  } // Assume cyclic values are equal.
-
-
-  var stacked = stack.get(array);
-
-  if (stacked && stack.get(other)) {
-    return stacked == other;
-  }
-
-  var index = -1,
-      result = true,
-      seen = bitmask & COMPARE_UNORDERED_FLAG ? new SetCache() : undefined;
-  stack.set(array, other);
-  stack.set(other, array); // Ignore non-index properties.
-
-  while (++index < arrLength) {
-    var arrValue = array[index],
-        othValue = other[index];
-
-    if (customizer) {
-      var compared = isPartial ? customizer(othValue, arrValue, index, other, array, stack) : customizer(arrValue, othValue, index, array, other, stack);
-    }
-
-    if (compared !== undefined) {
-      if (compared) {
-        continue;
-      }
-
-      result = false;
-      break;
-    } // Recursively compare arrays (susceptible to call stack limits).
-
-
-    if (seen) {
-      if (!arraySome(other, function (othValue, othIndex) {
-        if (!cacheHas(seen, othIndex) && (arrValue === othValue || equalFunc(arrValue, othValue, bitmask, customizer, stack))) {
-          return seen.push(othIndex);
-        }
-      })) {
-        result = false;
-        break;
-      }
-    } else if (!(arrValue === othValue || equalFunc(arrValue, othValue, bitmask, customizer, stack))) {
-      result = false;
-      break;
-    }
-  }
-
-  stack['delete'](array);
-  stack['delete'](other);
-  return result;
-}
-/**
- * A specialized version of `baseIsEqualDeep` for comparing objects of
- * the same `toStringTag`.
- *
- * **Note:** This function only supports comparing values with tags of
- * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
- *
- * @private
- * @param {Object} object The object to compare.
- * @param {Object} other The other object to compare.
- * @param {string} tag The `toStringTag` of the objects to compare.
- * @param {number} bitmask The bitmask flags. See `baseIsEqual` for more details.
- * @param {Function} customizer The function to customize comparisons.
- * @param {Function} equalFunc The function to determine equivalents of values.
- * @param {Object} stack Tracks traversed `object` and `other` objects.
- * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
- */
-
-
-function equalByTag(object, other, tag, bitmask, customizer, equalFunc, stack) {
-  switch (tag) {
-    case dataViewTag:
-      if (object.byteLength != other.byteLength || object.byteOffset != other.byteOffset) {
-        return false;
-      }
-
-      object = object.buffer;
-      other = other.buffer;
-
-    case arrayBufferTag:
-      if (object.byteLength != other.byteLength || !equalFunc(new Uint8Array(object), new Uint8Array(other))) {
-        return false;
-      }
-
-      return true;
-
-    case boolTag:
-    case dateTag:
-    case numberTag:
-      // Coerce booleans to `1` or `0` and dates to milliseconds.
-      // Invalid dates are coerced to `NaN`.
-      return eq(+object, +other);
-
-    case errorTag:
-      return object.name == other.name && object.message == other.message;
-
-    case regexpTag:
-    case stringTag:
-      // Coerce regexes to strings and treat strings, primitives and objects,
-      // as equal. See http://www.ecma-international.org/ecma-262/7.0/#sec-regexp.prototype.tostring
-      // for more details.
-      return object == other + '';
-
-    case mapTag:
-      var convert = mapToArray;
-
-    case setTag:
-      var isPartial = bitmask & COMPARE_PARTIAL_FLAG;
-      convert || (convert = setToArray);
-
-      if (object.size != other.size && !isPartial) {
-        return false;
-      } // Assume cyclic values are equal.
-
-
-      var stacked = stack.get(object);
-
-      if (stacked) {
-        return stacked == other;
-      }
-
-      bitmask |= COMPARE_UNORDERED_FLAG; // Recursively compare objects (susceptible to call stack limits).
-
-      stack.set(object, other);
-      var result = equalArrays(convert(object), convert(other), bitmask, customizer, equalFunc, stack);
-      stack['delete'](object);
-      return result;
-
-    case symbolTag:
-      if (symbolValueOf) {
-        return symbolValueOf.call(object) == symbolValueOf.call(other);
-      }
-
-  }
-
-  return false;
-}
-/**
- * A specialized version of `baseIsEqualDeep` for objects with support for
- * partial deep comparisons.
- *
- * @private
- * @param {Object} object The object to compare.
- * @param {Object} other The other object to compare.
- * @param {number} bitmask The bitmask flags. See `baseIsEqual` for more details.
- * @param {Function} customizer The function to customize comparisons.
- * @param {Function} equalFunc The function to determine equivalents of values.
- * @param {Object} stack Tracks traversed `object` and `other` objects.
- * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
- */
-
-
-function equalObjects(object, other, bitmask, customizer, equalFunc, stack) {
-  var isPartial = bitmask & COMPARE_PARTIAL_FLAG,
-      objProps = getAllKeys(object),
-      objLength = objProps.length,
-      othProps = getAllKeys(other),
-      othLength = othProps.length;
-
-  if (objLength != othLength && !isPartial) {
-    return false;
-  }
-
-  var index = objLength;
-
-  while (index--) {
-    var key = objProps[index];
-
-    if (!(isPartial ? key in other : hasOwnProperty.call(other, key))) {
-      return false;
-    }
-  } // Assume cyclic values are equal.
-
-
-  var stacked = stack.get(object);
-
-  if (stacked && stack.get(other)) {
-    return stacked == other;
-  }
-
-  var result = true;
-  stack.set(object, other);
-  stack.set(other, object);
-  var skipCtor = isPartial;
-
-  while (++index < objLength) {
-    key = objProps[index];
-    var objValue = object[key],
-        othValue = other[key];
-
-    if (customizer) {
-      var compared = isPartial ? customizer(othValue, objValue, key, other, object, stack) : customizer(objValue, othValue, key, object, other, stack);
-    } // Recursively compare objects (susceptible to call stack limits).
-
-
-    if (!(compared === undefined ? objValue === othValue || equalFunc(objValue, othValue, bitmask, customizer, stack) : compared)) {
-      result = false;
-      break;
-    }
-
-    skipCtor || (skipCtor = key == 'constructor');
-  }
-
-  if (result && !skipCtor) {
-    var objCtor = object.constructor,
-        othCtor = other.constructor; // Non `Object` object instances with different constructors are not equal.
-
-    if (objCtor != othCtor && 'constructor' in object && 'constructor' in other && !(typeof objCtor == 'function' && objCtor instanceof objCtor && typeof othCtor == 'function' && othCtor instanceof othCtor)) {
-      result = false;
-    }
-  }
-
-  stack['delete'](object);
-  stack['delete'](other);
-  return result;
-}
-/**
- * Creates an array of own enumerable property names and symbols of `object`.
- *
- * @private
- * @param {Object} object The object to query.
- * @returns {Array} Returns the array of property names and symbols.
- */
-
-
-function getAllKeys(object) {
-  return baseGetAllKeys(object, keys, getSymbols);
-}
-/**
- * Gets the data for `map`.
- *
- * @private
- * @param {Object} map The map to query.
- * @param {string} key The reference key.
- * @returns {*} Returns the map data.
- */
-
-
-function getMapData(map, key) {
-  var data = map.__data__;
-  return isKeyable(key) ? data[typeof key == 'string' ? 'string' : 'hash'] : data.map;
-}
-/**
- * Gets the native function at `key` of `object`.
- *
- * @private
- * @param {Object} object The object to query.
- * @param {string} key The key of the method to get.
- * @returns {*} Returns the function if it's native, else `undefined`.
- */
-
-
-function getNative(object, key) {
-  var value = getValue(object, key);
-  return baseIsNative(value) ? value : undefined;
-}
+var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
 /**
  * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
  *
@@ -12946,7 +11571,6 @@ function getNative(object, key) {
  * @param {*} value The value to query.
  * @returns {string} Returns the raw `toStringTag`.
  */
-
 
 function getRawTag(value) {
   var isOwn = hasOwnProperty.call(value, symToStringTag),
@@ -12969,116 +11593,27 @@ function getRawTag(value) {
 
   return result;
 }
+
+module.exports = getRawTag;
+
+/***/ }),
+
+/***/ "./node_modules/lodash/_objectToString.js":
+/*!************************************************!*\
+  !*** ./node_modules/lodash/_objectToString.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
 /**
- * Creates an array of the own enumerable symbols of `object`.
- *
- * @private
- * @param {Object} object The object to query.
- * @returns {Array} Returns the array of symbols.
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
  */
 
-
-var getSymbols = !nativeGetSymbols ? stubArray : function (object) {
-  if (object == null) {
-    return [];
-  }
-
-  object = Object(object);
-  return arrayFilter(nativeGetSymbols(object), function (symbol) {
-    return propertyIsEnumerable.call(object, symbol);
-  });
-};
-/**
- * Gets the `toStringTag` of `value`.
- *
- * @private
- * @param {*} value The value to query.
- * @returns {string} Returns the `toStringTag`.
- */
-
-var getTag = baseGetTag; // Fallback for data views, maps, sets, and weak maps in IE 11 and promises in Node.js < 6.
-
-if (DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag || Map && getTag(new Map()) != mapTag || Promise && getTag(Promise.resolve()) != promiseTag || Set && getTag(new Set()) != setTag || WeakMap && getTag(new WeakMap()) != weakMapTag) {
-  getTag = function (value) {
-    var result = baseGetTag(value),
-        Ctor = result == objectTag ? value.constructor : undefined,
-        ctorString = Ctor ? toSource(Ctor) : '';
-
-    if (ctorString) {
-      switch (ctorString) {
-        case dataViewCtorString:
-          return dataViewTag;
-
-        case mapCtorString:
-          return mapTag;
-
-        case promiseCtorString:
-          return promiseTag;
-
-        case setCtorString:
-          return setTag;
-
-        case weakMapCtorString:
-          return weakMapTag;
-      }
-    }
-
-    return result;
-  };
-}
-/**
- * Checks if `value` is a valid array-like index.
- *
- * @private
- * @param {*} value The value to check.
- * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
- * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
- */
-
-
-function isIndex(value, length) {
-  length = length == null ? MAX_SAFE_INTEGER : length;
-  return !!length && (typeof value == 'number' || reIsUint.test(value)) && value > -1 && value % 1 == 0 && value < length;
-}
-/**
- * Checks if `value` is suitable for use as unique object key.
- *
- * @private
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is suitable, else `false`.
- */
-
-
-function isKeyable(value) {
-  var type = typeof value;
-  return type == 'string' || type == 'number' || type == 'symbol' || type == 'boolean' ? value !== '__proto__' : value === null;
-}
-/**
- * Checks if `func` has its source masked.
- *
- * @private
- * @param {Function} func The function to check.
- * @returns {boolean} Returns `true` if `func` is masked, else `false`.
- */
-
-
-function isMasked(func) {
-  return !!maskSrcKey && maskSrcKey in func;
-}
-/**
- * Checks if `value` is likely a prototype object.
- *
- * @private
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a prototype, else `false`.
- */
-
-
-function isPrototype(value) {
-  var Ctor = value && value.constructor,
-      proto = typeof Ctor == 'function' && Ctor.prototype || objectProto;
-  return value === proto;
-}
+var nativeObjectToString = objectProto.toString;
 /**
  * Converts `value` to a string using `Object.prototype.toString`.
  *
@@ -13087,291 +11622,65 @@ function isPrototype(value) {
  * @returns {string} Returns the converted string.
  */
 
-
 function objectToString(value) {
   return nativeObjectToString.call(value);
 }
+
+module.exports = objectToString;
+
+/***/ }),
+
+/***/ "./node_modules/lodash/_overArg.js":
+/*!*****************************************!*\
+  !*** ./node_modules/lodash/_overArg.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
 /**
- * Converts `func` to its source code.
+ * Creates a unary function that invokes `func` with its argument transformed.
  *
  * @private
- * @param {Function} func The function to convert.
- * @returns {string} Returns the source code.
+ * @param {Function} func The function to wrap.
+ * @param {Function} transform The argument transform.
+ * @returns {Function} Returns the new function.
  */
-
-
-function toSource(func) {
-  if (func != null) {
-    try {
-      return funcToString.call(func);
-    } catch (e) {}
-
-    try {
-      return func + '';
-    } catch (e) {}
-  }
-
-  return '';
+function overArg(func, transform) {
+  return function (arg) {
+    return func(transform(arg));
+  };
 }
-/**
- * Performs a
- * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
- * comparison between two values to determine if they are equivalent.
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to compare.
- * @param {*} other The other value to compare.
- * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
- * @example
- *
- * var object = { 'a': 1 };
- * var other = { 'a': 1 };
- *
- * _.eq(object, object);
- * // => true
- *
- * _.eq(object, other);
- * // => false
- *
- * _.eq('a', 'a');
- * // => true
- *
- * _.eq('a', Object('a'));
- * // => false
- *
- * _.eq(NaN, NaN);
- * // => true
- */
+
+module.exports = overArg;
+
+/***/ }),
+
+/***/ "./node_modules/lodash/_root.js":
+/*!**************************************!*\
+  !*** ./node_modules/lodash/_root.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var freeGlobal = __webpack_require__(/*! ./_freeGlobal */ "./node_modules/lodash/_freeGlobal.js");
+/** Detect free variable `self`. */
 
 
-function eq(value, other) {
-  return value === other || value !== value && other !== other;
-}
-/**
- * Checks if `value` is likely an `arguments` object.
- *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an `arguments` object,
- *  else `false`.
- * @example
- *
- * _.isArguments(function() { return arguments; }());
- * // => true
- *
- * _.isArguments([1, 2, 3]);
- * // => false
- */
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+/** Used as a reference to the global object. */
 
+var root = freeGlobal || freeSelf || Function('return this')();
+module.exports = root;
 
-var isArguments = baseIsArguments(function () {
-  return arguments;
-}()) ? baseIsArguments : function (value) {
-  return isObjectLike(value) && hasOwnProperty.call(value, 'callee') && !propertyIsEnumerable.call(value, 'callee');
-};
-/**
- * Checks if `value` is classified as an `Array` object.
- *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an array, else `false`.
- * @example
- *
- * _.isArray([1, 2, 3]);
- * // => true
- *
- * _.isArray(document.body.children);
- * // => false
- *
- * _.isArray('abc');
- * // => false
- *
- * _.isArray(_.noop);
- * // => false
- */
+/***/ }),
 
-var isArray = Array.isArray;
-/**
- * Checks if `value` is array-like. A value is considered array-like if it's
- * not a function and has a `value.length` that's an integer greater than or
- * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
- * @example
- *
- * _.isArrayLike([1, 2, 3]);
- * // => true
- *
- * _.isArrayLike(document.body.children);
- * // => true
- *
- * _.isArrayLike('abc');
- * // => true
- *
- * _.isArrayLike(_.noop);
- * // => false
- */
+/***/ "./node_modules/lodash/isObjectLike.js":
+/*!*********************************************!*\
+  !*** ./node_modules/lodash/isObjectLike.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
 
-function isArrayLike(value) {
-  return value != null && isLength(value.length) && !isFunction(value);
-}
-/**
- * Checks if `value` is a buffer.
- *
- * @static
- * @memberOf _
- * @since 4.3.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a buffer, else `false`.
- * @example
- *
- * _.isBuffer(new Buffer(2));
- * // => true
- *
- * _.isBuffer(new Uint8Array(2));
- * // => false
- */
-
-
-var isBuffer = nativeIsBuffer || stubFalse;
-/**
- * Performs a deep comparison between two values to determine if they are
- * equivalent.
- *
- * **Note:** This method supports comparing arrays, array buffers, booleans,
- * date objects, error objects, maps, numbers, `Object` objects, regexes,
- * sets, strings, symbols, and typed arrays. `Object` objects are compared
- * by their own, not inherited, enumerable properties. Functions and DOM
- * nodes are compared by strict equality, i.e. `===`.
- *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Lang
- * @param {*} value The value to compare.
- * @param {*} other The other value to compare.
- * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
- * @example
- *
- * var object = { 'a': 1 };
- * var other = { 'a': 1 };
- *
- * _.isEqual(object, other);
- * // => true
- *
- * object === other;
- * // => false
- */
-
-function isEqual(value, other) {
-  return baseIsEqual(value, other);
-}
-/**
- * Checks if `value` is classified as a `Function` object.
- *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a function, else `false`.
- * @example
- *
- * _.isFunction(_);
- * // => true
- *
- * _.isFunction(/abc/);
- * // => false
- */
-
-
-function isFunction(value) {
-  if (!isObject(value)) {
-    return false;
-  } // The use of `Object#toString` avoids issues with the `typeof` operator
-  // in Safari 9 which returns 'object' for typed arrays and other constructors.
-
-
-  var tag = baseGetTag(value);
-  return tag == funcTag || tag == genTag || tag == asyncTag || tag == proxyTag;
-}
-/**
- * Checks if `value` is a valid array-like length.
- *
- * **Note:** This method is loosely based on
- * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
- * @example
- *
- * _.isLength(3);
- * // => true
- *
- * _.isLength(Number.MIN_VALUE);
- * // => false
- *
- * _.isLength(Infinity);
- * // => false
- *
- * _.isLength('3');
- * // => false
- */
-
-
-function isLength(value) {
-  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
-}
-/**
- * Checks if `value` is the
- * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
- * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
- *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an object, else `false`.
- * @example
- *
- * _.isObject({});
- * // => true
- *
- * _.isObject([1, 2, 3]);
- * // => true
- *
- * _.isObject(_.noop);
- * // => true
- *
- * _.isObject(null);
- * // => false
- */
-
-
-function isObject(value) {
-  var type = typeof value;
-  return value != null && (type == 'object' || type == 'function');
-}
 /**
  * Checks if `value` is object-like. A value is object-like if it's not `null`
  * and has a `typeof` result of "object".
@@ -13396,107 +11705,86 @@ function isObject(value) {
  * _.isObjectLike(null);
  * // => false
  */
-
-
 function isObjectLike(value) {
   return value != null && typeof value == 'object';
 }
+
+module.exports = isObjectLike;
+
+/***/ }),
+
+/***/ "./node_modules/lodash/isPlainObject.js":
+/*!**********************************************!*\
+  !*** ./node_modules/lodash/isPlainObject.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var baseGetTag = __webpack_require__(/*! ./_baseGetTag */ "./node_modules/lodash/_baseGetTag.js"),
+    getPrototype = __webpack_require__(/*! ./_getPrototype */ "./node_modules/lodash/_getPrototype.js"),
+    isObjectLike = __webpack_require__(/*! ./isObjectLike */ "./node_modules/lodash/isObjectLike.js");
+/** `Object#toString` result references. */
+
+
+var objectTag = '[object Object]';
+/** Used for built-in method references. */
+
+var funcProto = Function.prototype,
+    objectProto = Object.prototype;
+/** Used to resolve the decompiled source of functions. */
+
+var funcToString = funcProto.toString;
+/** Used to check objects for own properties. */
+
+var hasOwnProperty = objectProto.hasOwnProperty;
+/** Used to infer the `Object` constructor. */
+
+var objectCtorString = funcToString.call(Object);
 /**
- * Checks if `value` is classified as a typed array.
+ * Checks if `value` is a plain object, that is, an object created by the
+ * `Object` constructor or one with a `[[Prototype]]` of `null`.
  *
  * @static
  * @memberOf _
- * @since 3.0.0
+ * @since 0.8.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.
- * @example
- *
- * _.isTypedArray(new Uint8Array);
- * // => true
- *
- * _.isTypedArray([]);
- * // => false
- */
-
-
-var isTypedArray = nodeIsTypedArray ? baseUnary(nodeIsTypedArray) : baseIsTypedArray;
-/**
- * Creates an array of the own enumerable property names of `object`.
- *
- * **Note:** Non-object values are coerced to objects. See the
- * [ES spec](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
- * for more details.
- *
- * @static
- * @since 0.1.0
- * @memberOf _
- * @category Object
- * @param {Object} object The object to query.
- * @returns {Array} Returns the array of property names.
+ * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
  * @example
  *
  * function Foo() {
  *   this.a = 1;
- *   this.b = 2;
  * }
  *
- * Foo.prototype.c = 3;
- *
- * _.keys(new Foo);
- * // => ['a', 'b'] (iteration order is not guaranteed)
- *
- * _.keys('hi');
- * // => ['0', '1']
- */
-
-function keys(object) {
-  return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object);
-}
-/**
- * This method returns a new empty array.
- *
- * @static
- * @memberOf _
- * @since 4.13.0
- * @category Util
- * @returns {Array} Returns the new empty array.
- * @example
- *
- * var arrays = _.times(2, _.stubArray);
- *
- * console.log(arrays);
- * // => [[], []]
- *
- * console.log(arrays[0] === arrays[1]);
+ * _.isPlainObject(new Foo);
  * // => false
+ *
+ * _.isPlainObject([1, 2, 3]);
+ * // => false
+ *
+ * _.isPlainObject({ 'x': 0, 'y': 0 });
+ * // => true
+ *
+ * _.isPlainObject(Object.create(null));
+ * // => true
  */
 
+function isPlainObject(value) {
+  if (!isObjectLike(value) || baseGetTag(value) != objectTag) {
+    return false;
+  }
 
-function stubArray() {
-  return [];
-}
-/**
- * This method returns `false`.
- *
- * @static
- * @memberOf _
- * @since 4.13.0
- * @category Util
- * @returns {boolean} Returns `false`.
- * @example
- *
- * _.times(2, _.stubFalse);
- * // => [false, false]
- */
+  var proto = getPrototype(value);
 
+  if (proto === null) {
+    return true;
+  }
 
-function stubFalse() {
-  return false;
+  var Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
+  return typeof Ctor == 'function' && Ctor instanceof Ctor && funcToString.call(Ctor) == objectCtorString;
 }
 
-module.exports = isEqual;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js"), __webpack_require__(/*! ./../webpack/buildin/module.js */ "./node_modules/webpack/buildin/module.js")(module)))
+module.exports = isPlainObject;
 
 /***/ }),
 
@@ -14613,6191 +12901,673 @@ module.exports = ReactPropTypesSecret;
 
 /***/ }),
 
-/***/ "./node_modules/react-apollo/node_modules/prop-types/checkPropTypes.js":
-/*!*****************************************************************************!*\
-  !*** ./node_modules/react-apollo/node_modules/prop-types/checkPropTypes.js ***!
-  \*****************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-
-var printWarning = function () {};
-
-if (true) {
-  var ReactPropTypesSecret = __webpack_require__(/*! ./lib/ReactPropTypesSecret */ "./node_modules/react-apollo/node_modules/prop-types/lib/ReactPropTypesSecret.js");
-
-  var loggedTypeFailures = {};
-  var has = Function.call.bind(Object.prototype.hasOwnProperty);
-
-  printWarning = function (text) {
-    var message = 'Warning: ' + text;
-
-    if (typeof console !== 'undefined') {
-      console.error(message);
-    }
-
-    try {
-      // --- Welcome to debugging React ---
-      // This error was thrown as a convenience so that you can use this stack
-      // to find the callsite that caused this warning to fire.
-      throw new Error(message);
-    } catch (x) {}
-  };
-}
-/**
- * Assert that the values match with the type specs.
- * Error messages are memorized and will only be shown once.
- *
- * @param {object} typeSpecs Map of name to a ReactPropType
- * @param {object} values Runtime values that need to be type-checked
- * @param {string} location e.g. "prop", "context", "child context"
- * @param {string} componentName Name of the component for error messages.
- * @param {?Function} getStack Returns the component stack.
- * @private
- */
-
-
-function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
-  if (true) {
-    for (var typeSpecName in typeSpecs) {
-      if (has(typeSpecs, typeSpecName)) {
-        var error; // Prop type validation may throw. In case they do, we don't want to
-        // fail the render phase where it didn't fail before. So we log it.
-        // After these have been cleaned up, we'll let them throw.
-
-        try {
-          // This is intentionally an invariant that gets caught. It's the same
-          // behavior as without this statement except with a better message.
-          if (typeof typeSpecs[typeSpecName] !== 'function') {
-            var err = Error((componentName || 'React class') + ': ' + location + ' type `' + typeSpecName + '` is invalid; ' + 'it must be a function, usually from the `prop-types` package, but received `' + typeof typeSpecs[typeSpecName] + '`.');
-            err.name = 'Invariant Violation';
-            throw err;
-          }
-
-          error = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, ReactPropTypesSecret);
-        } catch (ex) {
-          error = ex;
-        }
-
-        if (error && !(error instanceof Error)) {
-          printWarning((componentName || 'React class') + ': type specification of ' + location + ' `' + typeSpecName + '` is invalid; the type checker ' + 'function must return `null` or an `Error` but returned a ' + typeof error + '. ' + 'You may have forgotten to pass an argument to the type checker ' + 'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' + 'shape all require an argument).');
-        }
-
-        if (error instanceof Error && !(error.message in loggedTypeFailures)) {
-          // Only monitor this failure once because there tends to be a lot of the
-          // same error.
-          loggedTypeFailures[error.message] = true;
-          var stack = getStack ? getStack() : '';
-          printWarning('Failed ' + location + ' type: ' + error.message + (stack != null ? stack : ''));
-        }
-      }
-    }
-  }
-}
-/**
- * Resets warning cache when testing.
- *
- * @private
- */
-
-
-checkPropTypes.resetWarningCache = function () {
-  if (true) {
-    loggedTypeFailures = {};
-  }
-};
-
-module.exports = checkPropTypes;
-
-/***/ }),
-
-/***/ "./node_modules/react-apollo/node_modules/prop-types/factoryWithTypeCheckers.js":
-/*!**************************************************************************************!*\
-  !*** ./node_modules/react-apollo/node_modules/prop-types/factoryWithTypeCheckers.js ***!
-  \**************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-
-var ReactIs = __webpack_require__(/*! react-is */ "./node_modules/react-is/index.js");
-
-var assign = __webpack_require__(/*! object-assign */ "./node_modules/object-assign/index.js");
-
-var ReactPropTypesSecret = __webpack_require__(/*! ./lib/ReactPropTypesSecret */ "./node_modules/react-apollo/node_modules/prop-types/lib/ReactPropTypesSecret.js");
-
-var checkPropTypes = __webpack_require__(/*! ./checkPropTypes */ "./node_modules/react-apollo/node_modules/prop-types/checkPropTypes.js");
-
-var has = Function.call.bind(Object.prototype.hasOwnProperty);
-
-var printWarning = function () {};
-
-if (true) {
-  printWarning = function (text) {
-    var message = 'Warning: ' + text;
-
-    if (typeof console !== 'undefined') {
-      console.error(message);
-    }
-
-    try {
-      // --- Welcome to debugging React ---
-      // This error was thrown as a convenience so that you can use this stack
-      // to find the callsite that caused this warning to fire.
-      throw new Error(message);
-    } catch (x) {}
-  };
-}
-
-function emptyFunctionThatReturnsNull() {
-  return null;
-}
-
-module.exports = function (isValidElement, throwOnDirectAccess) {
-  /* global Symbol */
-  var ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
-  var FAUX_ITERATOR_SYMBOL = '@@iterator'; // Before Symbol spec.
-
-  /**
-   * Returns the iterator method function contained on the iterable object.
-   *
-   * Be sure to invoke the function with the iterable as context:
-   *
-   *     var iteratorFn = getIteratorFn(myIterable);
-   *     if (iteratorFn) {
-   *       var iterator = iteratorFn.call(myIterable);
-   *       ...
-   *     }
-   *
-   * @param {?object} maybeIterable
-   * @return {?function}
-   */
-
-  function getIteratorFn(maybeIterable) {
-    var iteratorFn = maybeIterable && (ITERATOR_SYMBOL && maybeIterable[ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL]);
-
-    if (typeof iteratorFn === 'function') {
-      return iteratorFn;
-    }
-  }
-  /**
-   * Collection of methods that allow declaration and validation of props that are
-   * supplied to React components. Example usage:
-   *
-   *   var Props = require('ReactPropTypes');
-   *   var MyArticle = React.createClass({
-   *     propTypes: {
-   *       // An optional string prop named "description".
-   *       description: Props.string,
-   *
-   *       // A required enum prop named "category".
-   *       category: Props.oneOf(['News','Photos']).isRequired,
-   *
-   *       // A prop named "dialog" that requires an instance of Dialog.
-   *       dialog: Props.instanceOf(Dialog).isRequired
-   *     },
-   *     render: function() { ... }
-   *   });
-   *
-   * A more formal specification of how these methods are used:
-   *
-   *   type := array|bool|func|object|number|string|oneOf([...])|instanceOf(...)
-   *   decl := ReactPropTypes.{type}(.isRequired)?
-   *
-   * Each and every declaration produces a function with the same signature. This
-   * allows the creation of custom validation functions. For example:
-   *
-   *  var MyLink = React.createClass({
-   *    propTypes: {
-   *      // An optional string or URI prop named "href".
-   *      href: function(props, propName, componentName) {
-   *        var propValue = props[propName];
-   *        if (propValue != null && typeof propValue !== 'string' &&
-   *            !(propValue instanceof URI)) {
-   *          return new Error(
-   *            'Expected a string or an URI for ' + propName + ' in ' +
-   *            componentName
-   *          );
-   *        }
-   *      }
-   *    },
-   *    render: function() {...}
-   *  });
-   *
-   * @internal
-   */
-
-
-  var ANONYMOUS = '<<anonymous>>'; // Important!
-  // Keep this list in sync with production version in `./factoryWithThrowingShims.js`.
-
-  var ReactPropTypes = {
-    array: createPrimitiveTypeChecker('array'),
-    bool: createPrimitiveTypeChecker('boolean'),
-    func: createPrimitiveTypeChecker('function'),
-    number: createPrimitiveTypeChecker('number'),
-    object: createPrimitiveTypeChecker('object'),
-    string: createPrimitiveTypeChecker('string'),
-    symbol: createPrimitiveTypeChecker('symbol'),
-    any: createAnyTypeChecker(),
-    arrayOf: createArrayOfTypeChecker,
-    element: createElementTypeChecker(),
-    elementType: createElementTypeTypeChecker(),
-    instanceOf: createInstanceTypeChecker,
-    node: createNodeChecker(),
-    objectOf: createObjectOfTypeChecker,
-    oneOf: createEnumTypeChecker,
-    oneOfType: createUnionTypeChecker,
-    shape: createShapeTypeChecker,
-    exact: createStrictShapeTypeChecker
-  };
-  /**
-   * inlined Object.is polyfill to avoid requiring consumers ship their own
-   * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
-   */
-
-  /*eslint-disable no-self-compare*/
-
-  function is(x, y) {
-    // SameValue algorithm
-    if (x === y) {
-      // Steps 1-5, 7-10
-      // Steps 6.b-6.e: +0 != -0
-      return x !== 0 || 1 / x === 1 / y;
-    } else {
-      // Step 6.a: NaN == NaN
-      return x !== x && y !== y;
-    }
-  }
-  /*eslint-enable no-self-compare*/
-
-  /**
-   * We use an Error-like object for backward compatibility as people may call
-   * PropTypes directly and inspect their output. However, we don't use real
-   * Errors anymore. We don't inspect their stack anyway, and creating them
-   * is prohibitively expensive if they are created too often, such as what
-   * happens in oneOfType() for any type before the one that matched.
-   */
-
-
-  function PropTypeError(message) {
-    this.message = message;
-    this.stack = '';
-  } // Make `instanceof Error` still work for returned errors.
-
-
-  PropTypeError.prototype = Error.prototype;
-
-  function createChainableTypeChecker(validate) {
-    if (true) {
-      var manualPropTypeCallCache = {};
-      var manualPropTypeWarningCount = 0;
-    }
-
-    function checkType(isRequired, props, propName, componentName, location, propFullName, secret) {
-      componentName = componentName || ANONYMOUS;
-      propFullName = propFullName || propName;
-
-      if (secret !== ReactPropTypesSecret) {
-        if (throwOnDirectAccess) {
-          // New behavior only for users of `prop-types` package
-          var err = new Error('Calling PropTypes validators directly is not supported by the `prop-types` package. ' + 'Use `PropTypes.checkPropTypes()` to call them. ' + 'Read more at http://fb.me/use-check-prop-types');
-          err.name = 'Invariant Violation';
-          throw err;
-        } else if ( true && typeof console !== 'undefined') {
-          // Old behavior for people using React.PropTypes
-          var cacheKey = componentName + ':' + propName;
-
-          if (!manualPropTypeCallCache[cacheKey] && // Avoid spamming the console because they are often not actionable except for lib authors
-          manualPropTypeWarningCount < 3) {
-            printWarning('You are manually calling a React.PropTypes validation ' + 'function for the `' + propFullName + '` prop on `' + componentName + '`. This is deprecated ' + 'and will throw in the standalone `prop-types` package. ' + 'You may be seeing this warning due to a third-party PropTypes ' + 'library. See https://fb.me/react-warning-dont-call-proptypes ' + 'for details.');
-            manualPropTypeCallCache[cacheKey] = true;
-            manualPropTypeWarningCount++;
-          }
-        }
-      }
-
-      if (props[propName] == null) {
-        if (isRequired) {
-          if (props[propName] === null) {
-            return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required ' + ('in `' + componentName + '`, but its value is `null`.'));
-          }
-
-          return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required in ' + ('`' + componentName + '`, but its value is `undefined`.'));
-        }
-
-        return null;
-      } else {
-        return validate(props, propName, componentName, location, propFullName);
-      }
-    }
-
-    var chainedCheckType = checkType.bind(null, false);
-    chainedCheckType.isRequired = checkType.bind(null, true);
-    return chainedCheckType;
-  }
-
-  function createPrimitiveTypeChecker(expectedType) {
-    function validate(props, propName, componentName, location, propFullName, secret) {
-      var propValue = props[propName];
-      var propType = getPropType(propValue);
-
-      if (propType !== expectedType) {
-        // `propValue` being instance of, say, date/regexp, pass the 'object'
-        // check, but we can offer a more precise error message here rather than
-        // 'of type `object`'.
-        var preciseType = getPreciseType(propValue);
-        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + preciseType + '` supplied to `' + componentName + '`, expected ') + ('`' + expectedType + '`.'));
-      }
-
-      return null;
-    }
-
-    return createChainableTypeChecker(validate);
-  }
-
-  function createAnyTypeChecker() {
-    return createChainableTypeChecker(emptyFunctionThatReturnsNull);
-  }
-
-  function createArrayOfTypeChecker(typeChecker) {
-    function validate(props, propName, componentName, location, propFullName) {
-      if (typeof typeChecker !== 'function') {
-        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside arrayOf.');
-      }
-
-      var propValue = props[propName];
-
-      if (!Array.isArray(propValue)) {
-        var propType = getPropType(propValue);
-        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an array.'));
-      }
-
-      for (var i = 0; i < propValue.length; i++) {
-        var error = typeChecker(propValue, i, componentName, location, propFullName + '[' + i + ']', ReactPropTypesSecret);
-
-        if (error instanceof Error) {
-          return error;
-        }
-      }
-
-      return null;
-    }
-
-    return createChainableTypeChecker(validate);
-  }
-
-  function createElementTypeChecker() {
-    function validate(props, propName, componentName, location, propFullName) {
-      var propValue = props[propName];
-
-      if (!isValidElement(propValue)) {
-        var propType = getPropType(propValue);
-        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement.'));
-      }
-
-      return null;
-    }
-
-    return createChainableTypeChecker(validate);
-  }
-
-  function createElementTypeTypeChecker() {
-    function validate(props, propName, componentName, location, propFullName) {
-      var propValue = props[propName];
-
-      if (!ReactIs.isValidElementType(propValue)) {
-        var propType = getPropType(propValue);
-        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement type.'));
-      }
-
-      return null;
-    }
-
-    return createChainableTypeChecker(validate);
-  }
-
-  function createInstanceTypeChecker(expectedClass) {
-    function validate(props, propName, componentName, location, propFullName) {
-      if (!(props[propName] instanceof expectedClass)) {
-        var expectedClassName = expectedClass.name || ANONYMOUS;
-        var actualClassName = getClassName(props[propName]);
-        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + actualClassName + '` supplied to `' + componentName + '`, expected ') + ('instance of `' + expectedClassName + '`.'));
-      }
-
-      return null;
-    }
-
-    return createChainableTypeChecker(validate);
-  }
-
-  function createEnumTypeChecker(expectedValues) {
-    if (!Array.isArray(expectedValues)) {
-      if (true) {
-        if (arguments.length > 1) {
-          printWarning('Invalid arguments supplied to oneOf, expected an array, got ' + arguments.length + ' arguments. ' + 'A common mistake is to write oneOf(x, y, z) instead of oneOf([x, y, z]).');
-        } else {
-          printWarning('Invalid argument supplied to oneOf, expected an array.');
-        }
-      }
-
-      return emptyFunctionThatReturnsNull;
-    }
-
-    function validate(props, propName, componentName, location, propFullName) {
-      var propValue = props[propName];
-
-      for (var i = 0; i < expectedValues.length; i++) {
-        if (is(propValue, expectedValues[i])) {
-          return null;
-        }
-      }
-
-      var valuesString = JSON.stringify(expectedValues, function replacer(key, value) {
-        var type = getPreciseType(value);
-
-        if (type === 'symbol') {
-          return String(value);
-        }
-
-        return value;
-      });
-      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of value `' + String(propValue) + '` ' + ('supplied to `' + componentName + '`, expected one of ' + valuesString + '.'));
-    }
-
-    return createChainableTypeChecker(validate);
-  }
-
-  function createObjectOfTypeChecker(typeChecker) {
-    function validate(props, propName, componentName, location, propFullName) {
-      if (typeof typeChecker !== 'function') {
-        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside objectOf.');
-      }
-
-      var propValue = props[propName];
-      var propType = getPropType(propValue);
-
-      if (propType !== 'object') {
-        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an object.'));
-      }
-
-      for (var key in propValue) {
-        if (has(propValue, key)) {
-          var error = typeChecker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
-
-          if (error instanceof Error) {
-            return error;
-          }
-        }
-      }
-
-      return null;
-    }
-
-    return createChainableTypeChecker(validate);
-  }
-
-  function createUnionTypeChecker(arrayOfTypeCheckers) {
-    if (!Array.isArray(arrayOfTypeCheckers)) {
-       true ? printWarning('Invalid argument supplied to oneOfType, expected an instance of array.') : undefined;
-      return emptyFunctionThatReturnsNull;
-    }
-
-    for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
-      var checker = arrayOfTypeCheckers[i];
-
-      if (typeof checker !== 'function') {
-        printWarning('Invalid argument supplied to oneOfType. Expected an array of check functions, but ' + 'received ' + getPostfixForTypeWarning(checker) + ' at index ' + i + '.');
-        return emptyFunctionThatReturnsNull;
-      }
-    }
-
-    function validate(props, propName, componentName, location, propFullName) {
-      for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
-        var checker = arrayOfTypeCheckers[i];
-
-        if (checker(props, propName, componentName, location, propFullName, ReactPropTypesSecret) == null) {
-          return null;
-        }
-      }
-
-      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`.'));
-    }
-
-    return createChainableTypeChecker(validate);
-  }
-
-  function createNodeChecker() {
-    function validate(props, propName, componentName, location, propFullName) {
-      if (!isNode(props[propName])) {
-        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`, expected a ReactNode.'));
-      }
-
-      return null;
-    }
-
-    return createChainableTypeChecker(validate);
-  }
-
-  function createShapeTypeChecker(shapeTypes) {
-    function validate(props, propName, componentName, location, propFullName) {
-      var propValue = props[propName];
-      var propType = getPropType(propValue);
-
-      if (propType !== 'object') {
-        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
-      }
-
-      for (var key in shapeTypes) {
-        var checker = shapeTypes[key];
-
-        if (!checker) {
-          continue;
-        }
-
-        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
-
-        if (error) {
-          return error;
-        }
-      }
-
-      return null;
-    }
-
-    return createChainableTypeChecker(validate);
-  }
-
-  function createStrictShapeTypeChecker(shapeTypes) {
-    function validate(props, propName, componentName, location, propFullName) {
-      var propValue = props[propName];
-      var propType = getPropType(propValue);
-
-      if (propType !== 'object') {
-        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
-      } // We need to check all keys in case some are required but missing from
-      // props.
-
-
-      var allKeys = assign({}, props[propName], shapeTypes);
-
-      for (var key in allKeys) {
-        var checker = shapeTypes[key];
-
-        if (!checker) {
-          return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` key `' + key + '` supplied to `' + componentName + '`.' + '\nBad object: ' + JSON.stringify(props[propName], null, '  ') + '\nValid keys: ' + JSON.stringify(Object.keys(shapeTypes), null, '  '));
-        }
-
-        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
-
-        if (error) {
-          return error;
-        }
-      }
-
-      return null;
-    }
-
-    return createChainableTypeChecker(validate);
-  }
-
-  function isNode(propValue) {
-    switch (typeof propValue) {
-      case 'number':
-      case 'string':
-      case 'undefined':
-        return true;
-
-      case 'boolean':
-        return !propValue;
-
-      case 'object':
-        if (Array.isArray(propValue)) {
-          return propValue.every(isNode);
-        }
-
-        if (propValue === null || isValidElement(propValue)) {
-          return true;
-        }
-
-        var iteratorFn = getIteratorFn(propValue);
-
-        if (iteratorFn) {
-          var iterator = iteratorFn.call(propValue);
-          var step;
-
-          if (iteratorFn !== propValue.entries) {
-            while (!(step = iterator.next()).done) {
-              if (!isNode(step.value)) {
-                return false;
-              }
-            }
-          } else {
-            // Iterator will provide entry [k,v] tuples rather than values.
-            while (!(step = iterator.next()).done) {
-              var entry = step.value;
-
-              if (entry) {
-                if (!isNode(entry[1])) {
-                  return false;
-                }
-              }
-            }
-          }
-        } else {
-          return false;
-        }
-
-        return true;
-
-      default:
-        return false;
-    }
-  }
-
-  function isSymbol(propType, propValue) {
-    // Native Symbol.
-    if (propType === 'symbol') {
-      return true;
-    } // falsy value can't be a Symbol
-
-
-    if (!propValue) {
-      return false;
-    } // 19.4.3.5 Symbol.prototype[@@toStringTag] === 'Symbol'
-
-
-    if (propValue['@@toStringTag'] === 'Symbol') {
-      return true;
-    } // Fallback for non-spec compliant Symbols which are polyfilled.
-
-
-    if (typeof Symbol === 'function' && propValue instanceof Symbol) {
-      return true;
-    }
-
-    return false;
-  } // Equivalent of `typeof` but with special handling for array and regexp.
-
-
-  function getPropType(propValue) {
-    var propType = typeof propValue;
-
-    if (Array.isArray(propValue)) {
-      return 'array';
-    }
-
-    if (propValue instanceof RegExp) {
-      // Old webkits (at least until Android 4.0) return 'function' rather than
-      // 'object' for typeof a RegExp. We'll normalize this here so that /bla/
-      // passes PropTypes.object.
-      return 'object';
-    }
-
-    if (isSymbol(propType, propValue)) {
-      return 'symbol';
-    }
-
-    return propType;
-  } // This handles more types than `getPropType`. Only used for error messages.
-  // See `createPrimitiveTypeChecker`.
-
-
-  function getPreciseType(propValue) {
-    if (typeof propValue === 'undefined' || propValue === null) {
-      return '' + propValue;
-    }
-
-    var propType = getPropType(propValue);
-
-    if (propType === 'object') {
-      if (propValue instanceof Date) {
-        return 'date';
-      } else if (propValue instanceof RegExp) {
-        return 'regexp';
-      }
-    }
-
-    return propType;
-  } // Returns a string that is postfixed to a warning about an invalid type.
-  // For example, "undefined" or "of type array"
-
-
-  function getPostfixForTypeWarning(value) {
-    var type = getPreciseType(value);
-
-    switch (type) {
-      case 'array':
-      case 'object':
-        return 'an ' + type;
-
-      case 'boolean':
-      case 'date':
-      case 'regexp':
-        return 'a ' + type;
-
-      default:
-        return type;
-    }
-  } // Returns class name of the object, if any.
-
-
-  function getClassName(propValue) {
-    if (!propValue.constructor || !propValue.constructor.name) {
-      return ANONYMOUS;
-    }
-
-    return propValue.constructor.name;
-  }
-
-  ReactPropTypes.checkPropTypes = checkPropTypes;
-  ReactPropTypes.resetWarningCache = checkPropTypes.resetWarningCache;
-  ReactPropTypes.PropTypes = ReactPropTypes;
-  return ReactPropTypes;
-};
-
-/***/ }),
-
-/***/ "./node_modules/react-apollo/node_modules/prop-types/index.js":
-/*!********************************************************************!*\
-  !*** ./node_modules/react-apollo/node_modules/prop-types/index.js ***!
-  \********************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-if (true) {
-  var ReactIs = __webpack_require__(/*! react-is */ "./node_modules/react-is/index.js"); // By explicitly using `prop-types` you are opting into new development behavior.
-  // http://fb.me/prop-types-in-prod
-
-
-  var throwOnDirectAccess = true;
-  module.exports = __webpack_require__(/*! ./factoryWithTypeCheckers */ "./node_modules/react-apollo/node_modules/prop-types/factoryWithTypeCheckers.js")(ReactIs.isElement, throwOnDirectAccess);
-} else {}
-
-/***/ }),
-
-/***/ "./node_modules/react-apollo/node_modules/prop-types/lib/ReactPropTypesSecret.js":
-/*!***************************************************************************************!*\
-  !*** ./node_modules/react-apollo/node_modules/prop-types/lib/ReactPropTypesSecret.js ***!
-  \***************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-
-var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
-module.exports = ReactPropTypesSecret;
-
-/***/ }),
-
-/***/ "./node_modules/react-apollo/node_modules/ts-invariant/lib/invariant.esm.js":
-/*!**********************************************************************************!*\
-  !*** ./node_modules/react-apollo/node_modules/ts-invariant/lib/invariant.esm.js ***!
-  \**********************************************************************************/
-/*! exports provided: default, InvariantError, invariant, process */
+/***/ "./node_modules/react-apollo-hooks/es/ApolloContext.js":
+/*!*************************************************************!*\
+  !*** ./node_modules/react-apollo-hooks/es/ApolloContext.js ***!
+  \*************************************************************/
+/*! exports provided: ApolloProvider, useApolloClient */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* WEBPACK VAR INJECTION */(function(process) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InvariantError", function() { return InvariantError; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "invariant", function() { return invariant; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "process", function() { return processStub; });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-
-var genericMessage = "Invariant Violation";
-var _a = Object.setPrototypeOf,
-    setPrototypeOf = _a === void 0 ? function (obj, proto) {
-  obj.__proto__ = proto;
-  return obj;
-} : _a;
-
-var InvariantError =
-/** @class */
-function (_super) {
-  Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(InvariantError, _super);
-
-  function InvariantError(message) {
-    if (message === void 0) {
-      message = genericMessage;
-    }
-
-    var _this = _super.call(this, typeof message === "number" ? genericMessage + ": " + message + " (see https://github.com/apollographql/invariant-packages)" : message) || this;
-
-    _this.framesToPop = 1;
-    _this.name = genericMessage;
-    setPrototypeOf(_this, InvariantError.prototype);
-    return _this;
-  }
-
-  return InvariantError;
-}(Error);
-
-function invariant(condition, message) {
-  if (!condition) {
-    throw new InvariantError(message);
-  }
-}
-
-function wrapConsoleMethod(method) {
-  return function () {
-    return console[method].apply(console, arguments);
-  };
-}
-
-(function (invariant) {
-  invariant.warn = wrapConsoleMethod("warn");
-  invariant.error = wrapConsoleMethod("error");
-})(invariant || (invariant = {})); // Code that uses ts-invariant with rollup-plugin-invariant may want to
-// import this process stub to avoid errors evaluating process.env.NODE_ENV.
-// However, because most ESM-to-CJS compilers will rewrite the process import
-// as tsInvariant.process, which prevents proper replacement by minifiers, we
-// also attempt to define the stub globally when it is not already defined.
-
-
-var processStub = {
-  env: {}
-};
-
-if (typeof process === "object") {
-  processStub = process;
-} else try {
-  // Using Function to evaluate this assignment in global scope also escapes
-  // the strict mode of the current module, thereby allowing the assignment.
-  // Inspired by https://github.com/facebook/regenerator/pull/369.
-  Function("stub", "process = stub")(processStub);
-} catch (atLeastWeTried) {// The assignment can fail if a Content Security Policy heavy-handedly
-  // forbids Function usage. In those environments, developers should take
-  // extra care to replace process.env.NODE_ENV in their production builds,
-  // or define an appropriate global.process polyfill.
-}
-
-var invariant$1 = invariant;
-/* harmony default export */ __webpack_exports__["default"] = (invariant$1);
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../process/browser.js */ "./node_modules/process/browser.js")))
-
-/***/ }),
-
-/***/ "./node_modules/react-apollo/react-apollo.esm.js":
-/*!*******************************************************!*\
-  !*** ./node_modules/react-apollo/react-apollo.esm.js ***!
-  \*******************************************************/
-/*! exports provided: ApolloConsumer, ApolloContext, ApolloProvider, Mutation, Query, RenderPromises, Subscription, compose, getDataFromTree, getMarkupFromTree, graphql, renderToStringWithData, withApollo, withMutation, withQuery, withSubscription */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ApolloConsumer", function() { return ApolloConsumer; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ApolloContext", function() { return ApolloContext; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ApolloProvider", function() { return ApolloProvider; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Mutation", function() { return Mutation; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Query", function() { return Query; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RenderPromises", function() { return RenderPromises; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Subscription", function() { return Subscription; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compose", function() { return compose; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDataFromTree", function() { return getDataFromTree; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getMarkupFromTree", function() { return getMarkupFromTree; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "graphql", function() { return graphql; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "renderToStringWithData", function() { return renderToStringWithData; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "withApollo", function() { return withApollo; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "withMutation", function() { return withMutation; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "withQuery", function() { return withQuery; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "withSubscription", function() { return withSubscription; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "useApolloClient", function() { return useApolloClient; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! prop-types */ "./node_modules/react-apollo/node_modules/prop-types/index.js");
-/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var ts_invariant__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ts-invariant */ "./node_modules/react-apollo/node_modules/ts-invariant/lib/invariant.esm.js");
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-/* harmony import */ var apollo_client__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! apollo-client */ "./node_modules/apollo-client/bundle.esm.js");
-/* harmony import */ var lodash_isequal__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! lodash.isequal */ "./node_modules/lodash.isequal/index.js");
-/* harmony import */ var lodash_isequal__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(lodash_isequal__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var hoist_non_react_statics__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! hoist-non-react-statics */ "./node_modules/hoist-non-react-statics/dist/hoist-non-react-statics.cjs.js");
-/* harmony import */ var hoist_non_react_statics__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(hoist_non_react_statics__WEBPACK_IMPORTED_MODULE_6__);
 
-
-
-
-
-
-
-var ApolloContext = react__WEBPACK_IMPORTED_MODULE_0__["createContext"] ? Object(react__WEBPACK_IMPORTED_MODULE_0__["createContext"])(undefined) : null;
-
-var ApolloConsumer = function (props, legacyContext) {
-  function finish(context) {
-    if (!context || !context.client) {
-      throw  false ? undefined : new ts_invariant__WEBPACK_IMPORTED_MODULE_2__["InvariantError"]('Could not find "client" in the context of ApolloConsumer. ' + 'Wrap the root component in an <ApolloProvider>.');
-    }
-
-    return props.children(context.client);
-  }
-
-  return ApolloContext ? Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])(ApolloContext.Consumer, null, finish) : finish(legacyContext);
-};
-
-ApolloConsumer.contextTypes = {
-  client: prop_types__WEBPACK_IMPORTED_MODULE_1__["object"].isRequired
-};
-ApolloConsumer.propTypes = {
-  children: prop_types__WEBPACK_IMPORTED_MODULE_1__["func"].isRequired
-};
-
-var ApolloProvider = function (_super) {
-  Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__extends"])(ApolloProvider, _super);
-
-  function ApolloProvider(props, context) {
-    var _this = _super.call(this, props, context) || this;
-
-    _this.operations = new Map();
-     false ? undefined : Object(ts_invariant__WEBPACK_IMPORTED_MODULE_2__["invariant"])(props.client, 'ApolloProvider was not passed a client instance. Make ' + 'sure you pass in your client via the "client" prop.');
-
-    if (!props.client.__operations_cache__) {
-      props.client.__operations_cache__ = _this.operations;
-    }
-
-    return _this;
-  }
-
-  ApolloProvider.prototype.getChildContext = function () {
-    return {
-      client: this.props.client,
-      operations: this.props.client.__operations_cache__
-    };
-  };
-
-  ApolloProvider.prototype.render = function () {
-    return ApolloContext ? Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])(ApolloContext.Provider, {
-      value: this.getChildContext()
-    }, this.props.children) : this.props.children;
-  };
-
-  ApolloProvider.propTypes = {
-    client: prop_types__WEBPACK_IMPORTED_MODULE_1__["object"].isRequired,
-    children: prop_types__WEBPACK_IMPORTED_MODULE_1__["node"].isRequired
-  };
-  ApolloProvider.childContextTypes = {
-    client: prop_types__WEBPACK_IMPORTED_MODULE_1__["object"].isRequired,
-    operations: prop_types__WEBPACK_IMPORTED_MODULE_1__["object"]
-  };
-  return ApolloProvider;
-}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
-
-var DocumentType;
-
-(function (DocumentType) {
-  DocumentType[DocumentType["Query"] = 0] = "Query";
-  DocumentType[DocumentType["Mutation"] = 1] = "Mutation";
-  DocumentType[DocumentType["Subscription"] = 2] = "Subscription";
-})(DocumentType || (DocumentType = {}));
-
-var cache = new Map();
-
-function parser(document) {
-  var cached = cache.get(document);
-  if (cached) return cached;
-  var variables, type, name;
-   false ? undefined : Object(ts_invariant__WEBPACK_IMPORTED_MODULE_2__["invariant"])(!!document && !!document.kind, "Argument of " + document + " passed to parser was not a valid GraphQL " + "DocumentNode. You may need to use 'graphql-tag' or another method " + "to convert your operation into a document");
-  var fragments = document.definitions.filter(function (x) {
-    return x.kind === 'FragmentDefinition';
-  });
-  var queries = document.definitions.filter(function (x) {
-    return x.kind === 'OperationDefinition' && x.operation === 'query';
-  });
-  var mutations = document.definitions.filter(function (x) {
-    return x.kind === 'OperationDefinition' && x.operation === 'mutation';
-  });
-  var subscriptions = document.definitions.filter(function (x) {
-    return x.kind === 'OperationDefinition' && x.operation === 'subscription';
-  });
-   false ? undefined : Object(ts_invariant__WEBPACK_IMPORTED_MODULE_2__["invariant"])(!fragments.length || queries.length || mutations.length || subscriptions.length, "Passing only a fragment to 'graphql' is not yet supported. " + "You must include a query, subscription or mutation as well");
-   false ? undefined : Object(ts_invariant__WEBPACK_IMPORTED_MODULE_2__["invariant"])(queries.length + mutations.length + subscriptions.length <= 1, "react-apollo only supports a query, subscription, or a mutation per HOC. " + (document + " had " + queries.length + " queries, " + subscriptions.length + " ") + ("subscriptions and " + mutations.length + " mutations. ") + "You can use 'compose' to join multiple operation types to a component");
-  type = queries.length ? DocumentType.Query : DocumentType.Mutation;
-  if (!queries.length && !mutations.length) type = DocumentType.Subscription;
-  var definitions = queries.length ? queries : mutations.length ? mutations : subscriptions;
-   false ? undefined : Object(ts_invariant__WEBPACK_IMPORTED_MODULE_2__["invariant"])(definitions.length === 1, "react-apollo only supports one definition per HOC. " + document + " had " + (definitions.length + " definitions. ") + "You can use 'compose' to join multiple operation types to a component");
-  var definition = definitions[0];
-  variables = definition.variableDefinitions || [];
-
-  if (definition.name && definition.name.kind === 'Name') {
-    name = definition.name.value;
-  } else {
-    name = 'data';
-  }
-
-  var payload = {
-    name: name,
-    type: type,
-    variables: variables
-  };
-  cache.set(document, payload);
-  return payload;
+var ApolloContext = react__WEBPACK_IMPORTED_MODULE_0___default.a.createContext(null);
+function ApolloProvider(_ref) {
+  var client = _ref.client,
+      children = _ref.children;
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ApolloContext.Provider, {
+    value: client
+  }, children);
 }
+function useApolloClient(overrideClient) {
+  var client = Object(react__WEBPACK_IMPORTED_MODULE_0__["useContext"])(ApolloContext); // Ensures that the number of hooks called from one render to another remains
+  // constant, despite the Apollo client read from context being swapped for
+  // one passed directly as prop.
 
-function getClient(props, context) {
-  var client = props.client || context.client;
-   false ? undefined : Object(ts_invariant__WEBPACK_IMPORTED_MODULE_2__["invariant"])(!!client, 'Could not find "client" in the context or passed in as a prop. ' + 'Wrap the root component in an <ApolloProvider>, or pass an ' + 'ApolloClient instance in via props.');
+  if (overrideClient) {
+    return overrideClient;
+  }
+
+  if (!client) {
+    // https://github.com/apollographql/react-apollo/blob/5cb63b3625ce5e4a3d3e4ba132eaec2a38ef5d90/src/component-utils.tsx#L19-L22
+    throw new Error('Could not find "client" in the context or passed in as a prop. ' + 'Wrap the root component in an <ApolloProvider>, or pass an ' + 'ApolloClient instance in via props.');
+  }
+
   return client;
 }
 
-var hasOwnProperty = Object.prototype.hasOwnProperty;
+/***/ }),
 
-function is(x, y) {
-  if (x === y) {
-    return x !== 0 || y !== 0 || 1 / x === 1 / y;
-  }
+/***/ "./node_modules/react-apollo-hooks/es/SuspenseSSR.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/react-apollo-hooks/es/SuspenseSSR.js ***!
+  \***********************************************************/
+/*! exports provided: unstable_SuspenseSSR */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-  return x !== x && y !== y;
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "unstable_SuspenseSSR", function() { return unstable_SuspenseSSR; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _internal_SSRContext__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./internal/SSRContext */ "./node_modules/react-apollo-hooks/es/internal/SSRContext.js");
+
+
+function unstable_SuspenseSSR(_ref) {
+  var children = _ref.children,
+      fallback = _ref.fallback;
+  var ssrManager = Object(react__WEBPACK_IMPORTED_MODULE_0__["useContext"])(_internal_SSRContext__WEBPACK_IMPORTED_MODULE_1__["SSRContext"]);
+  return ssrManager ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, children) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Suspense"], {
+    fallback: fallback
+  }, children);
 }
 
-function isObject(obj) {
-  return obj !== null && typeof obj === "object";
-}
-
-function shallowEqual(objA, objB) {
-  if (is(objA, objB)) {
-    return true;
-  }
-
-  if (!isObject(objA) || !isObject(objB)) {
-    return false;
-  }
-
-  var keys = Object.keys(objA);
-
-  if (keys.length !== Object.keys(objB).length) {
-    return false;
-  }
-
-  return keys.every(function (key) {
-    return hasOwnProperty.call(objB, key) && is(objA[key], objB[key]);
-  });
-}
-
-function observableQueryFields(observable) {
-  var fields = {
-    variables: observable.variables,
-    refetch: observable.refetch.bind(observable),
-    fetchMore: observable.fetchMore.bind(observable),
-    updateQuery: observable.updateQuery.bind(observable),
-    startPolling: observable.startPolling.bind(observable),
-    stopPolling: observable.stopPolling.bind(observable),
-    subscribeToMore: observable.subscribeToMore.bind(observable)
-  };
-  return fields;
-}
-
-var Query = function (_super) {
-  Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__extends"])(Query, _super);
-
-  function Query(props, context) {
-    var _this = _super.call(this, props, context) || this;
-
-    _this.previousData = {};
-    _this.hasMounted = false;
-    _this.lastResult = null;
-
-    _this.startQuerySubscription = function (justMounted) {
-      if (justMounted === void 0) {
-        justMounted = false;
-      }
-
-      if (!justMounted) {
-        _this.lastResult = _this.queryObservable.getLastResult();
-      }
-
-      if (_this.querySubscription) return;
-
-      var initial = _this.getQueryResult();
-
-      _this.querySubscription = _this.queryObservable.subscribe({
-        next: function (_a) {
-          var loading = _a.loading,
-              networkStatus = _a.networkStatus,
-              data = _a.data;
-
-          if (initial && initial.networkStatus === 7 && shallowEqual(initial.data, data)) {
-            initial = undefined;
-            return;
-          }
-
-          if (_this.lastResult && _this.lastResult.loading === loading && _this.lastResult.networkStatus === networkStatus && shallowEqual(_this.lastResult.data, data)) {
-            return;
-          }
-
-          initial = undefined;
-
-          if (_this.lastResult) {
-            _this.lastResult = _this.queryObservable.getLastResult();
-          }
-
-          _this.updateCurrentData();
-        },
-        error: function (error) {
-          if (!_this.lastResult) {
-            _this.resubscribeToQuery();
-          }
-
-          if (!error.hasOwnProperty('graphQLErrors')) throw error;
-
-          _this.updateCurrentData();
-        }
-      });
-    };
-
-    _this.removeQuerySubscription = function () {
-      if (_this.querySubscription) {
-        _this.lastResult = _this.queryObservable.getLastResult();
-
-        _this.querySubscription.unsubscribe();
-
-        delete _this.querySubscription;
-      }
-    };
-
-    _this.updateCurrentData = function () {
-      _this.handleErrorOrCompleted();
-
-      if (_this.hasMounted) _this.forceUpdate();
-    };
-
-    _this.handleErrorOrCompleted = function () {
-      var result = _this.queryObservable.currentResult();
-
-      var data = result.data,
-          loading = result.loading,
-          error = result.error;
-      var _a = _this.props,
-          onCompleted = _a.onCompleted,
-          onError = _a.onError;
-
-      if (onCompleted && !loading && !error) {
-        onCompleted(data);
-      } else if (onError && !loading && error) {
-        onError(error);
-      }
-    };
-
-    _this.getQueryResult = function () {
-      var data = {
-        data: Object.create(null)
-      };
-      Object.assign(data, observableQueryFields(_this.queryObservable));
-
-      if (_this.props.skip) {
-        data = Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__assign"])({}, data, {
-          data: undefined,
-          error: undefined,
-          loading: false
-        });
-      } else {
-        var currentResult = _this.queryObservable.currentResult();
-
-        var loading = currentResult.loading,
-            partial = currentResult.partial,
-            networkStatus = currentResult.networkStatus,
-            errors = currentResult.errors;
-        var error = currentResult.error;
-
-        if (errors && errors.length > 0) {
-          error = new apollo_client__WEBPACK_IMPORTED_MODULE_4__["ApolloError"]({
-            graphQLErrors: errors
-          });
-        }
-
-        var fetchPolicy = _this.queryObservable.options.fetchPolicy;
-        Object.assign(data, {
-          loading: loading,
-          networkStatus: networkStatus,
-          error: error
-        });
-
-        if (loading) {
-          Object.assign(data.data, _this.previousData, currentResult.data);
-        } else if (error) {
-          Object.assign(data, {
-            data: (_this.queryObservable.getLastResult() || {}).data
-          });
-        } else if (fetchPolicy === 'no-cache' && Object.keys(currentResult.data).length === 0) {
-          data.data = _this.previousData;
-        } else {
-          var partialRefetch = _this.props.partialRefetch;
-
-          if (partialRefetch && Object.keys(currentResult.data).length === 0 && partial && fetchPolicy !== 'cache-only') {
-            Object.assign(data, {
-              loading: true,
-              networkStatus: apollo_client__WEBPACK_IMPORTED_MODULE_4__["NetworkStatus"].loading
-            });
-            data.refetch();
-            return data;
-          }
-
-          Object.assign(data.data, currentResult.data);
-          _this.previousData = currentResult.data;
-        }
-      }
-
-      if (!_this.querySubscription) {
-        var oldRefetch_1 = data.refetch;
-
-        data.refetch = function (args) {
-          if (_this.querySubscription) {
-            return oldRefetch_1(args);
-          } else {
-            return new Promise(function (r, f) {
-              _this.refetcherQueue = {
-                resolve: r,
-                reject: f,
-                args: args
-              };
-            });
-          }
-        };
-      }
-
-      data.client = _this.client;
-      return data;
-    };
-
-    _this.client = getClient(props, context);
-
-    _this.initializeQueryObservable(props);
-
-    return _this;
-  }
-
-  Query.prototype.fetchData = function () {
-    if (this.props.skip) return false;
-
-    var _a = this.props,
-        children = _a.children,
-        ssr = _a.ssr,
-        displayName = _a.displayName,
-        skip = _a.skip,
-        client = _a.client,
-        onCompleted = _a.onCompleted,
-        onError = _a.onError,
-        partialRefetch = _a.partialRefetch,
-        opts = Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__rest"])(_a, ["children", "ssr", "displayName", "skip", "client", "onCompleted", "onError", "partialRefetch"]);
-
-    var fetchPolicy = opts.fetchPolicy;
-    if (ssr === false) return false;
-
-    if (fetchPolicy === 'network-only' || fetchPolicy === 'cache-and-network') {
-      fetchPolicy = 'cache-first';
-    }
-
-    var observable = this.client.watchQuery(Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__assign"])({}, opts, {
-      fetchPolicy: fetchPolicy
-    }));
-
-    if (this.context && this.context.renderPromises) {
-      this.context.renderPromises.registerSSRObservable(this, observable);
-    }
-
-    var result = this.queryObservable.currentResult();
-    return result.loading ? observable.result() : false;
-  };
-
-  Query.prototype.componentDidMount = function () {
-    this.hasMounted = true;
-    if (this.props.skip) return;
-    this.startQuerySubscription(true);
-
-    if (this.refetcherQueue) {
-      var _a = this.refetcherQueue,
-          args = _a.args,
-          resolve = _a.resolve,
-          reject = _a.reject;
-      this.queryObservable.refetch(args).then(resolve).catch(reject);
-    }
-  };
-
-  Query.prototype.componentWillReceiveProps = function (nextProps, nextContext) {
-    if (nextProps.skip && !this.props.skip) {
-      this.removeQuerySubscription();
-      return;
-    }
-
-    var nextClient = getClient(nextProps, nextContext);
-
-    if (shallowEqual(this.props, nextProps) && this.client === nextClient) {
-      return;
-    }
-
-    if (this.client !== nextClient) {
-      this.client = nextClient;
-      this.removeQuerySubscription();
-      this.queryObservable = null;
-      this.previousData = {};
-      this.updateQuery(nextProps);
-    }
-
-    if (this.props.query !== nextProps.query) {
-      this.removeQuerySubscription();
-    }
-
-    this.updateQuery(nextProps);
-    if (nextProps.skip) return;
-    this.startQuerySubscription();
-  };
-
-  Query.prototype.componentWillUnmount = function () {
-    this.removeQuerySubscription();
-    this.hasMounted = false;
-  };
-
-  Query.prototype.componentDidUpdate = function (prevProps) {
-    var isDiffRequest = !lodash_isequal__WEBPACK_IMPORTED_MODULE_5___default()(prevProps.query, this.props.query) || !lodash_isequal__WEBPACK_IMPORTED_MODULE_5___default()(prevProps.variables, this.props.variables);
-
-    if (isDiffRequest) {
-      this.handleErrorOrCompleted();
-    }
-  };
-
-  Query.prototype.render = function () {
-    var _this = this;
-
-    var context = this.context;
-
-    var finish = function () {
-      return _this.props.children(_this.getQueryResult());
-    };
-
-    if (context && context.renderPromises) {
-      return context.renderPromises.addQueryPromise(this, finish);
-    }
-
-    return finish();
-  };
-
-  Query.prototype.extractOptsFromProps = function (props) {
-    this.operation = parser(props.query);
-     false ? undefined : Object(ts_invariant__WEBPACK_IMPORTED_MODULE_2__["invariant"])(this.operation.type === DocumentType.Query, "The <Query /> component requires a graphql query, but got a " + (this.operation.type === DocumentType.Mutation ? 'mutation' : 'subscription') + ".");
-    var displayName = props.displayName || 'Query';
-    return Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__assign"])({}, props, {
-      displayName: displayName,
-      context: props.context || {},
-      metadata: {
-        reactComponent: {
-          displayName: displayName
-        }
-      }
-    });
-  };
-
-  Query.prototype.initializeQueryObservable = function (props) {
-    var opts = this.extractOptsFromProps(props);
-    this.setOperations(opts);
-
-    if (this.context && this.context.renderPromises) {
-      this.queryObservable = this.context.renderPromises.getSSRObservable(this);
-    }
-
-    if (!this.queryObservable) {
-      this.queryObservable = this.client.watchQuery(opts);
-    }
-  };
-
-  Query.prototype.setOperations = function (props) {
-    if (this.context.operations) {
-      this.context.operations.set(this.operation.name, {
-        query: props.query,
-        variables: props.variables
-      });
-    }
-  };
-
-  Query.prototype.updateQuery = function (props) {
-    if (!this.queryObservable) {
-      this.initializeQueryObservable(props);
-    } else {
-      this.setOperations(props);
-    }
-
-    this.queryObservable.setOptions(this.extractOptsFromProps(props)).catch(function () {
-      return null;
-    });
-  };
-
-  Query.prototype.resubscribeToQuery = function () {
-    this.removeQuerySubscription();
-    var lastError = this.queryObservable.getLastError();
-    var lastResult = this.queryObservable.getLastResult();
-    this.queryObservable.resetLastResults();
-    this.startQuerySubscription();
-    Object.assign(this.queryObservable, {
-      lastError: lastError,
-      lastResult: lastResult
-    });
-  };
-
-  Query.contextTypes = {
-    client: prop_types__WEBPACK_IMPORTED_MODULE_1__["object"],
-    operations: prop_types__WEBPACK_IMPORTED_MODULE_1__["object"],
-    renderPromises: prop_types__WEBPACK_IMPORTED_MODULE_1__["object"]
-  };
-  Query.propTypes = {
-    client: prop_types__WEBPACK_IMPORTED_MODULE_1__["object"],
-    children: prop_types__WEBPACK_IMPORTED_MODULE_1__["func"].isRequired,
-    fetchPolicy: prop_types__WEBPACK_IMPORTED_MODULE_1__["string"],
-    notifyOnNetworkStatusChange: prop_types__WEBPACK_IMPORTED_MODULE_1__["bool"],
-    onCompleted: prop_types__WEBPACK_IMPORTED_MODULE_1__["func"],
-    onError: prop_types__WEBPACK_IMPORTED_MODULE_1__["func"],
-    pollInterval: prop_types__WEBPACK_IMPORTED_MODULE_1__["number"],
-    query: prop_types__WEBPACK_IMPORTED_MODULE_1__["object"].isRequired,
-    variables: prop_types__WEBPACK_IMPORTED_MODULE_1__["object"],
-    ssr: prop_types__WEBPACK_IMPORTED_MODULE_1__["bool"],
-    partialRefetch: prop_types__WEBPACK_IMPORTED_MODULE_1__["bool"]
-  };
-  return Query;
-}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
-
-var initialState = {
-  loading: false,
-  called: false,
-  error: undefined,
-  data: undefined
-};
-
-var Mutation = function (_super) {
-  Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__extends"])(Mutation, _super);
-
-  function Mutation(props, context) {
-    var _this = _super.call(this, props, context) || this;
-
-    _this.hasMounted = false;
-
-    _this.runMutation = function (options) {
-      if (options === void 0) {
-        options = {};
-      }
-
-      _this.onMutationStart();
-
-      var mutationId = _this.generateNewMutationId();
-
-      return _this.mutate(options).then(function (response) {
-        _this.onMutationCompleted(response, mutationId);
-
-        return response;
-      }).catch(function (e) {
-        _this.onMutationError(e, mutationId);
-
-        if (!_this.props.onError) throw e;
-      });
-    };
-
-    _this.mutate = function (options) {
-      var _a = _this.props,
-          mutation = _a.mutation,
-          variables = _a.variables,
-          optimisticResponse = _a.optimisticResponse,
-          update = _a.update,
-          _b = _a.context,
-          context = _b === void 0 ? {} : _b,
-          _c = _a.awaitRefetchQueries,
-          awaitRefetchQueries = _c === void 0 ? false : _c,
-          fetchPolicy = _a.fetchPolicy;
-
-      var mutateOptions = Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__assign"])({}, options);
-
-      var refetchQueries = mutateOptions.refetchQueries || _this.props.refetchQueries;
-
-      if (refetchQueries && refetchQueries.length && Array.isArray(refetchQueries)) {
-        refetchQueries = refetchQueries.map(function (x) {
-          if (typeof x === 'string' && _this.context.operations) return _this.context.operations.get(x) || x;
-          return x;
-        });
-        delete mutateOptions.refetchQueries;
-      }
-
-      var mutateVariables = Object.assign({}, variables, mutateOptions.variables);
-      delete mutateOptions.variables;
-      return _this.client.mutate(Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__assign"])({
-        mutation: mutation,
-        optimisticResponse: optimisticResponse,
-        refetchQueries: refetchQueries,
-        awaitRefetchQueries: awaitRefetchQueries,
-        update: update,
-        context: context,
-        fetchPolicy: fetchPolicy,
-        variables: mutateVariables
-      }, mutateOptions));
-    };
-
-    _this.onMutationStart = function () {
-      if (!_this.state.loading && !_this.props.ignoreResults) {
-        _this.setState({
-          loading: true,
-          error: undefined,
-          data: undefined,
-          called: true
-        });
-      }
-    };
-
-    _this.onMutationCompleted = function (response, mutationId) {
-      var _a = _this.props,
-          onCompleted = _a.onCompleted,
-          ignoreResults = _a.ignoreResults;
-      var data = response.data,
-          errors = response.errors;
-      var error = errors && errors.length > 0 ? new apollo_client__WEBPACK_IMPORTED_MODULE_4__["ApolloError"]({
-        graphQLErrors: errors
-      }) : undefined;
-
-      var callOncomplete = function () {
-        return onCompleted ? onCompleted(data) : null;
-      };
-
-      if (_this.hasMounted && _this.isMostRecentMutation(mutationId) && !ignoreResults) {
-        _this.setState({
-          loading: false,
-          data: data,
-          error: error
-        }, callOncomplete);
-      } else {
-        callOncomplete();
-      }
-    };
-
-    _this.onMutationError = function (error, mutationId) {
-      var onError = _this.props.onError;
-
-      var callOnError = function () {
-        return onError ? onError(error) : null;
-      };
-
-      if (_this.hasMounted && _this.isMostRecentMutation(mutationId)) {
-        _this.setState({
-          loading: false,
-          error: error
-        }, callOnError);
-      } else {
-        callOnError();
-      }
-    };
-
-    _this.generateNewMutationId = function () {
-      _this.mostRecentMutationId = _this.mostRecentMutationId + 1;
-      return _this.mostRecentMutationId;
-    };
-
-    _this.isMostRecentMutation = function (mutationId) {
-      return _this.mostRecentMutationId === mutationId;
-    };
-
-    _this.verifyDocumentIsMutation = function (mutation) {
-      var operation = parser(mutation);
-       false ? undefined : Object(ts_invariant__WEBPACK_IMPORTED_MODULE_2__["invariant"])(operation.type === DocumentType.Mutation, "The <Mutation /> component requires a graphql mutation, but got a " + (operation.type === DocumentType.Query ? 'query' : 'subscription') + ".");
-    };
-
-    _this.client = getClient(props, context);
-
-    _this.verifyDocumentIsMutation(props.mutation);
-
-    _this.mostRecentMutationId = 0;
-    _this.state = initialState;
-    return _this;
-  }
-
-  Mutation.prototype.componentDidMount = function () {
-    this.hasMounted = true;
-  };
-
-  Mutation.prototype.componentWillUnmount = function () {
-    this.hasMounted = false;
-  };
-
-  Mutation.prototype.componentWillReceiveProps = function (nextProps, nextContext) {
-    var nextClient = getClient(nextProps, nextContext);
-
-    if (shallowEqual(this.props, nextProps) && this.client === nextClient) {
-      return;
-    }
-
-    if (this.props.mutation !== nextProps.mutation) {
-      this.verifyDocumentIsMutation(nextProps.mutation);
-    }
-
-    if (this.client !== nextClient) {
-      this.client = nextClient;
-      this.setState(initialState);
-    }
-  };
-
-  Mutation.prototype.render = function () {
-    var children = this.props.children;
-    var _a = this.state,
-        loading = _a.loading,
-        data = _a.data,
-        error = _a.error,
-        called = _a.called;
-    var result = {
-      called: called,
-      loading: loading,
-      data: data,
-      error: error,
-      client: this.client
-    };
-    return children(this.runMutation, result);
-  };
-
-  Mutation.contextTypes = {
-    client: prop_types__WEBPACK_IMPORTED_MODULE_1__["object"],
-    operations: prop_types__WEBPACK_IMPORTED_MODULE_1__["object"]
-  };
-  Mutation.propTypes = {
-    mutation: prop_types__WEBPACK_IMPORTED_MODULE_1__["object"].isRequired,
-    variables: prop_types__WEBPACK_IMPORTED_MODULE_1__["object"],
-    optimisticResponse: prop_types__WEBPACK_IMPORTED_MODULE_1__["object"],
-    refetchQueries: Object(prop_types__WEBPACK_IMPORTED_MODULE_1__["oneOfType"])([Object(prop_types__WEBPACK_IMPORTED_MODULE_1__["arrayOf"])(Object(prop_types__WEBPACK_IMPORTED_MODULE_1__["oneOfType"])([prop_types__WEBPACK_IMPORTED_MODULE_1__["string"], prop_types__WEBPACK_IMPORTED_MODULE_1__["object"]])), prop_types__WEBPACK_IMPORTED_MODULE_1__["func"]]),
-    awaitRefetchQueries: prop_types__WEBPACK_IMPORTED_MODULE_1__["bool"],
-    update: prop_types__WEBPACK_IMPORTED_MODULE_1__["func"],
-    children: prop_types__WEBPACK_IMPORTED_MODULE_1__["func"].isRequired,
-    onCompleted: prop_types__WEBPACK_IMPORTED_MODULE_1__["func"],
-    onError: prop_types__WEBPACK_IMPORTED_MODULE_1__["func"],
-    fetchPolicy: prop_types__WEBPACK_IMPORTED_MODULE_1__["string"]
-  };
-  return Mutation;
-}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
-
-var Subscription = function (_super) {
-  Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__extends"])(Subscription, _super);
-
-  function Subscription(props, context) {
-    var _this = _super.call(this, props, context) || this;
-
-    _this.initialize = function (props) {
-      if (_this.queryObservable) return;
-      _this.queryObservable = _this.client.subscribe({
-        query: props.subscription,
-        variables: props.variables,
-        fetchPolicy: props.fetchPolicy
-      });
-    };
-
-    _this.startSubscription = function () {
-      if (_this.querySubscription) return;
-      _this.querySubscription = _this.queryObservable.subscribe({
-        next: _this.updateCurrentData,
-        error: _this.updateError,
-        complete: _this.completeSubscription
-      });
-    };
-
-    _this.getInitialState = function () {
-      return {
-        loading: true,
-        error: undefined,
-        data: undefined
-      };
-    };
-
-    _this.updateCurrentData = function (result) {
-      var _a = _this,
-          client = _a.client,
-          onSubscriptionData = _a.props.onSubscriptionData;
-      if (onSubscriptionData) onSubscriptionData({
-        client: client,
-        subscriptionData: result
-      });
-
-      _this.setState({
-        data: result.data,
-        loading: false,
-        error: undefined
-      });
-    };
-
-    _this.updateError = function (error) {
-      _this.setState({
-        error: error,
-        loading: false
-      });
-    };
-
-    _this.completeSubscription = function () {
-      var onSubscriptionComplete = _this.props.onSubscriptionComplete;
-      if (onSubscriptionComplete) onSubscriptionComplete();
-
-      _this.endSubscription();
-    };
-
-    _this.endSubscription = function () {
-      if (_this.querySubscription) {
-        _this.querySubscription.unsubscribe();
-
-        delete _this.querySubscription;
-      }
-    };
-
-    _this.client = getClient(props, context);
-
-    _this.initialize(props);
-
-    _this.state = _this.getInitialState();
-    return _this;
-  }
-
-  Subscription.prototype.componentDidMount = function () {
-    this.startSubscription();
-  };
-
-  Subscription.prototype.componentWillReceiveProps = function (nextProps, nextContext) {
-    var nextClient = getClient(nextProps, nextContext);
-
-    if (shallowEqual(this.props.variables, nextProps.variables) && this.client === nextClient && this.props.subscription === nextProps.subscription) {
-      return;
-    }
-
-    var shouldResubscribe = nextProps.shouldResubscribe;
-
-    if (typeof shouldResubscribe === 'function') {
-      shouldResubscribe = !!shouldResubscribe(this.props, nextProps);
-    }
-
-    var shouldNotResubscribe = shouldResubscribe === false;
-
-    if (this.client !== nextClient) {
-      this.client = nextClient;
-    }
-
-    if (!shouldNotResubscribe) {
-      this.endSubscription();
-      delete this.queryObservable;
-      this.initialize(nextProps);
-      this.startSubscription();
-      this.setState(this.getInitialState());
-      return;
-    }
-
-    this.initialize(nextProps);
-    this.startSubscription();
-  };
-
-  Subscription.prototype.componentWillUnmount = function () {
-    this.endSubscription();
-  };
-
-  Subscription.prototype.render = function () {
-    var renderFn = this.props.children;
-    if (!renderFn) return null;
-    var result = Object.assign({}, this.state, {
-      variables: this.props.variables
-    });
-    return renderFn(result);
-  };
-
-  Subscription.contextTypes = {
-    client: prop_types__WEBPACK_IMPORTED_MODULE_1__["object"]
-  };
-  Subscription.propTypes = {
-    subscription: prop_types__WEBPACK_IMPORTED_MODULE_1__["object"].isRequired,
-    variables: prop_types__WEBPACK_IMPORTED_MODULE_1__["object"],
-    children: prop_types__WEBPACK_IMPORTED_MODULE_1__["func"],
-    onSubscriptionData: prop_types__WEBPACK_IMPORTED_MODULE_1__["func"],
-    onSubscriptionComplete: prop_types__WEBPACK_IMPORTED_MODULE_1__["func"],
-    shouldResubscribe: Object(prop_types__WEBPACK_IMPORTED_MODULE_1__["oneOfType"])([prop_types__WEBPACK_IMPORTED_MODULE_1__["func"], prop_types__WEBPACK_IMPORTED_MODULE_1__["bool"]])
-  };
-  return Subscription;
-}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
-
-var defaultMapPropsToOptions = function () {
-  return {};
-};
-
-var defaultMapPropsToSkip = function () {
-  return false;
-};
-
-function getDisplayName(WrappedComponent) {
-  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
-}
-
-function calculateVariablesFromProps(operation, props) {
-  var variables = {};
-
-  for (var _i = 0, _a = operation.variables; _i < _a.length; _i++) {
-    var _b = _a[_i],
-        variable = _b.variable,
-        type = _b.type;
-    if (!variable.name || !variable.name.value) continue;
-    var variableName = variable.name.value;
-    var variableProp = props[variableName];
-
-    if (typeof variableProp !== 'undefined') {
-      variables[variableName] = variableProp;
-      continue;
-    }
-
-    if (type.kind !== 'NonNullType') {
-      variables[variableName] = null;
-    }
-  }
-
-  return variables;
-}
-
-var GraphQLBase = function (_super) {
-  Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__extends"])(GraphQLBase, _super);
-
-  function GraphQLBase(props) {
-    var _this = _super.call(this, props) || this;
-
-    _this.withRef = false;
-    _this.setWrappedInstance = _this.setWrappedInstance.bind(_this);
-    return _this;
-  }
-
-  GraphQLBase.prototype.getWrappedInstance = function () {
-     false ? undefined : Object(ts_invariant__WEBPACK_IMPORTED_MODULE_2__["invariant"])(this.withRef, "To access the wrapped instance, you need to specify " + "{ withRef: true } in the options");
-    return this.wrappedInstance;
-  };
-
-  GraphQLBase.prototype.setWrappedInstance = function (ref) {
-    this.wrappedInstance = ref;
-  };
-
-  return GraphQLBase;
-}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
-
-function withQuery(document, operationOptions) {
-  if (operationOptions === void 0) {
-    operationOptions = {};
-  }
-
-  var operation = parser(document);
-  var _a = operationOptions.options,
-      options = _a === void 0 ? defaultMapPropsToOptions : _a,
-      _b = operationOptions.skip,
-      skip = _b === void 0 ? defaultMapPropsToSkip : _b,
-      _c = operationOptions.alias,
-      alias = _c === void 0 ? 'Apollo' : _c;
-  var mapPropsToOptions = options;
-
-  if (typeof mapPropsToOptions !== 'function') {
-    mapPropsToOptions = function () {
-      return options;
-    };
-  }
-
-  var mapPropsToSkip = skip;
-
-  if (typeof mapPropsToSkip !== 'function') {
-    mapPropsToSkip = function () {
-      return skip;
-    };
-  }
-
-  var lastResultProps;
-  return function (WrappedComponent) {
-    var graphQLDisplayName = alias + "(" + getDisplayName(WrappedComponent) + ")";
-
-    var GraphQL = function (_super) {
-      Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__extends"])(GraphQL, _super);
-
-      function GraphQL() {
-        return _super !== null && _super.apply(this, arguments) || this;
-      }
-
-      GraphQL.prototype.render = function () {
-        var _this = this;
-
-        var props = this.props;
-        var shouldSkip = mapPropsToSkip(props);
-        var opts = shouldSkip ? Object.create(null) : Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__assign"])({}, mapPropsToOptions(props));
-
-        if (!shouldSkip && !opts.variables && operation.variables.length > 0) {
-          opts.variables = calculateVariablesFromProps(operation, props);
-        }
-
-        return Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])(Query, Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__assign"])({}, opts, {
-          displayName: graphQLDisplayName,
-          skip: shouldSkip,
-          query: document,
-          warnUnhandledError: true
-        }), function (_a) {
-          var _b, _c;
-
-          var _ = _a.client,
-              data = _a.data,
-              r = Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__rest"])(_a, ["client", "data"]);
-
-          if (operationOptions.withRef) {
-            _this.withRef = true;
-            props = Object.assign({}, props, {
-              ref: _this.setWrappedInstance
-            });
-          }
-
-          if (shouldSkip) {
-            return Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])(WrappedComponent, Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__assign"])({}, props, {}));
-          }
-
-          var result = Object.assign(r, data || {});
-          var name = operationOptions.name || 'data';
-          var childProps = (_b = {}, _b[name] = result, _b);
-
-          if (operationOptions.props) {
-            var newResult = (_c = {}, _c[name] = result, _c.ownProps = props, _c);
-            lastResultProps = operationOptions.props(newResult, lastResultProps);
-            childProps = lastResultProps;
-          }
-
-          return Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])(WrappedComponent, Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__assign"])({}, props, childProps));
-        });
-      };
-
-      GraphQL.displayName = graphQLDisplayName;
-      GraphQL.WrappedComponent = WrappedComponent;
-      return GraphQL;
-    }(GraphQLBase);
-
-    return hoist_non_react_statics__WEBPACK_IMPORTED_MODULE_6___default()(GraphQL, WrappedComponent, {});
-  };
-}
-
-function withMutation(document, operationOptions) {
-  if (operationOptions === void 0) {
-    operationOptions = {};
-  }
-
-  var operation = parser(document);
-  var _a = operationOptions.options,
-      options = _a === void 0 ? defaultMapPropsToOptions : _a,
-      _b = operationOptions.alias,
-      alias = _b === void 0 ? 'Apollo' : _b;
-  var mapPropsToOptions = options;
-  if (typeof mapPropsToOptions !== 'function') mapPropsToOptions = function () {
-    return options;
-  };
-  return function (WrappedComponent) {
-    var graphQLDisplayName = alias + "(" + getDisplayName(WrappedComponent) + ")";
-
-    var GraphQL = function (_super) {
-      Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__extends"])(GraphQL, _super);
-
-      function GraphQL() {
-        return _super !== null && _super.apply(this, arguments) || this;
-      }
-
-      GraphQL.prototype.render = function () {
-        var props = this.props;
-        var opts = mapPropsToOptions(props);
-
-        if (operationOptions.withRef) {
-          this.withRef = true;
-          props = Object.assign({}, props, {
-            ref: this.setWrappedInstance
-          });
-        }
-
-        if (!opts.variables && operation.variables.length > 0) {
-          opts.variables = calculateVariablesFromProps(operation, props);
-        }
-
-        return Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])(Mutation, Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__assign"])({}, opts, {
-          mutation: document,
-          ignoreResults: true
-        }), function (mutate, _result) {
-          var _a, _b;
-
-          var name = operationOptions.name || 'mutate';
-          var childProps = (_a = {}, _a[name] = mutate, _a);
-
-          if (operationOptions.props) {
-            var newResult = (_b = {}, _b[name] = mutate, _b.ownProps = props, _b);
-            childProps = operationOptions.props(newResult);
-          }
-
-          return Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])(WrappedComponent, Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__assign"])({}, props, childProps));
-        });
-      };
-
-      GraphQL.displayName = graphQLDisplayName;
-      GraphQL.WrappedComponent = WrappedComponent;
-      return GraphQL;
-    }(GraphQLBase);
-
-    return hoist_non_react_statics__WEBPACK_IMPORTED_MODULE_6___default()(GraphQL, WrappedComponent, {});
-  };
-}
-
-function withSubscription(document, operationOptions) {
-  if (operationOptions === void 0) {
-    operationOptions = {};
-  }
-
-  var operation = parser(document);
-  var _a = operationOptions.options,
-      options = _a === void 0 ? defaultMapPropsToOptions : _a,
-      _b = operationOptions.skip,
-      skip = _b === void 0 ? defaultMapPropsToSkip : _b,
-      _c = operationOptions.alias,
-      alias = _c === void 0 ? 'Apollo' : _c,
-      shouldResubscribe = operationOptions.shouldResubscribe;
-  var mapPropsToOptions = options;
-  if (typeof mapPropsToOptions !== 'function') mapPropsToOptions = function () {
-    return options;
-  };
-  var mapPropsToSkip = skip;
-  if (typeof mapPropsToSkip !== 'function') mapPropsToSkip = function () {
-    return skip;
-  };
-  var lastResultProps;
-  return function (WrappedComponent) {
-    var graphQLDisplayName = alias + "(" + getDisplayName(WrappedComponent) + ")";
-
-    var GraphQL = function (_super) {
-      Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__extends"])(GraphQL, _super);
-
-      function GraphQL(props) {
-        var _this = _super.call(this, props) || this;
-
-        _this.state = {
-          resubscribe: false
-        };
-        return _this;
-      }
-
-      GraphQL.prototype.componentWillReceiveProps = function (nextProps) {
-        if (!shouldResubscribe) return;
-        this.setState({
-          resubscribe: shouldResubscribe(this.props, nextProps)
-        });
-      };
-
-      GraphQL.prototype.render = function () {
-        var _this = this;
-
-        var props = this.props;
-        var shouldSkip = mapPropsToSkip(props);
-        var opts = shouldSkip ? Object.create(null) : mapPropsToOptions(props);
-
-        if (!shouldSkip && !opts.variables && operation.variables.length > 0) {
-          opts.variables = calculateVariablesFromProps(operation, props);
-        }
-
-        return Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])(Subscription, Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__assign"])({}, opts, {
-          displayName: graphQLDisplayName,
-          skip: shouldSkip,
-          subscription: document,
-          shouldResubscribe: this.state.resubscribe
-        }), function (_a) {
-          var _b, _c;
-
-          var data = _a.data,
-              r = Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__rest"])(_a, ["data"]);
-
-          if (operationOptions.withRef) {
-            _this.withRef = true;
-            props = Object.assign({}, props, {
-              ref: _this.setWrappedInstance
-            });
-          }
-
-          if (shouldSkip) {
-            return Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])(WrappedComponent, Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__assign"])({}, props, {}));
-          }
-
-          var result = Object.assign(r, data || {});
-          var name = operationOptions.name || 'data';
-          var childProps = (_b = {}, _b[name] = result, _b);
-
-          if (operationOptions.props) {
-            var newResult = (_c = {}, _c[name] = result, _c.ownProps = props, _c);
-            lastResultProps = operationOptions.props(newResult, lastResultProps);
-            childProps = lastResultProps;
-          }
-
-          return Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])(WrappedComponent, Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__assign"])({}, props, childProps));
-        });
-      };
-
-      GraphQL.displayName = graphQLDisplayName;
-      GraphQL.WrappedComponent = WrappedComponent;
-      return GraphQL;
-    }(GraphQLBase);
-
-    return hoist_non_react_statics__WEBPACK_IMPORTED_MODULE_6___default()(GraphQL, WrappedComponent, {});
-  };
-}
-
-function graphql(document, operationOptions) {
-  if (operationOptions === void 0) {
-    operationOptions = {};
-  }
-
-  switch (parser(document).type) {
-    case DocumentType.Mutation:
-      return withMutation(document, operationOptions);
-
-    case DocumentType.Subscription:
-      return withSubscription(document, operationOptions);
-
-    case DocumentType.Query:
-    default:
-      return withQuery(document, operationOptions);
-  }
-}
-
-function getDisplayName$1(WrappedComponent) {
-  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
-}
-
-function withApollo(WrappedComponent, operationOptions) {
-  if (operationOptions === void 0) {
-    operationOptions = {};
-  }
-
-  var withDisplayName = "withApollo(" + getDisplayName$1(WrappedComponent) + ")";
-
-  var WithApollo = function (_super) {
-    Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__extends"])(WithApollo, _super);
-
-    function WithApollo(props) {
-      var _this = _super.call(this, props) || this;
-
-      _this.setWrappedInstance = _this.setWrappedInstance.bind(_this);
-      return _this;
-    }
-
-    WithApollo.prototype.getWrappedInstance = function () {
-       false ? undefined : Object(ts_invariant__WEBPACK_IMPORTED_MODULE_2__["invariant"])(operationOptions.withRef, "To access the wrapped instance, you need to specify " + "{ withRef: true } in the options");
-      return this.wrappedInstance;
-    };
-
-    WithApollo.prototype.setWrappedInstance = function (ref) {
-      this.wrappedInstance = ref;
-    };
-
-    WithApollo.prototype.render = function () {
-      var _this = this;
-
-      return Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])(ApolloConsumer, null, function (client) {
-        var props = Object.assign({}, _this.props, {
-          client: client,
-          ref: operationOptions.withRef ? _this.setWrappedInstance : undefined
-        });
-        return Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])(WrappedComponent, Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__assign"])({}, props));
-      });
-    };
-
-    WithApollo.displayName = withDisplayName;
-    WithApollo.WrappedComponent = WrappedComponent;
-    return WithApollo;
-  }(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
-
-  return hoist_non_react_statics__WEBPACK_IMPORTED_MODULE_6___default()(WithApollo, WrappedComponent, {});
-}
-
-function makeDefaultQueryInfo() {
-  return {
-    seen: false,
-    observable: null
-  };
-}
-
-var RenderPromises = function () {
-  function RenderPromises() {
-    this.queryPromises = new Map();
-    this.queryInfoTrie = new Map();
-  }
-
-  RenderPromises.prototype.registerSSRObservable = function (queryInstance, observable) {
-    this.lookupQueryInfo(queryInstance).observable = observable;
-  };
-
-  RenderPromises.prototype.getSSRObservable = function (queryInstance) {
-    return this.lookupQueryInfo(queryInstance).observable;
-  };
-
-  RenderPromises.prototype.addQueryPromise = function (queryInstance, finish) {
-    var info = this.lookupQueryInfo(queryInstance);
-
-    if (!info.seen) {
-      this.queryPromises.set(queryInstance, new Promise(function (resolve) {
-        resolve(queryInstance.fetchData());
-      }));
-      return null;
-    }
-
-    return finish();
-  };
-
-  RenderPromises.prototype.hasPromises = function () {
-    return this.queryPromises.size > 0;
-  };
-
-  RenderPromises.prototype.consumeAndAwaitPromises = function () {
-    var _this = this;
-
-    var promises = [];
-    this.queryPromises.forEach(function (promise, queryInstance) {
-      _this.lookupQueryInfo(queryInstance).seen = true;
-      promises.push(promise);
-    });
-    this.queryPromises.clear();
-    return Promise.all(promises);
-  };
-
-  RenderPromises.prototype.lookupQueryInfo = function (queryInstance) {
-    var queryInfoTrie = this.queryInfoTrie;
-    var _a = queryInstance.props,
-        query = _a.query,
-        variables = _a.variables;
-    var varMap = queryInfoTrie.get(query) || new Map();
-    if (!queryInfoTrie.has(query)) queryInfoTrie.set(query, varMap);
-    var variablesString = JSON.stringify(variables);
-    var info = varMap.get(variablesString) || makeDefaultQueryInfo();
-    if (!varMap.has(variablesString)) varMap.set(variablesString, info);
-    return info;
-  };
-
-  return RenderPromises;
-}();
-
-function getDataFromTree(tree, context) {
-  if (context === void 0) {
-    context = {};
-  }
-
-  return getMarkupFromTree({
-    tree: tree,
-    context: context,
-    renderFunction: __webpack_require__(/*! react-dom/server */ "./node_modules/react-dom/server.browser.js").renderToStaticMarkup
-  });
-}
-
-function getMarkupFromTree(_a) {
-  var tree = _a.tree,
-      _b = _a.context,
-      context = _b === void 0 ? {} : _b,
-      _c = _a.renderFunction,
-      renderFunction = _c === void 0 ? __webpack_require__(/*! react-dom/server */ "./node_modules/react-dom/server.browser.js").renderToStaticMarkup : _c;
-  var renderPromises = new RenderPromises();
-
-  var RenderPromisesProvider = function (_super) {
-    Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__extends"])(RenderPromisesProvider, _super);
-
-    function RenderPromisesProvider() {
-      return _super !== null && _super.apply(this, arguments) || this;
-    }
-
-    RenderPromisesProvider.prototype.getChildContext = function () {
-      return Object(tslib__WEBPACK_IMPORTED_MODULE_3__["__assign"])({}, context, {
-        renderPromises: renderPromises
-      });
-    };
-
-    RenderPromisesProvider.prototype.render = function () {
-      return tree;
-    };
-
-    RenderPromisesProvider.childContextTypes = {
-      renderPromises: prop_types__WEBPACK_IMPORTED_MODULE_1__["object"]
-    };
-    return RenderPromisesProvider;
-  }(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
-
-  Object.keys(context).forEach(function (key) {
-    RenderPromisesProvider.childContextTypes[key] = prop_types__WEBPACK_IMPORTED_MODULE_1__["any"];
-  });
+/***/ }),
+
+/***/ "./node_modules/react-apollo-hooks/es/getMarkupFromTree.js":
+/*!*****************************************************************!*\
+  !*** ./node_modules/react-apollo-hooks/es/getMarkupFromTree.js ***!
+  \*****************************************************************/
+/*! exports provided: getMarkupFromTree */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getMarkupFromTree", function() { return getMarkupFromTree; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _internal_SSRContext__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./internal/SSRContext */ "./node_modules/react-apollo-hooks/es/internal/SSRContext.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils */ "./node_modules/react-apollo-hooks/es/utils.js");
+
+
+
+function getMarkupFromTree(_ref) {
+  var tree = _ref.tree,
+      onBeforeRender = _ref.onBeforeRender,
+      renderFunction = _ref.renderFunction;
+  var ssrManager = Object(_internal_SSRContext__WEBPACK_IMPORTED_MODULE_1__["createSSRManager"])();
 
   function process() {
-    var html = renderFunction(Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])(RenderPromisesProvider));
-    return renderPromises.hasPromises() ? renderPromises.consumeAndAwaitPromises().then(process) : html;
+    try {
+      if (onBeforeRender) {
+        onBeforeRender();
+      }
+
+      var html = renderFunction(react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_internal_SSRContext__WEBPACK_IMPORTED_MODULE_1__["SSRContext"].Provider, {
+        value: ssrManager
+      }, tree));
+
+      if (!ssrManager.hasPromises()) {
+        return html;
+      }
+    } catch (e) {
+      if (!Object(_utils__WEBPACK_IMPORTED_MODULE_2__["isPromiseLike"])(e)) {
+        throw e;
+      }
+
+      ssrManager.register(e);
+    }
+
+    return ssrManager.consumeAndAwaitPromises().then(process);
   }
 
   return Promise.resolve().then(process);
 }
 
-function renderToStringWithData(component) {
-  return getMarkupFromTree({
-    tree: component,
-    renderFunction: __webpack_require__(/*! react-dom/server */ "./node_modules/react-dom/server.browser.js").renderToString
-  });
-}
+/***/ }),
 
-function compose() {
-  var funcs = [];
+/***/ "./node_modules/react-apollo-hooks/es/index.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/react-apollo-hooks/es/index.js ***!
+  \*****************************************************/
+/*! exports provided: useQuery, useMutation, ApolloProvider, useApolloClient, unstable_SuspenseSSR, getMarkupFromTree, useSubscription */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-  for (var _i = 0; _i < arguments.length; _i++) {
-    funcs[_i] = arguments[_i];
-  }
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _useQuery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./useQuery */ "./node_modules/react-apollo-hooks/es/useQuery.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "useQuery", function() { return _useQuery__WEBPACK_IMPORTED_MODULE_0__["useQuery"]; });
 
-  var functions = funcs.reverse();
-  return function () {
-    var args = [];
+/* harmony import */ var _useMutation__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./useMutation */ "./node_modules/react-apollo-hooks/es/useMutation.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "useMutation", function() { return _useMutation__WEBPACK_IMPORTED_MODULE_1__["useMutation"]; });
 
-    for (var _i = 0; _i < arguments.length; _i++) {
-      args[_i] = arguments[_i];
-    }
+/* harmony import */ var _ApolloContext__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ApolloContext */ "./node_modules/react-apollo-hooks/es/ApolloContext.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ApolloProvider", function() { return _ApolloContext__WEBPACK_IMPORTED_MODULE_2__["ApolloProvider"]; });
 
-    var firstFunction = functions[0],
-        restFunctions = functions.slice(1);
-    var result = firstFunction.apply(null, args);
-    restFunctions.forEach(function (fnc) {
-      result = fnc.call(null, result);
-    });
-    return result;
-  };
-}
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "useApolloClient", function() { return _ApolloContext__WEBPACK_IMPORTED_MODULE_2__["useApolloClient"]; });
+
+/* harmony import */ var _SuspenseSSR__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./SuspenseSSR */ "./node_modules/react-apollo-hooks/es/SuspenseSSR.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "unstable_SuspenseSSR", function() { return _SuspenseSSR__WEBPACK_IMPORTED_MODULE_3__["unstable_SuspenseSSR"]; });
+
+/* harmony import */ var _getMarkupFromTree__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./getMarkupFromTree */ "./node_modules/react-apollo-hooks/es/getMarkupFromTree.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "getMarkupFromTree", function() { return _getMarkupFromTree__WEBPACK_IMPORTED_MODULE_4__["getMarkupFromTree"]; });
+
+/* harmony import */ var _useSubscription__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./useSubscription */ "./node_modules/react-apollo-hooks/es/useSubscription.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "useSubscription", function() { return _useSubscription__WEBPACK_IMPORTED_MODULE_5__["useSubscription"]; });
+
+
+
+
+
 
 
 
 /***/ }),
 
-/***/ "./node_modules/react-dom/cjs/react-dom-server.browser.development.js":
-/*!****************************************************************************!*\
-  !*** ./node_modules/react-dom/cjs/react-dom-server.browser.development.js ***!
-  \****************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ "./node_modules/react-apollo-hooks/es/internal/SSRContext.js":
+/*!*******************************************************************!*\
+  !*** ./node_modules/react-apollo-hooks/es/internal/SSRContext.js ***!
+  \*******************************************************************/
+/*! exports provided: createSSRManager, SSRContext */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/** @license React v16.8.6
- * react-dom-server.browser.development.js
- *
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createSSRManager", function() { return createSSRManager; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SSRContext", function() { return SSRContext; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+
+function createSSRManager() {
+  var promiseSet = new Set();
+  return {
+    hasPromises: function hasPromises() {
+      return promiseSet.size > 0;
+    },
+    register: function register(promise) {
+      promiseSet.add(promise);
+    },
+    consumeAndAwaitPromises: function consumeAndAwaitPromises() {
+      var promises = Array.from(promiseSet);
+      promiseSet.clear();
+      return Promise.all(promises);
+    }
+  };
+}
+var SSRContext = Object(react__WEBPACK_IMPORTED_MODULE_0__["createContext"])(null);
+
+/***/ }),
+
+/***/ "./node_modules/react-apollo-hooks/es/internal/actHack.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/react-apollo-hooks/es/internal/actHack.js ***!
+  \****************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return actHack; });
+function actHack(callback) {
+  callback();
+}
+
+/***/ }),
+
+/***/ "./node_modules/react-apollo-hooks/es/queryCache.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/react-apollo-hooks/es/queryCache.js ***!
+  \**********************************************************/
+/*! exports provided: getCachedObservableQuery, invalidateCachedObservableQuery */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getCachedObservableQuery", function() { return getCachedObservableQuery; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "invalidateCachedObservableQuery", function() { return invalidateCachedObservableQuery; });
+/* harmony import */ var graphql_language_printer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! graphql/language/printer */ "./node_modules/graphql/language/printer.mjs");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils */ "./node_modules/react-apollo-hooks/es/utils.js");
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
 
 
-if (true) {
-  (function () {
-    'use strict';
 
-    var _assign = __webpack_require__(/*! object-assign */ "./node_modules/object-assign/index.js");
+var cachedQueriesByClient = new WeakMap();
+function getCachedObservableQuery(client, options) {
+  var queriesForClient = getCachedQueriesForClient(client);
+  var cacheKey = getCacheKey(options);
+  var observableQuery = queriesForClient.get(cacheKey);
 
-    var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+  if (observableQuery == null) {
+    observableQuery = client.watchQuery(options);
+    queriesForClient.set(cacheKey, observableQuery);
+  }
 
-    var checkPropTypes = __webpack_require__(/*! prop-types/checkPropTypes */ "./node_modules/prop-types/checkPropTypes.js");
-    /**
-     * Use invariant() to assert state which your program assumes to be true.
-     *
-     * Provide sprintf-style format (only %s is supported) and arguments
-     * to provide information about what broke and what you were
-     * expecting.
-     *
-     * The invariant message will be stripped in production, but the invariant
-     * will remain to ensure logic does not differ in production.
-     */
+  return observableQuery;
+}
+function invalidateCachedObservableQuery(client, options) {
+  var queriesForClient = getCachedQueriesForClient(client);
+  var cacheKey = getCacheKey(options);
+  queriesForClient.delete(cacheKey);
+}
 
+function getCachedQueriesForClient(client) {
+  var queriesForClient = cachedQueriesByClient.get(client);
 
-    var validateFormat = function () {};
+  if (queriesForClient == null) {
+    queriesForClient = new Map();
+    cachedQueriesByClient.set(client, queriesForClient);
+  }
 
-    {
-      validateFormat = function (format) {
-        if (format === undefined) {
-          throw new Error('invariant requires an error message argument');
+  return queriesForClient;
+}
+
+function getCacheKey(_ref) {
+  var query = _ref.query,
+      options = _objectWithoutPropertiesLoose(_ref, ["query"]);
+
+  return Object(graphql_language_printer__WEBPACK_IMPORTED_MODULE_0__["print"])(query) + "@@" + Object(_utils__WEBPACK_IMPORTED_MODULE_1__["objToKey"])(options);
+}
+
+/***/ }),
+
+/***/ "./node_modules/react-apollo-hooks/es/useMutation.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/react-apollo-hooks/es/useMutation.js ***!
+  \***********************************************************/
+/*! exports provided: useMutation */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "useMutation", function() { return useMutation; });
+/* harmony import */ var _ApolloContext__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ApolloContext */ "./node_modules/react-apollo-hooks/es/ApolloContext.js");
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
         }
-      };
+      }
     }
 
-    function invariant(condition, format, a, b, c, d, e, f) {
-      validateFormat(format);
+    return target;
+  };
 
-      if (!condition) {
-        var error = void 0;
+  return _extends.apply(this, arguments);
+}
 
-        if (format === undefined) {
-          error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
-        } else {
-          var args = [a, b, c, d, e, f];
-          var argIndex = 0;
-          error = new Error(format.replace(/%s/g, function () {
-            return args[argIndex++];
-          }));
-          error.name = 'Invariant Violation';
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+
+function useMutation(mutation, _temp) {
+  var _ref = _temp === void 0 ? {} : _temp,
+      overrideClient = _ref.client,
+      baseOptions = _objectWithoutPropertiesLoose(_ref, ["client"]);
+
+  var client = Object(_ApolloContext__WEBPACK_IMPORTED_MODULE_0__["useApolloClient"])(overrideClient);
+  return function (options) {
+    return client.mutate(_extends({
+      mutation: mutation
+    }, baseOptions, options));
+  };
+}
+
+/***/ }),
+
+/***/ "./node_modules/react-apollo-hooks/es/useQuery.js":
+/*!********************************************************!*\
+  !*** ./node_modules/react-apollo-hooks/es/useQuery.js ***!
+  \********************************************************/
+/*! exports provided: useQuery */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "useQuery", function() { return useQuery; });
+/* harmony import */ var apollo_client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! apollo-client */ "./node_modules/apollo-client/bundle.esm.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _ApolloContext__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ApolloContext */ "./node_modules/react-apollo-hooks/es/ApolloContext.js");
+/* harmony import */ var _internal_SSRContext__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./internal/SSRContext */ "./node_modules/react-apollo-hooks/es/internal/SSRContext.js");
+/* harmony import */ var _internal_actHack__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./internal/actHack */ "./node_modules/react-apollo-hooks/es/internal/actHack.js");
+/* harmony import */ var _queryCache__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./queryCache */ "./node_modules/react-apollo-hooks/es/queryCache.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./utils */ "./node_modules/react-apollo-hooks/es/utils.js");
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
         }
-
-        error.framesToPop = 1; // we don't care about invariant's own frame
-
-        throw error;
       }
-    } // Relying on the `invariant()` implementation lets us
-    // preserve the format and params in the www builds.
-    // TODO: this is special because it gets imported during build.
-
-
-    var ReactVersion = '16.8.6';
-    /**
-     * Similar to invariant but only logs a warning if the condition is not met.
-     * This can be used to log issues in development environments in critical
-     * paths. Removing the logging code for production environments will keep the
-     * same logic and follow the same code paths.
-     */
-
-    var warningWithoutStack = function () {};
-
-    {
-      warningWithoutStack = function (condition, format) {
-        for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-          args[_key - 2] = arguments[_key];
-        }
-
-        if (format === undefined) {
-          throw new Error('`warningWithoutStack(condition, format, ...args)` requires a warning ' + 'message argument');
-        }
-
-        if (args.length > 8) {
-          // Check before the condition to catch violations early.
-          throw new Error('warningWithoutStack() currently supports at most 8 arguments.');
-        }
-
-        if (condition) {
-          return;
-        }
-
-        if (typeof console !== 'undefined') {
-          var argsWithFormat = args.map(function (item) {
-            return '' + item;
-          });
-          argsWithFormat.unshift('Warning: ' + format); // We intentionally don't use spread (or .apply) directly because it
-          // breaks IE9: https://github.com/facebook/react/issues/13610
-
-          Function.prototype.apply.call(console.error, console, argsWithFormat);
-        }
-
-        try {
-          // --- Welcome to debugging React ---
-          // This error was thrown as a convenience so that you can use this stack
-          // to find the callsite that caused this warning to fire.
-          var argIndex = 0;
-          var message = 'Warning: ' + format.replace(/%s/g, function () {
-            return args[argIndex++];
-          });
-          throw new Error(message);
-        } catch (x) {}
-      };
-    }
-    var warningWithoutStack$1 = warningWithoutStack; // The Symbol used to tag the ReactElement-like types. If there is no native Symbol
-    // nor polyfill, then a plain number is used for performance.
-
-    var hasSymbol = typeof Symbol === 'function' && Symbol.for;
-    var REACT_PORTAL_TYPE = hasSymbol ? Symbol.for('react.portal') : 0xeaca;
-    var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
-    var REACT_STRICT_MODE_TYPE = hasSymbol ? Symbol.for('react.strict_mode') : 0xeacc;
-    var REACT_PROFILER_TYPE = hasSymbol ? Symbol.for('react.profiler') : 0xead2;
-    var REACT_PROVIDER_TYPE = hasSymbol ? Symbol.for('react.provider') : 0xeacd;
-    var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace;
-    var REACT_CONCURRENT_MODE_TYPE = hasSymbol ? Symbol.for('react.concurrent_mode') : 0xeacf;
-    var REACT_FORWARD_REF_TYPE = hasSymbol ? Symbol.for('react.forward_ref') : 0xead0;
-    var REACT_SUSPENSE_TYPE = hasSymbol ? Symbol.for('react.suspense') : 0xead1;
-    var REACT_MEMO_TYPE = hasSymbol ? Symbol.for('react.memo') : 0xead3;
-    var REACT_LAZY_TYPE = hasSymbol ? Symbol.for('react.lazy') : 0xead4;
-    var Resolved = 1;
-
-    function refineResolvedLazyComponent(lazyComponent) {
-      return lazyComponent._status === Resolved ? lazyComponent._result : null;
     }
 
-    function getWrappedName(outerType, innerType, wrapperName) {
-      var functionName = innerType.displayName || innerType.name || '';
-      return outerType.displayName || (functionName !== '' ? wrapperName + '(' + functionName + ')' : wrapperName);
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+
+
+
+
+
+
+
+function useQuery(query, _temp) {
+  var _ref = _temp === void 0 ? {} : _temp,
+      _ref$ssr = _ref.ssr,
+      ssr = _ref$ssr === void 0 ? true : _ref$ssr,
+      _ref$skip = _ref.skip,
+      skip = _ref$skip === void 0 ? false : _ref$skip,
+      _ref$suspend = _ref.suspend,
+      suspend = _ref$suspend === void 0 ? false : _ref$suspend,
+      pollInterval = _ref.pollInterval,
+      _ref$notifyOnNetworkS = _ref.notifyOnNetworkStatusChange,
+      notifyOnNetworkStatusChange = _ref$notifyOnNetworkS === void 0 ? false : _ref$notifyOnNetworkS,
+      overrideClient = _ref.client,
+      context = _ref.context,
+      metadata = _ref.metadata,
+      variables = _ref.variables,
+      actualCachePolicy = _ref.fetchPolicy,
+      errorPolicy = _ref.errorPolicy,
+      fetchResults = _ref.fetchResults;
+
+  var client = Object(_ApolloContext__WEBPACK_IMPORTED_MODULE_2__["useApolloClient"])(overrideClient);
+  var ssrManager = Object(react__WEBPACK_IMPORTED_MODULE_1__["useContext"])(_internal_SSRContext__WEBPACK_IMPORTED_MODULE_3__["SSRContext"]);
+  var ssrInUse = ssr && ssrManager; // Skips when `skip: true` or SSRContext passed but `ssr: false`
+
+  var shouldSkip = skip || ssrManager != null && !ssr;
+  var fetchPolicy = ssrInUse && ( // Taken from https://github.com/apollographql/react-apollo/blob/2d7e48b7d0c26e792e1ed26e98bb84d8fba5bb8a/src/Query.tsx#L167-L169
+  actualCachePolicy === 'network-only' || actualCachePolicy === 'cache-and-network') ? 'cache-first' : actualCachePolicy;
+  var watchQueryOptions = Object(react__WEBPACK_IMPORTED_MODULE_1__["useMemo"])(function () {
+    return Object(_utils__WEBPACK_IMPORTED_MODULE_6__["compact"])({
+      context: context,
+      errorPolicy: errorPolicy,
+      fetchPolicy: fetchPolicy,
+      fetchResults: fetchResults,
+      metadata: metadata,
+      notifyOnNetworkStatusChange: notifyOnNetworkStatusChange,
+      pollInterval: pollInterval,
+      query: query,
+      variables: variables
+    });
+  }, [query, pollInterval, notifyOnNetworkStatusChange, context && Object(_utils__WEBPACK_IMPORTED_MODULE_6__["objToKey"])(context), metadata && Object(_utils__WEBPACK_IMPORTED_MODULE_6__["objToKey"])(metadata), variables && Object(_utils__WEBPACK_IMPORTED_MODULE_6__["objToKey"])(variables), fetchPolicy, errorPolicy, fetchResults]);
+  var observableQuery = Object(react__WEBPACK_IMPORTED_MODULE_1__["useMemo"])(function () {
+    return Object(_queryCache__WEBPACK_IMPORTED_MODULE_5__["getCachedObservableQuery"])(client, watchQueryOptions);
+  }, [client, watchQueryOptions]);
+
+  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(0),
+      responseId = _useState[0],
+      setResponseId = _useState[1];
+
+  var currentResult = Object(react__WEBPACK_IMPORTED_MODULE_1__["useMemo"])(function () {
+    var helpers = {
+      fetchMore: observableQuery.fetchMore.bind(observableQuery),
+      refetch: observableQuery.refetch.bind(observableQuery),
+      startPolling: observableQuery.startPolling.bind(observableQuery),
+      stopPolling: observableQuery.stopPolling.bind(observableQuery),
+      updateQuery: observableQuery.updateQuery.bind(observableQuery)
+    };
+    var result = observableQuery.currentResult(); // return the old result data when there is an error
+
+    var data = result.data;
+
+    if (result.error || result.errors) {
+      data = _extends({}, result.data, (observableQuery.getLastResult() || {}).data);
     }
 
-    function getComponentName(type) {
-      if (type == null) {
-        // Host root, text node or just invalid type.
-        return null;
-      }
-
-      {
-        if (typeof type.tag === 'number') {
-          warningWithoutStack$1(false, 'Received an unexpected object in getComponentName(). ' + 'This is likely a bug in React. Please file an issue.');
-        }
-      }
-
-      if (typeof type === 'function') {
-        return type.displayName || type.name || null;
-      }
-
-      if (typeof type === 'string') {
-        return type;
-      }
-
-      switch (type) {
-        case REACT_CONCURRENT_MODE_TYPE:
-          return 'ConcurrentMode';
-
-        case REACT_FRAGMENT_TYPE:
-          return 'Fragment';
-
-        case REACT_PORTAL_TYPE:
-          return 'Portal';
-
-        case REACT_PROFILER_TYPE:
-          return 'Profiler';
-
-        case REACT_STRICT_MODE_TYPE:
-          return 'StrictMode';
-
-        case REACT_SUSPENSE_TYPE:
-          return 'Suspense';
-      }
-
-      if (typeof type === 'object') {
-        switch (type.$$typeof) {
-          case REACT_CONTEXT_TYPE:
-            return 'Context.Consumer';
-
-          case REACT_PROVIDER_TYPE:
-            return 'Context.Provider';
-
-          case REACT_FORWARD_REF_TYPE:
-            return getWrappedName(type, type.render, 'ForwardRef');
-
-          case REACT_MEMO_TYPE:
-            return getComponentName(type.type);
-
-          case REACT_LAZY_TYPE:
-            {
-              var thenable = type;
-              var resolvedThenable = refineResolvedLazyComponent(thenable);
-
-              if (resolvedThenable) {
-                return getComponentName(resolvedThenable);
-              }
-            }
-        }
-      }
-
-      return null;
+    if (shouldSkip) {
+      // Taken from https://github.com/apollographql/react-apollo/blob/5cb63b3625ce5e4a3d3e4ba132eaec2a38ef5d90/src/Query.tsx#L376-L381
+      return _extends({}, helpers, {
+        data: undefined,
+        error: undefined,
+        loading: false,
+        networkStatus: undefined
+      });
     }
-    /**
-     * Forked from fbjs/warning:
-     * https://github.com/facebook/fbjs/blob/e66ba20ad5be433eb54423f2b097d829324d9de6/packages/fbjs/src/__forks__/warning.js
-     *
-     * Only change is we use console.warn instead of console.error,
-     * and do nothing when 'console' is not supported.
-     * This really simplifies the code.
-     * ---
-     * Similar to invariant but only logs a warning if the condition is not met.
-     * This can be used to log issues in development environments in critical
-     * paths. Removing the logging code for production environments will keep the
-     * same logic and follow the same code paths.
-     */
 
+    return _extends({}, helpers, {
+      data: data,
+      error: result.errors && result.errors.length > 0 ? new apollo_client__WEBPACK_IMPORTED_MODULE_0__["ApolloError"]({
+        graphQLErrors: result.errors
+      }) : result.error,
+      errors: result.errors,
+      loading: result.loading,
+      // don't try to return `networkStatus` when suspense it's used
+      // because it's unreliable in that case
+      // https://github.com/trojanowski/react-apollo-hooks/pull/68
+      networkStatus: suspend ? undefined : result.networkStatus,
+      partial: result.partial
+    });
+  }, [shouldSkip, responseId, observableQuery]);
+  Object(react__WEBPACK_IMPORTED_MODULE_1__["useEffect"])(function () {
+    if (shouldSkip) {
+      return;
+    }
 
-    var lowPriorityWarning = function () {};
-
-    {
-      var printWarning = function (format) {
-        for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-          args[_key - 1] = arguments[_key];
-        }
-
-        var argIndex = 0;
-        var message = 'Warning: ' + format.replace(/%s/g, function () {
-          return args[argIndex++];
+    var invalidateCurrentResult = function invalidateCurrentResult() {
+      // A hack to get rid React warnings during tests. The default
+      // implementation of `actHack` just invokes the callback immediately.
+      // In tests, it's replaced with `act` from react-testing-library.
+      // A better solution welcome.
+      Object(_internal_actHack__WEBPACK_IMPORTED_MODULE_4__["default"])(function () {
+        setResponseId(function (x) {
+          return x + 1;
         });
-
-        if (typeof console !== 'undefined') {
-          console.warn(message);
-        }
-
-        try {
-          // --- Welcome to debugging React ---
-          // This error was thrown as a convenience so that you can use this stack
-          // to find the callsite that caused this warning to fire.
-          throw new Error(message);
-        } catch (x) {}
-      };
-
-      lowPriorityWarning = function (condition, format) {
-        if (format === undefined) {
-          throw new Error('`lowPriorityWarning(condition, format, ...args)` requires a warning ' + 'message argument');
-        }
-
-        if (!condition) {
-          for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
-            args[_key2 - 2] = arguments[_key2];
-          }
-
-          printWarning.apply(undefined, [format].concat(args));
-        }
-      };
-    }
-    var lowPriorityWarning$1 = lowPriorityWarning;
-    var ReactSharedInternals = React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED; // Prevent newer renderers from RTE when used with older react package versions.
-    // Current owner and dispatcher used to share the same ref,
-    // but PR #14548 split them out to better support the react-debug-tools package.
-
-    if (!ReactSharedInternals.hasOwnProperty('ReactCurrentDispatcher')) {
-      ReactSharedInternals.ReactCurrentDispatcher = {
-        current: null
-      };
-    }
-    /**
-     * Similar to invariant but only logs a warning if the condition is not met.
-     * This can be used to log issues in development environments in critical
-     * paths. Removing the logging code for production environments will keep the
-     * same logic and follow the same code paths.
-     */
-
-
-    var warning = warningWithoutStack$1;
-    {
-      warning = function (condition, format) {
-        if (condition) {
-          return;
-        }
-
-        var ReactDebugCurrentFrame = ReactSharedInternals.ReactDebugCurrentFrame;
-        var stack = ReactDebugCurrentFrame.getStackAddendum(); // eslint-disable-next-line react-internal/warning-and-invariant-args
-
-        for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-          args[_key - 2] = arguments[_key];
-        }
-
-        warningWithoutStack$1.apply(undefined, [false, format + '%s'].concat(args, [stack]));
-      };
-    }
-    var warning$1 = warning;
-    var BEFORE_SLASH_RE = /^(.*)[\\\/]/;
-
-    var describeComponentFrame = function (name, source, ownerName) {
-      var sourceInfo = '';
-
-      if (source) {
-        var path = source.fileName;
-        var fileName = path.replace(BEFORE_SLASH_RE, '');
-        {
-          // In DEV, include code for a common special case:
-          // prefer "folder/index.js" instead of just "index.js".
-          if (/^index\./.test(fileName)) {
-            var match = path.match(BEFORE_SLASH_RE);
-
-            if (match) {
-              var pathBeforeSlash = match[1];
-
-              if (pathBeforeSlash) {
-                var folderName = pathBeforeSlash.replace(BEFORE_SLASH_RE, '');
-                fileName = folderName + '/' + fileName;
-              }
-            }
-          }
-        }
-        sourceInfo = ' (at ' + fileName + ':' + source.lineNumber + ')';
-      } else if (ownerName) {
-        sourceInfo = ' (created by ' + ownerName + ')';
-      }
-
-      return '\n    in ' + (name || 'Unknown') + sourceInfo;
-    }; // Helps identify side effects in begin-phase lifecycle hooks and setState reducers:
-    // In some cases, StrictMode should also double-render lifecycles.
-    // This can be confusing for tests though,
-    // And it can be bad for performance in production.
-    // This feature flag can be used to control the behavior:
-    // To preserve the "Pause on caught exceptions" behavior of the debugger, we
-    // replay the begin phase of a failed component inside invokeGuardedCallback.
-    // Warn about deprecated, async-unsafe lifecycles; relates to RFC #6:
-
-
-    var warnAboutDeprecatedLifecycles = false; // Gather advanced timing metrics for Profiler subtrees.
-    // Trace which interactions trigger each commit.
-    // Only used in www builds.
-
-    var enableSuspenseServerRenderer = false; // TODO: true? Here it might just be false.
-    // Only used in www builds.
-    // Only used in www builds.
-    // React Fire: prevent the value and checked attributes from syncing
-    // with their related DOM properties
-    // These APIs will no longer be "unstable" in the upcoming 16.7 release,
-    // Control this behavior with a flag to support 16.6 minor releases in the meanwhile.
-
-    var ReactDebugCurrentFrame$1 = void 0;
-    var didWarnAboutInvalidateContextType = void 0;
-    {
-      ReactDebugCurrentFrame$1 = ReactSharedInternals.ReactDebugCurrentFrame;
-      didWarnAboutInvalidateContextType = new Set();
-    }
-    var emptyObject = {};
-    {
-      Object.freeze(emptyObject);
-    }
-
-    function maskContext(type, context) {
-      var contextTypes = type.contextTypes;
-
-      if (!contextTypes) {
-        return emptyObject;
-      }
-
-      var maskedContext = {};
-
-      for (var contextName in contextTypes) {
-        maskedContext[contextName] = context[contextName];
-      }
-
-      return maskedContext;
-    }
-
-    function checkContextTypes(typeSpecs, values, location) {
-      {
-        checkPropTypes(typeSpecs, values, location, 'Component', ReactDebugCurrentFrame$1.getCurrentStack);
-      }
-    }
-
-    function validateContextBounds(context, threadID) {
-      // If we don't have enough slots in this context to store this threadID,
-      // fill it in without leaving any holes to ensure that the VM optimizes
-      // this as non-holey index properties.
-      // (Note: If `react` package is < 16.6, _threadCount is undefined.)
-      for (var i = context._threadCount | 0; i <= threadID; i++) {
-        // We assume that this is the same as the defaultValue which might not be
-        // true if we're rendering inside a secondary renderer but they are
-        // secondary because these use cases are very rare.
-        context[i] = context._currentValue2;
-        context._threadCount = i + 1;
-      }
-    }
-
-    function processContext(type, context, threadID) {
-      var contextType = type.contextType;
-      {
-        if ('contextType' in type) {
-          var isValid = // Allow null for conditional declaration
-          contextType === null || contextType !== undefined && contextType.$$typeof === REACT_CONTEXT_TYPE && contextType._context === undefined; // Not a <Context.Consumer>
-
-          if (!isValid && !didWarnAboutInvalidateContextType.has(type)) {
-            didWarnAboutInvalidateContextType.add(type);
-            var addendum = '';
-
-            if (contextType === undefined) {
-              addendum = ' However, it is set to undefined. ' + 'This can be caused by a typo or by mixing up named and default imports. ' + 'This can also happen due to a circular dependency, so ' + 'try moving the createContext() call to a separate file.';
-            } else if (typeof contextType !== 'object') {
-              addendum = ' However, it is set to a ' + typeof contextType + '.';
-            } else if (contextType.$$typeof === REACT_PROVIDER_TYPE) {
-              addendum = ' Did you accidentally pass the Context.Provider instead?';
-            } else if (contextType._context !== undefined) {
-              // <Context.Consumer>
-              addendum = ' Did you accidentally pass the Context.Consumer instead?';
-            } else {
-              addendum = ' However, it is set to an object with keys {' + Object.keys(contextType).join(', ') + '}.';
-            }
-
-            warningWithoutStack$1(false, '%s defines an invalid contextType. ' + 'contextType should point to the Context object returned by React.createContext().%s', getComponentName(type) || 'Component', addendum);
-          }
-        }
-      }
-
-      if (typeof contextType === 'object' && contextType !== null) {
-        validateContextBounds(contextType, threadID);
-        return contextType[threadID];
-      } else {
-        var maskedContext = maskContext(type, context);
-        {
-          if (type.contextTypes) {
-            checkContextTypes(type.contextTypes, maskedContext, 'context');
-          }
-        }
-        return maskedContext;
-      }
-    } // Allocates a new index for each request. Tries to stay as compact as possible so that these
-    // indices can be used to reference a tightly packaged array. As opposed to being used in a Map.
-    // The first allocated index is 1.
-
-
-    var nextAvailableThreadIDs = new Uint16Array(16);
-
-    for (var i = 0; i < 15; i++) {
-      nextAvailableThreadIDs[i] = i + 1;
-    }
-
-    nextAvailableThreadIDs[15] = 0;
-
-    function growThreadCountAndReturnNextAvailable() {
-      var oldArray = nextAvailableThreadIDs;
-      var oldSize = oldArray.length;
-      var newSize = oldSize * 2;
-      !(newSize <= 0x10000) ? invariant(false, 'Maximum number of concurrent React renderers exceeded. This can happen if you are not properly destroying the Readable provided by React. Ensure that you call .destroy() on it if you no longer want to read from it, and did not read to the end. If you use .pipe() this should be automatic.') : void 0;
-      var newArray = new Uint16Array(newSize);
-      newArray.set(oldArray);
-      nextAvailableThreadIDs = newArray;
-      nextAvailableThreadIDs[0] = oldSize + 1;
-
-      for (var _i = oldSize; _i < newSize - 1; _i++) {
-        nextAvailableThreadIDs[_i] = _i + 1;
-      }
-
-      nextAvailableThreadIDs[newSize - 1] = 0;
-      return oldSize;
-    }
-
-    function allocThreadID() {
-      var nextID = nextAvailableThreadIDs[0];
-
-      if (nextID === 0) {
-        return growThreadCountAndReturnNextAvailable();
-      }
-
-      nextAvailableThreadIDs[0] = nextAvailableThreadIDs[nextID];
-      return nextID;
-    }
-
-    function freeThreadID(id) {
-      nextAvailableThreadIDs[id] = nextAvailableThreadIDs[0];
-      nextAvailableThreadIDs[0] = id;
-    } // A reserved attribute.
-    // It is handled by React separately and shouldn't be written to the DOM.
-
-
-    var RESERVED = 0; // A simple string attribute.
-    // Attributes that aren't in the whitelist are presumed to have this type.
-
-    var STRING = 1; // A string attribute that accepts booleans in React. In HTML, these are called
-    // "enumerated" attributes with "true" and "false" as possible values.
-    // When true, it should be set to a "true" string.
-    // When false, it should be set to a "false" string.
-
-    var BOOLEANISH_STRING = 2; // A real boolean attribute.
-    // When true, it should be present (set either to an empty string or its name).
-    // When false, it should be omitted.
-
-    var BOOLEAN = 3; // An attribute that can be used as a flag as well as with a value.
-    // When true, it should be present (set either to an empty string or its name).
-    // When false, it should be omitted.
-    // For any other value, should be present with that value.
-
-    var OVERLOADED_BOOLEAN = 4; // An attribute that must be numeric or parse as a numeric.
-    // When falsy, it should be removed.
-
-    var NUMERIC = 5; // An attribute that must be positive numeric or parse as a positive numeric.
-    // When falsy, it should be removed.
-
-    var POSITIVE_NUMERIC = 6;
-    /* eslint-disable max-len */
-
-    var ATTRIBUTE_NAME_START_CHAR = ':A-Z_a-z\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u02FF\\u0370-\\u037D\\u037F-\\u1FFF\\u200C-\\u200D\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD';
-    /* eslint-enable max-len */
-
-    var ATTRIBUTE_NAME_CHAR = ATTRIBUTE_NAME_START_CHAR + '\\-.0-9\\u00B7\\u0300-\\u036F\\u203F-\\u2040';
-    var ROOT_ATTRIBUTE_NAME = 'data-reactroot';
-    var VALID_ATTRIBUTE_NAME_REGEX = new RegExp('^[' + ATTRIBUTE_NAME_START_CHAR + '][' + ATTRIBUTE_NAME_CHAR + ']*$');
-    var hasOwnProperty$1 = Object.prototype.hasOwnProperty;
-    var illegalAttributeNameCache = {};
-    var validatedAttributeNameCache = {};
-
-    function isAttributeNameSafe(attributeName) {
-      if (hasOwnProperty$1.call(validatedAttributeNameCache, attributeName)) {
-        return true;
-      }
-
-      if (hasOwnProperty$1.call(illegalAttributeNameCache, attributeName)) {
-        return false;
-      }
-
-      if (VALID_ATTRIBUTE_NAME_REGEX.test(attributeName)) {
-        validatedAttributeNameCache[attributeName] = true;
-        return true;
-      }
-
-      illegalAttributeNameCache[attributeName] = true;
-      {
-        warning$1(false, 'Invalid attribute name: `%s`', attributeName);
-      }
-      return false;
-    }
-
-    function shouldIgnoreAttribute(name, propertyInfo, isCustomComponentTag) {
-      if (propertyInfo !== null) {
-        return propertyInfo.type === RESERVED;
-      }
-
-      if (isCustomComponentTag) {
-        return false;
-      }
-
-      if (name.length > 2 && (name[0] === 'o' || name[0] === 'O') && (name[1] === 'n' || name[1] === 'N')) {
-        return true;
-      }
-
-      return false;
-    }
-
-    function shouldRemoveAttributeWithWarning(name, value, propertyInfo, isCustomComponentTag) {
-      if (propertyInfo !== null && propertyInfo.type === RESERVED) {
-        return false;
-      }
-
-      switch (typeof value) {
-        case 'function': // $FlowIssue symbol is perfectly valid here
-
-        case 'symbol':
-          // eslint-disable-line
-          return true;
-
-        case 'boolean':
-          {
-            if (isCustomComponentTag) {
-              return false;
-            }
-
-            if (propertyInfo !== null) {
-              return !propertyInfo.acceptsBooleans;
-            } else {
-              var prefix = name.toLowerCase().slice(0, 5);
-              return prefix !== 'data-' && prefix !== 'aria-';
-            }
-          }
-
-        default:
-          return false;
-      }
-    }
-
-    function shouldRemoveAttribute(name, value, propertyInfo, isCustomComponentTag) {
-      if (value === null || typeof value === 'undefined') {
-        return true;
-      }
-
-      if (shouldRemoveAttributeWithWarning(name, value, propertyInfo, isCustomComponentTag)) {
-        return true;
-      }
-
-      if (isCustomComponentTag) {
-        return false;
-      }
-
-      if (propertyInfo !== null) {
-        switch (propertyInfo.type) {
-          case BOOLEAN:
-            return !value;
-
-          case OVERLOADED_BOOLEAN:
-            return value === false;
-
-          case NUMERIC:
-            return isNaN(value);
-
-          case POSITIVE_NUMERIC:
-            return isNaN(value) || value < 1;
-        }
-      }
-
-      return false;
-    }
-
-    function getPropertyInfo(name) {
-      return properties.hasOwnProperty(name) ? properties[name] : null;
-    }
-
-    function PropertyInfoRecord(name, type, mustUseProperty, attributeName, attributeNamespace) {
-      this.acceptsBooleans = type === BOOLEANISH_STRING || type === BOOLEAN || type === OVERLOADED_BOOLEAN;
-      this.attributeName = attributeName;
-      this.attributeNamespace = attributeNamespace;
-      this.mustUseProperty = mustUseProperty;
-      this.propertyName = name;
-      this.type = type;
-    } // When adding attributes to this list, be sure to also add them to
-    // the `possibleStandardNames` module to ensure casing and incorrect
-    // name warnings.
-
-
-    var properties = {}; // These props are reserved by React. They shouldn't be written to the DOM.
-
-    ['children', 'dangerouslySetInnerHTML', // TODO: This prevents the assignment of defaultValue to regular
-    // elements (not just inputs). Now that ReactDOMInput assigns to the
-    // defaultValue property -- do we need this?
-    'defaultValue', 'defaultChecked', 'innerHTML', 'suppressContentEditableWarning', 'suppressHydrationWarning', 'style'].forEach(function (name) {
-      properties[name] = new PropertyInfoRecord(name, RESERVED, false, // mustUseProperty
-      name, // attributeName
-      null);
-    } // attributeNamespace
-    ); // A few React string attributes have a different name.
-    // This is a mapping from React prop names to the attribute names.
-
-    [['acceptCharset', 'accept-charset'], ['className', 'class'], ['htmlFor', 'for'], ['httpEquiv', 'http-equiv']].forEach(function (_ref) {
-      var name = _ref[0],
-          attributeName = _ref[1];
-      properties[name] = new PropertyInfoRecord(name, STRING, false, // mustUseProperty
-      attributeName, // attributeName
-      null);
-    } // attributeNamespace
-    ); // These are "enumerated" HTML attributes that accept "true" and "false".
-    // In React, we let users pass `true` and `false` even though technically
-    // these aren't boolean attributes (they are coerced to strings).
-
-    ['contentEditable', 'draggable', 'spellCheck', 'value'].forEach(function (name) {
-      properties[name] = new PropertyInfoRecord(name, BOOLEANISH_STRING, false, // mustUseProperty
-      name.toLowerCase(), // attributeName
-      null);
-    } // attributeNamespace
-    ); // These are "enumerated" SVG attributes that accept "true" and "false".
-    // In React, we let users pass `true` and `false` even though technically
-    // these aren't boolean attributes (they are coerced to strings).
-    // Since these are SVG attributes, their attribute names are case-sensitive.
-
-    ['autoReverse', 'externalResourcesRequired', 'focusable', 'preserveAlpha'].forEach(function (name) {
-      properties[name] = new PropertyInfoRecord(name, BOOLEANISH_STRING, false, // mustUseProperty
-      name, // attributeName
-      null);
-    } // attributeNamespace
-    ); // These are HTML boolean attributes.
-
-    ['allowFullScreen', 'async', // Note: there is a special case that prevents it from being written to the DOM
-    // on the client side because the browsers are inconsistent. Instead we call focus().
-    'autoFocus', 'autoPlay', 'controls', 'default', 'defer', 'disabled', 'formNoValidate', 'hidden', 'loop', 'noModule', 'noValidate', 'open', 'playsInline', 'readOnly', 'required', 'reversed', 'scoped', 'seamless', // Microdata
-    'itemScope'].forEach(function (name) {
-      properties[name] = new PropertyInfoRecord(name, BOOLEAN, false, // mustUseProperty
-      name.toLowerCase(), // attributeName
-      null);
-    } // attributeNamespace
-    ); // These are the few React props that we set as DOM properties
-    // rather than attributes. These are all booleans.
-
-    ['checked', // Note: `option.selected` is not updated if `select.multiple` is
-    // disabled with `removeAttribute`. We have special logic for handling this.
-    'multiple', 'muted', 'selected'].forEach(function (name) {
-      properties[name] = new PropertyInfoRecord(name, BOOLEAN, true, // mustUseProperty
-      name, // attributeName
-      null);
-    } // attributeNamespace
-    ); // These are HTML attributes that are "overloaded booleans": they behave like
-    // booleans, but can also accept a string value.
-
-    ['capture', 'download'].forEach(function (name) {
-      properties[name] = new PropertyInfoRecord(name, OVERLOADED_BOOLEAN, false, // mustUseProperty
-      name, // attributeName
-      null);
-    } // attributeNamespace
-    ); // These are HTML attributes that must be positive numbers.
-
-    ['cols', 'rows', 'size', 'span'].forEach(function (name) {
-      properties[name] = new PropertyInfoRecord(name, POSITIVE_NUMERIC, false, // mustUseProperty
-      name, // attributeName
-      null);
-    } // attributeNamespace
-    ); // These are HTML attributes that must be numbers.
-
-    ['rowSpan', 'start'].forEach(function (name) {
-      properties[name] = new PropertyInfoRecord(name, NUMERIC, false, // mustUseProperty
-      name.toLowerCase(), // attributeName
-      null);
-    } // attributeNamespace
-    );
-    var CAMELIZE = /[\-\:]([a-z])/g;
-
-    var capitalize = function (token) {
-      return token[1].toUpperCase();
-    }; // This is a list of all SVG attributes that need special casing, namespacing,
-    // or boolean value assignment. Regular attributes that just accept strings
-    // and have the same names are omitted, just like in the HTML whitelist.
-    // Some of these attributes can be hard to find. This list was created by
-    // scrapping the MDN documentation.
-
-
-    ['accent-height', 'alignment-baseline', 'arabic-form', 'baseline-shift', 'cap-height', 'clip-path', 'clip-rule', 'color-interpolation', 'color-interpolation-filters', 'color-profile', 'color-rendering', 'dominant-baseline', 'enable-background', 'fill-opacity', 'fill-rule', 'flood-color', 'flood-opacity', 'font-family', 'font-size', 'font-size-adjust', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'glyph-name', 'glyph-orientation-horizontal', 'glyph-orientation-vertical', 'horiz-adv-x', 'horiz-origin-x', 'image-rendering', 'letter-spacing', 'lighting-color', 'marker-end', 'marker-mid', 'marker-start', 'overline-position', 'overline-thickness', 'paint-order', 'panose-1', 'pointer-events', 'rendering-intent', 'shape-rendering', 'stop-color', 'stop-opacity', 'strikethrough-position', 'strikethrough-thickness', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity', 'stroke-width', 'text-anchor', 'text-decoration', 'text-rendering', 'underline-position', 'underline-thickness', 'unicode-bidi', 'unicode-range', 'units-per-em', 'v-alphabetic', 'v-hanging', 'v-ideographic', 'v-mathematical', 'vector-effect', 'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'word-spacing', 'writing-mode', 'xmlns:xlink', 'x-height'].forEach(function (attributeName) {
-      var name = attributeName.replace(CAMELIZE, capitalize);
-      properties[name] = new PropertyInfoRecord(name, STRING, false, // mustUseProperty
-      attributeName, null);
-    } // attributeNamespace
-    ); // String SVG attributes with the xlink namespace.
-
-    ['xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type'].forEach(function (attributeName) {
-      var name = attributeName.replace(CAMELIZE, capitalize);
-      properties[name] = new PropertyInfoRecord(name, STRING, false, // mustUseProperty
-      attributeName, 'http://www.w3.org/1999/xlink');
-    }); // String SVG attributes with the xml namespace.
-
-    ['xml:base', 'xml:lang', 'xml:space'].forEach(function (attributeName) {
-      var name = attributeName.replace(CAMELIZE, capitalize);
-      properties[name] = new PropertyInfoRecord(name, STRING, false, // mustUseProperty
-      attributeName, 'http://www.w3.org/XML/1998/namespace');
-    }); // These attribute exists both in HTML and SVG.
-    // The attribute name is case-sensitive in SVG so we can't just use
-    // the React name like we do for attributes that exist only in HTML.
-
-    ['tabIndex', 'crossOrigin'].forEach(function (attributeName) {
-      properties[attributeName] = new PropertyInfoRecord(attributeName, STRING, false, // mustUseProperty
-      attributeName.toLowerCase(), // attributeName
-      null);
-    } // attributeNamespace
-    ); // code copied and modified from escape-html
-
-    /**
-     * Module variables.
-     * @private
-     */
-
-    var matchHtmlRegExp = /["'&<>]/;
-    /**
-     * Escapes special characters and HTML entities in a given html string.
-     *
-     * @param  {string} string HTML string to escape for later insertion
-     * @return {string}
-     * @public
-     */
-
-    function escapeHtml(string) {
-      var str = '' + string;
-      var match = matchHtmlRegExp.exec(str);
-
-      if (!match) {
-        return str;
-      }
-
-      var escape = void 0;
-      var html = '';
-      var index = void 0;
-      var lastIndex = 0;
-
-      for (index = match.index; index < str.length; index++) {
-        switch (str.charCodeAt(index)) {
-          case 34:
-            // "
-            escape = '&quot;';
-            break;
-
-          case 38:
-            // &
-            escape = '&amp;';
-            break;
-
-          case 39:
-            // '
-            escape = '&#x27;'; // modified from escape-html; used to be '&#39'
-
-            break;
-
-          case 60:
-            // <
-            escape = '&lt;';
-            break;
-
-          case 62:
-            // >
-            escape = '&gt;';
-            break;
-
-          default:
-            continue;
-        }
-
-        if (lastIndex !== index) {
-          html += str.substring(lastIndex, index);
-        }
-
-        lastIndex = index + 1;
-        html += escape;
-      }
-
-      return lastIndex !== index ? html + str.substring(lastIndex, index) : html;
-    } // end code copied and modified from escape-html
-
-    /**
-     * Escapes text to prevent scripting attacks.
-     *
-     * @param {*} text Text value to escape.
-     * @return {string} An escaped string.
-     */
-
-
-    function escapeTextForBrowser(text) {
-      if (typeof text === 'boolean' || typeof text === 'number') {
-        // this shortcircuit helps perf for types that we know will never have
-        // special characters, especially given that this function is used often
-        // for numeric dom ids.
-        return '' + text;
-      }
-
-      return escapeHtml(text);
-    }
-    /**
-     * Escapes attribute value to prevent scripting attacks.
-     *
-     * @param {*} value Value to escape.
-     * @return {string} An escaped string.
-     */
-
-
-    function quoteAttributeValueForBrowser(value) {
-      return '"' + escapeTextForBrowser(value) + '"';
-    }
-    /**
-     * Operations for dealing with DOM properties.
-     */
-
-    /**
-     * Creates markup for the ID property.
-     *
-     * @param {string} id Unescaped ID.
-     * @return {string} Markup string.
-     */
-
-
-    function createMarkupForRoot() {
-      return ROOT_ATTRIBUTE_NAME + '=""';
-    }
-    /**
-     * Creates markup for a property.
-     *
-     * @param {string} name
-     * @param {*} value
-     * @return {?string} Markup string, or null if the property was invalid.
-     */
-
-
-    function createMarkupForProperty(name, value) {
-      var propertyInfo = getPropertyInfo(name);
-
-      if (name !== 'style' && shouldIgnoreAttribute(name, propertyInfo, false)) {
-        return '';
-      }
-
-      if (shouldRemoveAttribute(name, value, propertyInfo, false)) {
-        return '';
-      }
-
-      if (propertyInfo !== null) {
-        var attributeName = propertyInfo.attributeName;
-        var type = propertyInfo.type;
-
-        if (type === BOOLEAN || type === OVERLOADED_BOOLEAN && value === true) {
-          return attributeName + '=""';
-        } else {
-          return attributeName + '=' + quoteAttributeValueForBrowser(value);
-        }
-      } else if (isAttributeNameSafe(name)) {
-        return name + '=' + quoteAttributeValueForBrowser(value);
-      }
-
-      return '';
-    }
-    /**
-     * Creates markup for a custom property.
-     *
-     * @param {string} name
-     * @param {*} value
-     * @return {string} Markup string, or empty string if the property was invalid.
-     */
-
-
-    function createMarkupForCustomAttribute(name, value) {
-      if (!isAttributeNameSafe(name) || value == null) {
-        return '';
-      }
-
-      return name + '=' + quoteAttributeValueForBrowser(value);
-    }
-    /**
-     * inlined Object.is polyfill to avoid requiring consumers ship their own
-     * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
-     */
-
-
-    function is(x, y) {
-      return x === y && (x !== 0 || 1 / x === 1 / y) || x !== x && y !== y // eslint-disable-line no-self-compare
-      ;
-    }
-
-    var currentlyRenderingComponent = null;
-    var firstWorkInProgressHook = null;
-    var workInProgressHook = null; // Whether the work-in-progress hook is a re-rendered hook
-
-    var isReRender = false; // Whether an update was scheduled during the currently executing render pass.
-
-    var didScheduleRenderPhaseUpdate = false; // Lazily created map of render-phase updates
-
-    var renderPhaseUpdates = null; // Counter to prevent infinite loops.
-
-    var numberOfReRenders = 0;
-    var RE_RENDER_LIMIT = 25;
-    var isInHookUserCodeInDev = false; // In DEV, this is the name of the currently executing primitive hook
-
-    var currentHookNameInDev = void 0;
-
-    function resolveCurrentlyRenderingComponent() {
-      !(currentlyRenderingComponent !== null) ? invariant(false, 'Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:\n1. You might have mismatching versions of React and the renderer (such as React DOM)\n2. You might be breaking the Rules of Hooks\n3. You might have more than one copy of React in the same app\nSee https://fb.me/react-invalid-hook-call for tips about how to debug and fix this problem.') : void 0;
-      {
-        !!isInHookUserCodeInDev ? warning$1(false, 'Do not call Hooks inside useEffect(...), useMemo(...), or other built-in Hooks. ' + 'You can only call Hooks at the top level of your React function. ' + 'For more information, see ' + 'https://fb.me/rules-of-hooks') : void 0;
-      }
-      return currentlyRenderingComponent;
-    }
-
-    function areHookInputsEqual(nextDeps, prevDeps) {
-      if (prevDeps === null) {
-        {
-          warning$1(false, '%s received a final argument during this render, but not during ' + 'the previous render. Even though the final argument is optional, ' + 'its type cannot change between renders.', currentHookNameInDev);
-        }
-        return false;
-      }
-
-      {
-        // Don't bother comparing lengths in prod because these arrays should be
-        // passed inline.
-        if (nextDeps.length !== prevDeps.length) {
-          warning$1(false, 'The final argument passed to %s changed size between renders. The ' + 'order and size of this array must remain constant.\n\n' + 'Previous: %s\n' + 'Incoming: %s', currentHookNameInDev, '[' + nextDeps.join(', ') + ']', '[' + prevDeps.join(', ') + ']');
-        }
-      }
-
-      for (var i = 0; i < prevDeps.length && i < nextDeps.length; i++) {
-        if (is(nextDeps[i], prevDeps[i])) {
-          continue;
-        }
-
-        return false;
-      }
-
-      return true;
-    }
-
-    function createHook() {
-      if (numberOfReRenders > 0) {
-        invariant(false, 'Rendered more hooks than during the previous render');
-      }
-
-      return {
-        memoizedState: null,
-        queue: null,
-        next: null
-      };
-    }
-
-    function createWorkInProgressHook() {
-      if (workInProgressHook === null) {
-        // This is the first hook in the list
-        if (firstWorkInProgressHook === null) {
-          isReRender = false;
-          firstWorkInProgressHook = workInProgressHook = createHook();
-        } else {
-          // There's already a work-in-progress. Reuse it.
-          isReRender = true;
-          workInProgressHook = firstWorkInProgressHook;
-        }
-      } else {
-        if (workInProgressHook.next === null) {
-          isReRender = false; // Append to the end of the list
-
-          workInProgressHook = workInProgressHook.next = createHook();
-        } else {
-          // There's already a work-in-progress. Reuse it.
-          isReRender = true;
-          workInProgressHook = workInProgressHook.next;
-        }
-      }
-
-      return workInProgressHook;
-    }
-
-    function prepareToUseHooks(componentIdentity) {
-      currentlyRenderingComponent = componentIdentity;
-      {
-        isInHookUserCodeInDev = false;
-      } // The following should have already been reset
-      // didScheduleRenderPhaseUpdate = false;
-      // firstWorkInProgressHook = null;
-      // numberOfReRenders = 0;
-      // renderPhaseUpdates = null;
-      // workInProgressHook = null;
-    }
-
-    function finishHooks(Component, props, children, refOrContext) {
-      // This must be called after every function component to prevent hooks from
-      // being used in classes.
-      while (didScheduleRenderPhaseUpdate) {
-        // Updates were scheduled during the render phase. They are stored in
-        // the `renderPhaseUpdates` map. Call the component again, reusing the
-        // work-in-progress hooks and applying the additional updates on top. Keep
-        // restarting until no more updates are scheduled.
-        didScheduleRenderPhaseUpdate = false;
-        numberOfReRenders += 1; // Start over from the beginning of the list
-
-        workInProgressHook = null;
-        children = Component(props, refOrContext);
-      }
-
-      currentlyRenderingComponent = null;
-      firstWorkInProgressHook = null;
-      numberOfReRenders = 0;
-      renderPhaseUpdates = null;
-      workInProgressHook = null;
-      {
-        isInHookUserCodeInDev = false;
-      } // These were reset above
-      // currentlyRenderingComponent = null;
-      // didScheduleRenderPhaseUpdate = false;
-      // firstWorkInProgressHook = null;
-      // numberOfReRenders = 0;
-      // renderPhaseUpdates = null;
-      // workInProgressHook = null;
-
-      return children;
-    }
-
-    function readContext(context, observedBits) {
-      var threadID = currentThreadID;
-      validateContextBounds(context, threadID);
-      {
-        !!isInHookUserCodeInDev ? warning$1(false, 'Context can only be read while React is rendering. ' + 'In classes, you can read it in the render method or getDerivedStateFromProps. ' + 'In function components, you can read it directly in the function body, but not ' + 'inside Hooks like useReducer() or useMemo().') : void 0;
-      }
-      return context[threadID];
-    }
-
-    function useContext(context, observedBits) {
-      {
-        currentHookNameInDev = 'useContext';
-      }
-      resolveCurrentlyRenderingComponent();
-      var threadID = currentThreadID;
-      validateContextBounds(context, threadID);
-      return context[threadID];
-    }
-
-    function basicStateReducer(state, action) {
-      return typeof action === 'function' ? action(state) : action;
-    }
-
-    function useState(initialState) {
-      {
-        currentHookNameInDev = 'useState';
-      }
-      return useReducer(basicStateReducer, // useReducer has a special case to support lazy useState initializers
-      initialState);
-    }
-
-    function useReducer(reducer, initialArg, init) {
-      {
-        if (reducer !== basicStateReducer) {
-          currentHookNameInDev = 'useReducer';
-        }
-      }
-      currentlyRenderingComponent = resolveCurrentlyRenderingComponent();
-      workInProgressHook = createWorkInProgressHook();
-
-      if (isReRender) {
-        // This is a re-render. Apply the new render phase updates to the previous
-        var _queue = workInProgressHook.queue;
-        var _dispatch = _queue.dispatch;
-
-        if (renderPhaseUpdates !== null) {
-          // Render phase updates are stored in a map of queue -> linked list
-          var firstRenderPhaseUpdate = renderPhaseUpdates.get(_queue);
-
-          if (firstRenderPhaseUpdate !== undefined) {
-            renderPhaseUpdates.delete(_queue);
-            var newState = workInProgressHook.memoizedState;
-            var update = firstRenderPhaseUpdate;
-
-            do {
-              // Process this render phase update. We don't have to check the
-              // priority because it will always be the same as the current
-              // render's.
-              var _action = update.action;
-              {
-                isInHookUserCodeInDev = true;
-              }
-              newState = reducer(newState, _action);
-              {
-                isInHookUserCodeInDev = false;
-              }
-              update = update.next;
-            } while (update !== null);
-
-            workInProgressHook.memoizedState = newState;
-            return [newState, _dispatch];
-          }
-        }
-
-        return [workInProgressHook.memoizedState, _dispatch];
-      } else {
-        {
-          isInHookUserCodeInDev = true;
-        }
-        var initialState = void 0;
-
-        if (reducer === basicStateReducer) {
-          // Special case for `useState`.
-          initialState = typeof initialArg === 'function' ? initialArg() : initialArg;
-        } else {
-          initialState = init !== undefined ? init(initialArg) : initialArg;
-        }
-
-        {
-          isInHookUserCodeInDev = false;
-        }
-        workInProgressHook.memoizedState = initialState;
-
-        var _queue2 = workInProgressHook.queue = {
-          last: null,
-          dispatch: null
-        };
-
-        var _dispatch2 = _queue2.dispatch = dispatchAction.bind(null, currentlyRenderingComponent, _queue2);
-
-        return [workInProgressHook.memoizedState, _dispatch2];
-      }
-    }
-
-    function useMemo(nextCreate, deps) {
-      currentlyRenderingComponent = resolveCurrentlyRenderingComponent();
-      workInProgressHook = createWorkInProgressHook();
-      var nextDeps = deps === undefined ? null : deps;
-
-      if (workInProgressHook !== null) {
-        var prevState = workInProgressHook.memoizedState;
-
-        if (prevState !== null) {
-          if (nextDeps !== null) {
-            var prevDeps = prevState[1];
-
-            if (areHookInputsEqual(nextDeps, prevDeps)) {
-              return prevState[0];
-            }
-          }
-        }
-      }
-
-      {
-        isInHookUserCodeInDev = true;
-      }
-      var nextValue = nextCreate();
-      {
-        isInHookUserCodeInDev = false;
-      }
-      workInProgressHook.memoizedState = [nextValue, nextDeps];
-      return nextValue;
-    }
-
-    function useRef(initialValue) {
-      currentlyRenderingComponent = resolveCurrentlyRenderingComponent();
-      workInProgressHook = createWorkInProgressHook();
-      var previousRef = workInProgressHook.memoizedState;
-
-      if (previousRef === null) {
-        var ref = {
-          current: initialValue
-        };
-        {
-          Object.seal(ref);
-        }
-        workInProgressHook.memoizedState = ref;
-        return ref;
-      } else {
-        return previousRef;
-      }
-    }
-
-    function useLayoutEffect(create, inputs) {
-      {
-        currentHookNameInDev = 'useLayoutEffect';
-      }
-      warning$1(false, 'useLayoutEffect does nothing on the server, because its effect cannot ' + "be encoded into the server renderer's output format. This will lead " + 'to a mismatch between the initial, non-hydrated UI and the intended ' + 'UI. To avoid this, useLayoutEffect should only be used in ' + 'components that render exclusively on the client. ' + 'See https://fb.me/react-uselayouteffect-ssr for common fixes.');
-    }
-
-    function dispatchAction(componentIdentity, queue, action) {
-      !(numberOfReRenders < RE_RENDER_LIMIT) ? invariant(false, 'Too many re-renders. React limits the number of renders to prevent an infinite loop.') : void 0;
-
-      if (componentIdentity === currentlyRenderingComponent) {
-        // This is a render phase update. Stash it in a lazily-created map of
-        // queue -> linked list of updates. After this render pass, we'll restart
-        // and apply the stashed updates on top of the work-in-progress hook.
-        didScheduleRenderPhaseUpdate = true;
-        var update = {
-          action: action,
-          next: null
-        };
-
-        if (renderPhaseUpdates === null) {
-          renderPhaseUpdates = new Map();
-        }
-
-        var firstRenderPhaseUpdate = renderPhaseUpdates.get(queue);
-
-        if (firstRenderPhaseUpdate === undefined) {
-          renderPhaseUpdates.set(queue, update);
-        } else {
-          // Append the update to the end of the list.
-          var lastRenderPhaseUpdate = firstRenderPhaseUpdate;
-
-          while (lastRenderPhaseUpdate.next !== null) {
-            lastRenderPhaseUpdate = lastRenderPhaseUpdate.next;
-          }
-
-          lastRenderPhaseUpdate.next = update;
-        }
-      } else {// This means an update has happened after the function component has
-        // returned. On the server this is a no-op. In React Fiber, the update
-        // would be scheduled for a future render.
-      }
-    }
-
-    function useCallback(callback, deps) {
-      // Callbacks are passed as they are in the server environment.
-      return callback;
-    }
-
-    function noop() {}
-
-    var currentThreadID = 0;
-
-    function setCurrentThreadID(threadID) {
-      currentThreadID = threadID;
-    }
-
-    var Dispatcher = {
-      readContext: readContext,
-      useContext: useContext,
-      useMemo: useMemo,
-      useReducer: useReducer,
-      useRef: useRef,
-      useState: useState,
-      useLayoutEffect: useLayoutEffect,
-      useCallback: useCallback,
-      // useImperativeHandle is not run in the server environment
-      useImperativeHandle: noop,
-      // Effects are not run in the server environment.
-      useEffect: noop,
-      // Debugging effect
-      useDebugValue: noop
+      });
     };
-    var HTML_NAMESPACE = 'http://www.w3.org/1999/xhtml';
-    var MATH_NAMESPACE = 'http://www.w3.org/1998/Math/MathML';
-    var SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
-    var Namespaces = {
-      html: HTML_NAMESPACE,
-      mathml: MATH_NAMESPACE,
-      svg: SVG_NAMESPACE
-    }; // Assumes there is no parent namespace.
 
-    function getIntrinsicNamespace(type) {
-      switch (type) {
-        case 'svg':
-          return SVG_NAMESPACE;
-
-        case 'math':
-          return MATH_NAMESPACE;
-
-        default:
-          return HTML_NAMESPACE;
-      }
-    }
-
-    function getChildNamespace(parentNamespace, type) {
-      if (parentNamespace == null || parentNamespace === HTML_NAMESPACE) {
-        // No (or default) parent namespace: potential entry point.
-        return getIntrinsicNamespace(type);
-      }
-
-      if (parentNamespace === SVG_NAMESPACE && type === 'foreignObject') {
-        // We're leaving SVG.
-        return HTML_NAMESPACE;
-      } // By default, pass namespace below.
-
-
-      return parentNamespace;
-    }
-
-    var ReactDebugCurrentFrame$2 = null;
-    var ReactControlledValuePropTypes = {
-      checkPropTypes: null
+    var subscription = observableQuery.subscribe(invalidateCurrentResult, invalidateCurrentResult);
+    Object(_queryCache__WEBPACK_IMPORTED_MODULE_5__["invalidateCachedObservableQuery"])(client, watchQueryOptions);
+    return function () {
+      subscription.unsubscribe();
     };
-    {
-      ReactDebugCurrentFrame$2 = ReactSharedInternals.ReactDebugCurrentFrame;
-      var hasReadOnlyValue = {
-        button: true,
-        checkbox: true,
-        image: true,
-        hidden: true,
-        radio: true,
-        reset: true,
-        submit: true
-      };
-      var propTypes = {
-        value: function (props, propName, componentName) {
-          if (hasReadOnlyValue[props.type] || props.onChange || props.readOnly || props.disabled || props[propName] == null) {
-            return null;
-          }
+  }, [shouldSkip, observableQuery]);
+  ensureSupportedFetchPolicy(suspend, fetchPolicy);
 
-          return new Error('You provided a `value` prop to a form field without an ' + '`onChange` handler. This will render a read-only field. If ' + 'the field should be mutable use `defaultValue`. Otherwise, ' + 'set either `onChange` or `readOnly`.');
-        },
-        checked: function (props, propName, componentName) {
-          if (props.onChange || props.readOnly || props.disabled || props[propName] == null) {
-            return null;
-          }
+  if (currentResult.partial) {
+    if (suspend) {
+      // throw a promise - use the react suspense to wait until the data is
+      // available
+      throw observableQuery.result();
+    }
 
-          return new Error('You provided a `checked` prop to a form field without an ' + '`onChange` handler. This will render a read-only field. If ' + 'the field should be mutable use `defaultChecked`. Otherwise, ' + 'set either `onChange` or `readOnly`.');
+    if (ssrInUse) {
+      ssrManager.register(observableQuery.result());
+    }
+  }
+
+  return currentResult;
+}
+
+function ensureSupportedFetchPolicy(suspend, fetchPolicy) {
+  if (suspend && fetchPolicy && fetchPolicy !== 'cache-first') {
+    throw new Error("Fetch policy " + fetchPolicy + " is not supported without 'suspend: false'");
+  }
+}
+
+/***/ }),
+
+/***/ "./node_modules/react-apollo-hooks/es/useSubscription.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/react-apollo-hooks/es/useSubscription.js ***!
+  \***************************************************************/
+/*! exports provided: useSubscription */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "useSubscription", function() { return useSubscription; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _ApolloContext__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ApolloContext */ "./node_modules/react-apollo-hooks/es/ApolloContext.js");
+/* harmony import */ var _internal_actHack__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./internal/actHack */ "./node_modules/react-apollo-hooks/es/internal/actHack.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils */ "./node_modules/react-apollo-hooks/es/utils.js");
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
         }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+
+
+
+
+function useSubscription(query, _temp) {
+  var _ref = _temp === void 0 ? {} : _temp,
+      onSubscriptionData = _ref.onSubscriptionData,
+      overrideClient = _ref.client,
+      options = _objectWithoutPropertiesLoose(_ref, ["onSubscriptionData", "client"]);
+
+  var client = Object(_ApolloContext__WEBPACK_IMPORTED_MODULE_1__["useApolloClient"])(overrideClient);
+  var onSubscriptionDataRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
+
+  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])({
+    loading: true
+  }),
+      result = _useState[0],
+      setResultBase = _useState[1];
+
+  onSubscriptionDataRef.current = onSubscriptionData;
+
+  function setResult(newResult) {
+    // A hack to get rid React warnings during tests.
+    Object(_internal_actHack__WEBPACK_IMPORTED_MODULE_2__["default"])(function () {
+      setResultBase(newResult);
+    });
+  }
+
+  Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
+    if (options.skip === true) {
+      return;
+    }
+
+    var subscription = client.subscribe(_extends({}, options, {
+      query: query
+    })).subscribe(function (nextResult) {
+      var newResult = {
+        data: nextResult.data,
+        error: undefined,
+        loading: false
       };
-      /**
-       * Provide a linked `value` attribute for controlled forms. You should not use
-       * this outside of the ReactDOM controlled form components.
-       */
+      setResult(newResult);
 
-      ReactControlledValuePropTypes.checkPropTypes = function (tagName, props) {
-        checkPropTypes(propTypes, props, 'prop', tagName, ReactDebugCurrentFrame$2.getStackAddendum);
-      };
-    } // For HTML, certain tags should omit their close tag. We keep a whitelist for
-    // those special-case tags.
-
-    var omittedCloseTags = {
-      area: true,
-      base: true,
-      br: true,
-      col: true,
-      embed: true,
-      hr: true,
-      img: true,
-      input: true,
-      keygen: true,
-      link: true,
-      meta: true,
-      param: true,
-      source: true,
-      track: true,
-      wbr: true // NOTE: menuitem's close tag should be omitted, but that causes problems.
-
-    }; // For HTML, certain tags cannot have children. This has the same purpose as
-    // `omittedCloseTags` except that `menuitem` should still have its closing tag.
-
-    var voidElementTags = _assign({
-      menuitem: true
-    }, omittedCloseTags); // TODO: We can remove this if we add invariantWithStack()
-    // or add stack by default to invariants where possible.
-
-
-    var HTML = '__html';
-    var ReactDebugCurrentFrame$3 = null;
-    {
-      ReactDebugCurrentFrame$3 = ReactSharedInternals.ReactDebugCurrentFrame;
-    }
-
-    function assertValidProps(tag, props) {
-      if (!props) {
-        return;
-      } // Note the use of `==` which checks for null or undefined.
-
-
-      if (voidElementTags[tag]) {
-        !(props.children == null && props.dangerouslySetInnerHTML == null) ? invariant(false, '%s is a void element tag and must neither have `children` nor use `dangerouslySetInnerHTML`.%s', tag, ReactDebugCurrentFrame$3.getStackAddendum()) : void 0;
+      if (onSubscriptionDataRef.current) {
+        onSubscriptionDataRef.current({
+          client: client,
+          subscriptionData: newResult
+        });
       }
-
-      if (props.dangerouslySetInnerHTML != null) {
-        !(props.children == null) ? invariant(false, 'Can only set one of `children` or `props.dangerouslySetInnerHTML`.') : void 0;
-        !(typeof props.dangerouslySetInnerHTML === 'object' && HTML in props.dangerouslySetInnerHTML) ? invariant(false, '`props.dangerouslySetInnerHTML` must be in the form `{__html: ...}`. Please visit https://fb.me/react-invariant-dangerously-set-inner-html for more information.') : void 0;
-      }
-
-      {
-        !(props.suppressContentEditableWarning || !props.contentEditable || props.children == null) ? warning$1(false, 'A component is `contentEditable` and contains `children` managed by ' + 'React. It is now your responsibility to guarantee that none of ' + 'those nodes are unexpectedly modified or duplicated. This is ' + 'probably not intentional.') : void 0;
-      }
-      !(props.style == null || typeof props.style === 'object') ? invariant(false, 'The `style` prop expects a mapping from style properties to values, not a string. For example, style={{marginRight: spacing + \'em\'}} when using JSX.%s', ReactDebugCurrentFrame$3.getStackAddendum()) : void 0;
-    }
-    /**
-     * CSS properties which accept numbers but are not in units of "px".
-     */
-
-
-    var isUnitlessNumber = {
-      animationIterationCount: true,
-      borderImageOutset: true,
-      borderImageSlice: true,
-      borderImageWidth: true,
-      boxFlex: true,
-      boxFlexGroup: true,
-      boxOrdinalGroup: true,
-      columnCount: true,
-      columns: true,
-      flex: true,
-      flexGrow: true,
-      flexPositive: true,
-      flexShrink: true,
-      flexNegative: true,
-      flexOrder: true,
-      gridArea: true,
-      gridRow: true,
-      gridRowEnd: true,
-      gridRowSpan: true,
-      gridRowStart: true,
-      gridColumn: true,
-      gridColumnEnd: true,
-      gridColumnSpan: true,
-      gridColumnStart: true,
-      fontWeight: true,
-      lineClamp: true,
-      lineHeight: true,
-      opacity: true,
-      order: true,
-      orphans: true,
-      tabSize: true,
-      widows: true,
-      zIndex: true,
-      zoom: true,
-      // SVG-related properties
-      fillOpacity: true,
-      floodOpacity: true,
-      stopOpacity: true,
-      strokeDasharray: true,
-      strokeDashoffset: true,
-      strokeMiterlimit: true,
-      strokeOpacity: true,
-      strokeWidth: true
-    };
-    /**
-     * @param {string} prefix vendor-specific prefix, eg: Webkit
-     * @param {string} key style name, eg: transitionDuration
-     * @return {string} style name prefixed with `prefix`, properly camelCased, eg:
-     * WebkitTransitionDuration
-     */
-
-    function prefixKey(prefix, key) {
-      return prefix + key.charAt(0).toUpperCase() + key.substring(1);
-    }
-    /**
-     * Support style names that may come passed in prefixed by adding permutations
-     * of vendor prefixes.
-     */
-
-
-    var prefixes = ['Webkit', 'ms', 'Moz', 'O']; // Using Object.keys here, or else the vanilla for-in loop makes IE8 go into an
-    // infinite loop, because it iterates over the newly added props too.
-
-    Object.keys(isUnitlessNumber).forEach(function (prop) {
-      prefixes.forEach(function (prefix) {
-        isUnitlessNumber[prefixKey(prefix, prop)] = isUnitlessNumber[prop];
+    }, function (error) {
+      setResult({
+        loading: false,
+        data: result.data,
+        error: error
       });
     });
-    /**
-     * Convert a value into the proper css writable value. The style name `name`
-     * should be logical (no hyphens), as specified
-     * in `CSSProperty.isUnitlessNumber`.
-     *
-     * @param {string} name CSS property name such as `topMargin`.
-     * @param {*} value CSS property value such as `10px`.
-     * @return {string} Normalized style value with dimensions applied.
-     */
-
-    function dangerousStyleValue(name, value, isCustomProperty) {
-      // Note that we've removed escapeTextForBrowser() calls here since the
-      // whole string will be escaped when the attribute is injected into
-      // the markup. If you provide unsafe user data here they can inject
-      // arbitrary CSS which may be problematic (I couldn't repro this):
-      // https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet
-      // http://www.thespanner.co.uk/2007/11/26/ultimate-xss-css-injection/
-      // This is not an XSS hole but instead a potential CSS injection issue
-      // which has lead to a greater discussion about how we're going to
-      // trust URLs moving forward. See #2115901
-      var isEmpty = value == null || typeof value === 'boolean' || value === '';
-
-      if (isEmpty) {
-        return '';
-      }
-
-      if (!isCustomProperty && typeof value === 'number' && value !== 0 && !(isUnitlessNumber.hasOwnProperty(name) && isUnitlessNumber[name])) {
-        return value + 'px'; // Presumes implicit 'px' suffix for unitless numbers
-      }
-
-      return ('' + value).trim();
-    }
-
-    var uppercasePattern = /([A-Z])/g;
-    var msPattern = /^ms-/;
-    /**
-     * Hyphenates a camelcased CSS property name, for example:
-     *
-     *   > hyphenateStyleName('backgroundColor')
-     *   < "background-color"
-     *   > hyphenateStyleName('MozTransition')
-     *   < "-moz-transition"
-     *   > hyphenateStyleName('msTransition')
-     *   < "-ms-transition"
-     *
-     * As Modernizr suggests (http://modernizr.com/docs/#prefixed), an `ms` prefix
-     * is converted to `-ms-`.
-     */
-
-    function hyphenateStyleName(name) {
-      return name.replace(uppercasePattern, '-$1').toLowerCase().replace(msPattern, '-ms-');
-    }
-
-    function isCustomComponent(tagName, props) {
-      if (tagName.indexOf('-') === -1) {
-        return typeof props.is === 'string';
-      }
-
-      switch (tagName) {
-        // These are reserved SVG and MathML elements.
-        // We don't mind this whitelist too much because we expect it to never grow.
-        // The alternative is to track the namespace in a few places which is convoluted.
-        // https://w3c.github.io/webcomponents/spec/custom/#custom-elements-core-concepts
-        case 'annotation-xml':
-        case 'color-profile':
-        case 'font-face':
-        case 'font-face-src':
-        case 'font-face-uri':
-        case 'font-face-format':
-        case 'font-face-name':
-        case 'missing-glyph':
-          return false;
-
-        default:
-          return true;
-      }
-    }
-
-    var warnValidStyle = function () {};
-
-    {
-      // 'msTransform' is correct, but the other prefixes should be capitalized
-      var badVendoredStyleNamePattern = /^(?:webkit|moz|o)[A-Z]/;
-      var msPattern$1 = /^-ms-/;
-      var hyphenPattern = /-(.)/g; // style values shouldn't contain a semicolon
-
-      var badStyleValueWithSemicolonPattern = /;\s*$/;
-      var warnedStyleNames = {};
-      var warnedStyleValues = {};
-      var warnedForNaNValue = false;
-      var warnedForInfinityValue = false;
-
-      var camelize = function (string) {
-        return string.replace(hyphenPattern, function (_, character) {
-          return character.toUpperCase();
-        });
-      };
-
-      var warnHyphenatedStyleName = function (name) {
-        if (warnedStyleNames.hasOwnProperty(name) && warnedStyleNames[name]) {
-          return;
-        }
-
-        warnedStyleNames[name] = true;
-        warning$1(false, 'Unsupported style property %s. Did you mean %s?', name, // As Andi Smith suggests
-        // (http://www.andismith.com/blog/2012/02/modernizr-prefixed/), an `-ms` prefix
-        // is converted to lowercase `ms`.
-        camelize(name.replace(msPattern$1, 'ms-')));
-      };
-
-      var warnBadVendoredStyleName = function (name) {
-        if (warnedStyleNames.hasOwnProperty(name) && warnedStyleNames[name]) {
-          return;
-        }
-
-        warnedStyleNames[name] = true;
-        warning$1(false, 'Unsupported vendor-prefixed style property %s. Did you mean %s?', name, name.charAt(0).toUpperCase() + name.slice(1));
-      };
-
-      var warnStyleValueWithSemicolon = function (name, value) {
-        if (warnedStyleValues.hasOwnProperty(value) && warnedStyleValues[value]) {
-          return;
-        }
-
-        warnedStyleValues[value] = true;
-        warning$1(false, "Style property values shouldn't contain a semicolon. " + 'Try "%s: %s" instead.', name, value.replace(badStyleValueWithSemicolonPattern, ''));
-      };
-
-      var warnStyleValueIsNaN = function (name, value) {
-        if (warnedForNaNValue) {
-          return;
-        }
-
-        warnedForNaNValue = true;
-        warning$1(false, '`NaN` is an invalid value for the `%s` css style property.', name);
-      };
-
-      var warnStyleValueIsInfinity = function (name, value) {
-        if (warnedForInfinityValue) {
-          return;
-        }
-
-        warnedForInfinityValue = true;
-        warning$1(false, '`Infinity` is an invalid value for the `%s` css style property.', name);
-      };
-
-      warnValidStyle = function (name, value) {
-        if (name.indexOf('-') > -1) {
-          warnHyphenatedStyleName(name);
-        } else if (badVendoredStyleNamePattern.test(name)) {
-          warnBadVendoredStyleName(name);
-        } else if (badStyleValueWithSemicolonPattern.test(value)) {
-          warnStyleValueWithSemicolon(name, value);
-        }
-
-        if (typeof value === 'number') {
-          if (isNaN(value)) {
-            warnStyleValueIsNaN(name, value);
-          } else if (!isFinite(value)) {
-            warnStyleValueIsInfinity(name, value);
-          }
-        }
-      };
-    }
-    var warnValidStyle$1 = warnValidStyle;
-    var ariaProperties = {
-      'aria-current': 0,
-      // state
-      'aria-details': 0,
-      'aria-disabled': 0,
-      // state
-      'aria-hidden': 0,
-      // state
-      'aria-invalid': 0,
-      // state
-      'aria-keyshortcuts': 0,
-      'aria-label': 0,
-      'aria-roledescription': 0,
-      // Widget Attributes
-      'aria-autocomplete': 0,
-      'aria-checked': 0,
-      'aria-expanded': 0,
-      'aria-haspopup': 0,
-      'aria-level': 0,
-      'aria-modal': 0,
-      'aria-multiline': 0,
-      'aria-multiselectable': 0,
-      'aria-orientation': 0,
-      'aria-placeholder': 0,
-      'aria-pressed': 0,
-      'aria-readonly': 0,
-      'aria-required': 0,
-      'aria-selected': 0,
-      'aria-sort': 0,
-      'aria-valuemax': 0,
-      'aria-valuemin': 0,
-      'aria-valuenow': 0,
-      'aria-valuetext': 0,
-      // Live Region Attributes
-      'aria-atomic': 0,
-      'aria-busy': 0,
-      'aria-live': 0,
-      'aria-relevant': 0,
-      // Drag-and-Drop Attributes
-      'aria-dropeffect': 0,
-      'aria-grabbed': 0,
-      // Relationship Attributes
-      'aria-activedescendant': 0,
-      'aria-colcount': 0,
-      'aria-colindex': 0,
-      'aria-colspan': 0,
-      'aria-controls': 0,
-      'aria-describedby': 0,
-      'aria-errormessage': 0,
-      'aria-flowto': 0,
-      'aria-labelledby': 0,
-      'aria-owns': 0,
-      'aria-posinset': 0,
-      'aria-rowcount': 0,
-      'aria-rowindex': 0,
-      'aria-rowspan': 0,
-      'aria-setsize': 0
-    };
-    var warnedProperties = {};
-    var rARIA = new RegExp('^(aria)-[' + ATTRIBUTE_NAME_CHAR + ']*$');
-    var rARIACamel = new RegExp('^(aria)[A-Z][' + ATTRIBUTE_NAME_CHAR + ']*$');
-    var hasOwnProperty$2 = Object.prototype.hasOwnProperty;
-
-    function validateProperty(tagName, name) {
-      if (hasOwnProperty$2.call(warnedProperties, name) && warnedProperties[name]) {
-        return true;
-      }
-
-      if (rARIACamel.test(name)) {
-        var ariaName = 'aria-' + name.slice(4).toLowerCase();
-        var correctName = ariaProperties.hasOwnProperty(ariaName) ? ariaName : null; // If this is an aria-* attribute, but is not listed in the known DOM
-        // DOM properties, then it is an invalid aria-* attribute.
-
-        if (correctName == null) {
-          warning$1(false, 'Invalid ARIA attribute `%s`. ARIA attributes follow the pattern aria-* and must be lowercase.', name);
-          warnedProperties[name] = true;
-          return true;
-        } // aria-* attributes should be lowercase; suggest the lowercase version.
-
-
-        if (name !== correctName) {
-          warning$1(false, 'Invalid ARIA attribute `%s`. Did you mean `%s`?', name, correctName);
-          warnedProperties[name] = true;
-          return true;
-        }
-      }
-
-      if (rARIA.test(name)) {
-        var lowerCasedName = name.toLowerCase();
-        var standardName = ariaProperties.hasOwnProperty(lowerCasedName) ? lowerCasedName : null; // If this is an aria-* attribute, but is not listed in the known DOM
-        // DOM properties, then it is an invalid aria-* attribute.
-
-        if (standardName == null) {
-          warnedProperties[name] = true;
-          return false;
-        } // aria-* attributes should be lowercase; suggest the lowercase version.
-
-
-        if (name !== standardName) {
-          warning$1(false, 'Unknown ARIA attribute `%s`. Did you mean `%s`?', name, standardName);
-          warnedProperties[name] = true;
-          return true;
-        }
-      }
-
-      return true;
-    }
-
-    function warnInvalidARIAProps(type, props) {
-      var invalidProps = [];
-
-      for (var key in props) {
-        var isValid = validateProperty(type, key);
-
-        if (!isValid) {
-          invalidProps.push(key);
-        }
-      }
-
-      var unknownPropString = invalidProps.map(function (prop) {
-        return '`' + prop + '`';
-      }).join(', ');
-
-      if (invalidProps.length === 1) {
-        warning$1(false, 'Invalid aria prop %s on <%s> tag. ' + 'For details, see https://fb.me/invalid-aria-prop', unknownPropString, type);
-      } else if (invalidProps.length > 1) {
-        warning$1(false, 'Invalid aria props %s on <%s> tag. ' + 'For details, see https://fb.me/invalid-aria-prop', unknownPropString, type);
-      }
-    }
-
-    function validateProperties(type, props) {
-      if (isCustomComponent(type, props)) {
-        return;
-      }
-
-      warnInvalidARIAProps(type, props);
-    }
-
-    var didWarnValueNull = false;
-
-    function validateProperties$1(type, props) {
-      if (type !== 'input' && type !== 'textarea' && type !== 'select') {
-        return;
-      }
-
-      if (props != null && props.value === null && !didWarnValueNull) {
-        didWarnValueNull = true;
-
-        if (type === 'select' && props.multiple) {
-          warning$1(false, '`value` prop on `%s` should not be null. ' + 'Consider using an empty array when `multiple` is set to `true` ' + 'to clear the component or `undefined` for uncontrolled components.', type);
-        } else {
-          warning$1(false, '`value` prop on `%s` should not be null. ' + 'Consider using an empty string to clear the component or `undefined` ' + 'for uncontrolled components.', type);
-        }
-      }
-    }
-    /**
-     * Registers plugins so that they can extract and dispatch events.
-     *
-     * @see {EventPluginHub}
-     */
-
-    /**
-     * Ordered list of injected plugins.
-     */
-
-    /**
-     * Mapping from event name to dispatch config
-     */
-
-    /**
-     * Mapping from registration name to plugin module
-     */
-
-
-    var registrationNameModules = {};
-    /**
-     * Mapping from registration name to event name
-     */
-
-    /**
-     * Mapping from lowercase registration names to the properly cased version,
-     * used to warn in the case of missing event handlers. Available
-     * only in true.
-     * @type {Object}
-     */
-
-    var possibleRegistrationNames = {}; // Trust the developer to only use possibleRegistrationNames in true
-
-    /**
-     * Injects an ordering of plugins (by plugin name). This allows the ordering
-     * to be decoupled from injection of the actual plugins so that ordering is
-     * always deterministic regardless of packaging, on-the-fly injection, etc.
-     *
-     * @param {array} InjectedEventPluginOrder
-     * @internal
-     * @see {EventPluginHub.injection.injectEventPluginOrder}
-     */
-
-    /**
-     * Injects plugins to be used by `EventPluginHub`. The plugin names must be
-     * in the ordering injected by `injectEventPluginOrder`.
-     *
-     * Plugins can be injected as part of page initialization or on-the-fly.
-     *
-     * @param {object} injectedNamesToPlugins Map from names to plugin modules.
-     * @internal
-     * @see {EventPluginHub.injection.injectEventPluginsByName}
-     */
-    // When adding attributes to the HTML or SVG whitelist, be sure to
-    // also add them to this module to ensure casing and incorrect name
-    // warnings.
-
-    var possibleStandardNames = {
-      // HTML
-      accept: 'accept',
-      acceptcharset: 'acceptCharset',
-      'accept-charset': 'acceptCharset',
-      accesskey: 'accessKey',
-      action: 'action',
-      allowfullscreen: 'allowFullScreen',
-      alt: 'alt',
-      as: 'as',
-      async: 'async',
-      autocapitalize: 'autoCapitalize',
-      autocomplete: 'autoComplete',
-      autocorrect: 'autoCorrect',
-      autofocus: 'autoFocus',
-      autoplay: 'autoPlay',
-      autosave: 'autoSave',
-      capture: 'capture',
-      cellpadding: 'cellPadding',
-      cellspacing: 'cellSpacing',
-      challenge: 'challenge',
-      charset: 'charSet',
-      checked: 'checked',
-      children: 'children',
-      cite: 'cite',
-      class: 'className',
-      classid: 'classID',
-      classname: 'className',
-      cols: 'cols',
-      colspan: 'colSpan',
-      content: 'content',
-      contenteditable: 'contentEditable',
-      contextmenu: 'contextMenu',
-      controls: 'controls',
-      controlslist: 'controlsList',
-      coords: 'coords',
-      crossorigin: 'crossOrigin',
-      dangerouslysetinnerhtml: 'dangerouslySetInnerHTML',
-      data: 'data',
-      datetime: 'dateTime',
-      default: 'default',
-      defaultchecked: 'defaultChecked',
-      defaultvalue: 'defaultValue',
-      defer: 'defer',
-      dir: 'dir',
-      disabled: 'disabled',
-      download: 'download',
-      draggable: 'draggable',
-      enctype: 'encType',
-      for: 'htmlFor',
-      form: 'form',
-      formmethod: 'formMethod',
-      formaction: 'formAction',
-      formenctype: 'formEncType',
-      formnovalidate: 'formNoValidate',
-      formtarget: 'formTarget',
-      frameborder: 'frameBorder',
-      headers: 'headers',
-      height: 'height',
-      hidden: 'hidden',
-      high: 'high',
-      href: 'href',
-      hreflang: 'hrefLang',
-      htmlfor: 'htmlFor',
-      httpequiv: 'httpEquiv',
-      'http-equiv': 'httpEquiv',
-      icon: 'icon',
-      id: 'id',
-      innerhtml: 'innerHTML',
-      inputmode: 'inputMode',
-      integrity: 'integrity',
-      is: 'is',
-      itemid: 'itemID',
-      itemprop: 'itemProp',
-      itemref: 'itemRef',
-      itemscope: 'itemScope',
-      itemtype: 'itemType',
-      keyparams: 'keyParams',
-      keytype: 'keyType',
-      kind: 'kind',
-      label: 'label',
-      lang: 'lang',
-      list: 'list',
-      loop: 'loop',
-      low: 'low',
-      manifest: 'manifest',
-      marginwidth: 'marginWidth',
-      marginheight: 'marginHeight',
-      max: 'max',
-      maxlength: 'maxLength',
-      media: 'media',
-      mediagroup: 'mediaGroup',
-      method: 'method',
-      min: 'min',
-      minlength: 'minLength',
-      multiple: 'multiple',
-      muted: 'muted',
-      name: 'name',
-      nomodule: 'noModule',
-      nonce: 'nonce',
-      novalidate: 'noValidate',
-      open: 'open',
-      optimum: 'optimum',
-      pattern: 'pattern',
-      placeholder: 'placeholder',
-      playsinline: 'playsInline',
-      poster: 'poster',
-      preload: 'preload',
-      profile: 'profile',
-      radiogroup: 'radioGroup',
-      readonly: 'readOnly',
-      referrerpolicy: 'referrerPolicy',
-      rel: 'rel',
-      required: 'required',
-      reversed: 'reversed',
-      role: 'role',
-      rows: 'rows',
-      rowspan: 'rowSpan',
-      sandbox: 'sandbox',
-      scope: 'scope',
-      scoped: 'scoped',
-      scrolling: 'scrolling',
-      seamless: 'seamless',
-      selected: 'selected',
-      shape: 'shape',
-      size: 'size',
-      sizes: 'sizes',
-      span: 'span',
-      spellcheck: 'spellCheck',
-      src: 'src',
-      srcdoc: 'srcDoc',
-      srclang: 'srcLang',
-      srcset: 'srcSet',
-      start: 'start',
-      step: 'step',
-      style: 'style',
-      summary: 'summary',
-      tabindex: 'tabIndex',
-      target: 'target',
-      title: 'title',
-      type: 'type',
-      usemap: 'useMap',
-      value: 'value',
-      width: 'width',
-      wmode: 'wmode',
-      wrap: 'wrap',
-      // SVG
-      about: 'about',
-      accentheight: 'accentHeight',
-      'accent-height': 'accentHeight',
-      accumulate: 'accumulate',
-      additive: 'additive',
-      alignmentbaseline: 'alignmentBaseline',
-      'alignment-baseline': 'alignmentBaseline',
-      allowreorder: 'allowReorder',
-      alphabetic: 'alphabetic',
-      amplitude: 'amplitude',
-      arabicform: 'arabicForm',
-      'arabic-form': 'arabicForm',
-      ascent: 'ascent',
-      attributename: 'attributeName',
-      attributetype: 'attributeType',
-      autoreverse: 'autoReverse',
-      azimuth: 'azimuth',
-      basefrequency: 'baseFrequency',
-      baselineshift: 'baselineShift',
-      'baseline-shift': 'baselineShift',
-      baseprofile: 'baseProfile',
-      bbox: 'bbox',
-      begin: 'begin',
-      bias: 'bias',
-      by: 'by',
-      calcmode: 'calcMode',
-      capheight: 'capHeight',
-      'cap-height': 'capHeight',
-      clip: 'clip',
-      clippath: 'clipPath',
-      'clip-path': 'clipPath',
-      clippathunits: 'clipPathUnits',
-      cliprule: 'clipRule',
-      'clip-rule': 'clipRule',
-      color: 'color',
-      colorinterpolation: 'colorInterpolation',
-      'color-interpolation': 'colorInterpolation',
-      colorinterpolationfilters: 'colorInterpolationFilters',
-      'color-interpolation-filters': 'colorInterpolationFilters',
-      colorprofile: 'colorProfile',
-      'color-profile': 'colorProfile',
-      colorrendering: 'colorRendering',
-      'color-rendering': 'colorRendering',
-      contentscripttype: 'contentScriptType',
-      contentstyletype: 'contentStyleType',
-      cursor: 'cursor',
-      cx: 'cx',
-      cy: 'cy',
-      d: 'd',
-      datatype: 'datatype',
-      decelerate: 'decelerate',
-      descent: 'descent',
-      diffuseconstant: 'diffuseConstant',
-      direction: 'direction',
-      display: 'display',
-      divisor: 'divisor',
-      dominantbaseline: 'dominantBaseline',
-      'dominant-baseline': 'dominantBaseline',
-      dur: 'dur',
-      dx: 'dx',
-      dy: 'dy',
-      edgemode: 'edgeMode',
-      elevation: 'elevation',
-      enablebackground: 'enableBackground',
-      'enable-background': 'enableBackground',
-      end: 'end',
-      exponent: 'exponent',
-      externalresourcesrequired: 'externalResourcesRequired',
-      fill: 'fill',
-      fillopacity: 'fillOpacity',
-      'fill-opacity': 'fillOpacity',
-      fillrule: 'fillRule',
-      'fill-rule': 'fillRule',
-      filter: 'filter',
-      filterres: 'filterRes',
-      filterunits: 'filterUnits',
-      floodopacity: 'floodOpacity',
-      'flood-opacity': 'floodOpacity',
-      floodcolor: 'floodColor',
-      'flood-color': 'floodColor',
-      focusable: 'focusable',
-      fontfamily: 'fontFamily',
-      'font-family': 'fontFamily',
-      fontsize: 'fontSize',
-      'font-size': 'fontSize',
-      fontsizeadjust: 'fontSizeAdjust',
-      'font-size-adjust': 'fontSizeAdjust',
-      fontstretch: 'fontStretch',
-      'font-stretch': 'fontStretch',
-      fontstyle: 'fontStyle',
-      'font-style': 'fontStyle',
-      fontvariant: 'fontVariant',
-      'font-variant': 'fontVariant',
-      fontweight: 'fontWeight',
-      'font-weight': 'fontWeight',
-      format: 'format',
-      from: 'from',
-      fx: 'fx',
-      fy: 'fy',
-      g1: 'g1',
-      g2: 'g2',
-      glyphname: 'glyphName',
-      'glyph-name': 'glyphName',
-      glyphorientationhorizontal: 'glyphOrientationHorizontal',
-      'glyph-orientation-horizontal': 'glyphOrientationHorizontal',
-      glyphorientationvertical: 'glyphOrientationVertical',
-      'glyph-orientation-vertical': 'glyphOrientationVertical',
-      glyphref: 'glyphRef',
-      gradienttransform: 'gradientTransform',
-      gradientunits: 'gradientUnits',
-      hanging: 'hanging',
-      horizadvx: 'horizAdvX',
-      'horiz-adv-x': 'horizAdvX',
-      horizoriginx: 'horizOriginX',
-      'horiz-origin-x': 'horizOriginX',
-      ideographic: 'ideographic',
-      imagerendering: 'imageRendering',
-      'image-rendering': 'imageRendering',
-      in2: 'in2',
-      in: 'in',
-      inlist: 'inlist',
-      intercept: 'intercept',
-      k1: 'k1',
-      k2: 'k2',
-      k3: 'k3',
-      k4: 'k4',
-      k: 'k',
-      kernelmatrix: 'kernelMatrix',
-      kernelunitlength: 'kernelUnitLength',
-      kerning: 'kerning',
-      keypoints: 'keyPoints',
-      keysplines: 'keySplines',
-      keytimes: 'keyTimes',
-      lengthadjust: 'lengthAdjust',
-      letterspacing: 'letterSpacing',
-      'letter-spacing': 'letterSpacing',
-      lightingcolor: 'lightingColor',
-      'lighting-color': 'lightingColor',
-      limitingconeangle: 'limitingConeAngle',
-      local: 'local',
-      markerend: 'markerEnd',
-      'marker-end': 'markerEnd',
-      markerheight: 'markerHeight',
-      markermid: 'markerMid',
-      'marker-mid': 'markerMid',
-      markerstart: 'markerStart',
-      'marker-start': 'markerStart',
-      markerunits: 'markerUnits',
-      markerwidth: 'markerWidth',
-      mask: 'mask',
-      maskcontentunits: 'maskContentUnits',
-      maskunits: 'maskUnits',
-      mathematical: 'mathematical',
-      mode: 'mode',
-      numoctaves: 'numOctaves',
-      offset: 'offset',
-      opacity: 'opacity',
-      operator: 'operator',
-      order: 'order',
-      orient: 'orient',
-      orientation: 'orientation',
-      origin: 'origin',
-      overflow: 'overflow',
-      overlineposition: 'overlinePosition',
-      'overline-position': 'overlinePosition',
-      overlinethickness: 'overlineThickness',
-      'overline-thickness': 'overlineThickness',
-      paintorder: 'paintOrder',
-      'paint-order': 'paintOrder',
-      panose1: 'panose1',
-      'panose-1': 'panose1',
-      pathlength: 'pathLength',
-      patterncontentunits: 'patternContentUnits',
-      patterntransform: 'patternTransform',
-      patternunits: 'patternUnits',
-      pointerevents: 'pointerEvents',
-      'pointer-events': 'pointerEvents',
-      points: 'points',
-      pointsatx: 'pointsAtX',
-      pointsaty: 'pointsAtY',
-      pointsatz: 'pointsAtZ',
-      prefix: 'prefix',
-      preservealpha: 'preserveAlpha',
-      preserveaspectratio: 'preserveAspectRatio',
-      primitiveunits: 'primitiveUnits',
-      property: 'property',
-      r: 'r',
-      radius: 'radius',
-      refx: 'refX',
-      refy: 'refY',
-      renderingintent: 'renderingIntent',
-      'rendering-intent': 'renderingIntent',
-      repeatcount: 'repeatCount',
-      repeatdur: 'repeatDur',
-      requiredextensions: 'requiredExtensions',
-      requiredfeatures: 'requiredFeatures',
-      resource: 'resource',
-      restart: 'restart',
-      result: 'result',
-      results: 'results',
-      rotate: 'rotate',
-      rx: 'rx',
-      ry: 'ry',
-      scale: 'scale',
-      security: 'security',
-      seed: 'seed',
-      shaperendering: 'shapeRendering',
-      'shape-rendering': 'shapeRendering',
-      slope: 'slope',
-      spacing: 'spacing',
-      specularconstant: 'specularConstant',
-      specularexponent: 'specularExponent',
-      speed: 'speed',
-      spreadmethod: 'spreadMethod',
-      startoffset: 'startOffset',
-      stddeviation: 'stdDeviation',
-      stemh: 'stemh',
-      stemv: 'stemv',
-      stitchtiles: 'stitchTiles',
-      stopcolor: 'stopColor',
-      'stop-color': 'stopColor',
-      stopopacity: 'stopOpacity',
-      'stop-opacity': 'stopOpacity',
-      strikethroughposition: 'strikethroughPosition',
-      'strikethrough-position': 'strikethroughPosition',
-      strikethroughthickness: 'strikethroughThickness',
-      'strikethrough-thickness': 'strikethroughThickness',
-      string: 'string',
-      stroke: 'stroke',
-      strokedasharray: 'strokeDasharray',
-      'stroke-dasharray': 'strokeDasharray',
-      strokedashoffset: 'strokeDashoffset',
-      'stroke-dashoffset': 'strokeDashoffset',
-      strokelinecap: 'strokeLinecap',
-      'stroke-linecap': 'strokeLinecap',
-      strokelinejoin: 'strokeLinejoin',
-      'stroke-linejoin': 'strokeLinejoin',
-      strokemiterlimit: 'strokeMiterlimit',
-      'stroke-miterlimit': 'strokeMiterlimit',
-      strokewidth: 'strokeWidth',
-      'stroke-width': 'strokeWidth',
-      strokeopacity: 'strokeOpacity',
-      'stroke-opacity': 'strokeOpacity',
-      suppresscontenteditablewarning: 'suppressContentEditableWarning',
-      suppresshydrationwarning: 'suppressHydrationWarning',
-      surfacescale: 'surfaceScale',
-      systemlanguage: 'systemLanguage',
-      tablevalues: 'tableValues',
-      targetx: 'targetX',
-      targety: 'targetY',
-      textanchor: 'textAnchor',
-      'text-anchor': 'textAnchor',
-      textdecoration: 'textDecoration',
-      'text-decoration': 'textDecoration',
-      textlength: 'textLength',
-      textrendering: 'textRendering',
-      'text-rendering': 'textRendering',
-      to: 'to',
-      transform: 'transform',
-      typeof: 'typeof',
-      u1: 'u1',
-      u2: 'u2',
-      underlineposition: 'underlinePosition',
-      'underline-position': 'underlinePosition',
-      underlinethickness: 'underlineThickness',
-      'underline-thickness': 'underlineThickness',
-      unicode: 'unicode',
-      unicodebidi: 'unicodeBidi',
-      'unicode-bidi': 'unicodeBidi',
-      unicoderange: 'unicodeRange',
-      'unicode-range': 'unicodeRange',
-      unitsperem: 'unitsPerEm',
-      'units-per-em': 'unitsPerEm',
-      unselectable: 'unselectable',
-      valphabetic: 'vAlphabetic',
-      'v-alphabetic': 'vAlphabetic',
-      values: 'values',
-      vectoreffect: 'vectorEffect',
-      'vector-effect': 'vectorEffect',
-      version: 'version',
-      vertadvy: 'vertAdvY',
-      'vert-adv-y': 'vertAdvY',
-      vertoriginx: 'vertOriginX',
-      'vert-origin-x': 'vertOriginX',
-      vertoriginy: 'vertOriginY',
-      'vert-origin-y': 'vertOriginY',
-      vhanging: 'vHanging',
-      'v-hanging': 'vHanging',
-      videographic: 'vIdeographic',
-      'v-ideographic': 'vIdeographic',
-      viewbox: 'viewBox',
-      viewtarget: 'viewTarget',
-      visibility: 'visibility',
-      vmathematical: 'vMathematical',
-      'v-mathematical': 'vMathematical',
-      vocab: 'vocab',
-      widths: 'widths',
-      wordspacing: 'wordSpacing',
-      'word-spacing': 'wordSpacing',
-      writingmode: 'writingMode',
-      'writing-mode': 'writingMode',
-      x1: 'x1',
-      x2: 'x2',
-      x: 'x',
-      xchannelselector: 'xChannelSelector',
-      xheight: 'xHeight',
-      'x-height': 'xHeight',
-      xlinkactuate: 'xlinkActuate',
-      'xlink:actuate': 'xlinkActuate',
-      xlinkarcrole: 'xlinkArcrole',
-      'xlink:arcrole': 'xlinkArcrole',
-      xlinkhref: 'xlinkHref',
-      'xlink:href': 'xlinkHref',
-      xlinkrole: 'xlinkRole',
-      'xlink:role': 'xlinkRole',
-      xlinkshow: 'xlinkShow',
-      'xlink:show': 'xlinkShow',
-      xlinktitle: 'xlinkTitle',
-      'xlink:title': 'xlinkTitle',
-      xlinktype: 'xlinkType',
-      'xlink:type': 'xlinkType',
-      xmlbase: 'xmlBase',
-      'xml:base': 'xmlBase',
-      xmllang: 'xmlLang',
-      'xml:lang': 'xmlLang',
-      xmlns: 'xmlns',
-      'xml:space': 'xmlSpace',
-      xmlnsxlink: 'xmlnsXlink',
-      'xmlns:xlink': 'xmlnsXlink',
-      xmlspace: 'xmlSpace',
-      y1: 'y1',
-      y2: 'y2',
-      y: 'y',
-      ychannelselector: 'yChannelSelector',
-      z: 'z',
-      zoomandpan: 'zoomAndPan'
-    };
-
-    var validateProperty$1 = function () {};
-
-    {
-      var warnedProperties$1 = {};
-      var _hasOwnProperty = Object.prototype.hasOwnProperty;
-      var EVENT_NAME_REGEX = /^on./;
-      var INVALID_EVENT_NAME_REGEX = /^on[^A-Z]/;
-      var rARIA$1 = new RegExp('^(aria)-[' + ATTRIBUTE_NAME_CHAR + ']*$');
-      var rARIACamel$1 = new RegExp('^(aria)[A-Z][' + ATTRIBUTE_NAME_CHAR + ']*$');
-
-      validateProperty$1 = function (tagName, name, value, canUseEventSystem) {
-        if (_hasOwnProperty.call(warnedProperties$1, name) && warnedProperties$1[name]) {
-          return true;
-        }
-
-        var lowerCasedName = name.toLowerCase();
-
-        if (lowerCasedName === 'onfocusin' || lowerCasedName === 'onfocusout') {
-          warning$1(false, 'React uses onFocus and onBlur instead of onFocusIn and onFocusOut. ' + 'All React events are normalized to bubble, so onFocusIn and onFocusOut ' + 'are not needed/supported by React.');
-          warnedProperties$1[name] = true;
-          return true;
-        } // We can't rely on the event system being injected on the server.
-
-
-        if (canUseEventSystem) {
-          if (registrationNameModules.hasOwnProperty(name)) {
-            return true;
-          }
-
-          var registrationName = possibleRegistrationNames.hasOwnProperty(lowerCasedName) ? possibleRegistrationNames[lowerCasedName] : null;
-
-          if (registrationName != null) {
-            warning$1(false, 'Invalid event handler property `%s`. Did you mean `%s`?', name, registrationName);
-            warnedProperties$1[name] = true;
-            return true;
-          }
-
-          if (EVENT_NAME_REGEX.test(name)) {
-            warning$1(false, 'Unknown event handler property `%s`. It will be ignored.', name);
-            warnedProperties$1[name] = true;
-            return true;
-          }
-        } else if (EVENT_NAME_REGEX.test(name)) {
-          // If no event plugins have been injected, we are in a server environment.
-          // So we can't tell if the event name is correct for sure, but we can filter
-          // out known bad ones like `onclick`. We can't suggest a specific replacement though.
-          if (INVALID_EVENT_NAME_REGEX.test(name)) {
-            warning$1(false, 'Invalid event handler property `%s`. ' + 'React events use the camelCase naming convention, for example `onClick`.', name);
-          }
-
-          warnedProperties$1[name] = true;
-          return true;
-        } // Let the ARIA attribute hook validate ARIA attributes
-
-
-        if (rARIA$1.test(name) || rARIACamel$1.test(name)) {
-          return true;
-        }
-
-        if (lowerCasedName === 'innerhtml') {
-          warning$1(false, 'Directly setting property `innerHTML` is not permitted. ' + 'For more information, lookup documentation on `dangerouslySetInnerHTML`.');
-          warnedProperties$1[name] = true;
-          return true;
-        }
-
-        if (lowerCasedName === 'aria') {
-          warning$1(false, 'The `aria` attribute is reserved for future use in React. ' + 'Pass individual `aria-` attributes instead.');
-          warnedProperties$1[name] = true;
-          return true;
-        }
-
-        if (lowerCasedName === 'is' && value !== null && value !== undefined && typeof value !== 'string') {
-          warning$1(false, 'Received a `%s` for a string attribute `is`. If this is expected, cast ' + 'the value to a string.', typeof value);
-          warnedProperties$1[name] = true;
-          return true;
-        }
-
-        if (typeof value === 'number' && isNaN(value)) {
-          warning$1(false, 'Received NaN for the `%s` attribute. If this is expected, cast ' + 'the value to a string.', name);
-          warnedProperties$1[name] = true;
-          return true;
-        }
-
-        var propertyInfo = getPropertyInfo(name);
-        var isReserved = propertyInfo !== null && propertyInfo.type === RESERVED; // Known attributes should match the casing specified in the property config.
-
-        if (possibleStandardNames.hasOwnProperty(lowerCasedName)) {
-          var standardName = possibleStandardNames[lowerCasedName];
-
-          if (standardName !== name) {
-            warning$1(false, 'Invalid DOM property `%s`. Did you mean `%s`?', name, standardName);
-            warnedProperties$1[name] = true;
-            return true;
-          }
-        } else if (!isReserved && name !== lowerCasedName) {
-          // Unknown attributes should have lowercase casing since that's how they
-          // will be cased anyway with server rendering.
-          warning$1(false, 'React does not recognize the `%s` prop on a DOM element. If you ' + 'intentionally want it to appear in the DOM as a custom ' + 'attribute, spell it as lowercase `%s` instead. ' + 'If you accidentally passed it from a parent component, remove ' + 'it from the DOM element.', name, lowerCasedName);
-          warnedProperties$1[name] = true;
-          return true;
-        }
-
-        if (typeof value === 'boolean' && shouldRemoveAttributeWithWarning(name, value, propertyInfo, false)) {
-          if (value) {
-            warning$1(false, 'Received `%s` for a non-boolean attribute `%s`.\n\n' + 'If you want to write it to the DOM, pass a string instead: ' + '%s="%s" or %s={value.toString()}.', value, name, name, value, name);
-          } else {
-            warning$1(false, 'Received `%s` for a non-boolean attribute `%s`.\n\n' + 'If you want to write it to the DOM, pass a string instead: ' + '%s="%s" or %s={value.toString()}.\n\n' + 'If you used to conditionally omit it with %s={condition && value}, ' + 'pass %s={condition ? value : undefined} instead.', value, name, name, value, name, name, name);
-          }
-
-          warnedProperties$1[name] = true;
-          return true;
-        } // Now that we've validated casing, do not validate
-        // data types for reserved props
-
-
-        if (isReserved) {
-          return true;
-        } // Warn when a known attribute is a bad type
-
-
-        if (shouldRemoveAttributeWithWarning(name, value, propertyInfo, false)) {
-          warnedProperties$1[name] = true;
-          return false;
-        } // Warn when passing the strings 'false' or 'true' into a boolean prop
-
-
-        if ((value === 'false' || value === 'true') && propertyInfo !== null && propertyInfo.type === BOOLEAN) {
-          warning$1(false, 'Received the string `%s` for the boolean attribute `%s`. ' + '%s ' + 'Did you mean %s={%s}?', value, name, value === 'false' ? 'The browser will interpret it as a truthy value.' : 'Although this works, it will not work as expected if you pass the string "false".', name, value);
-          warnedProperties$1[name] = true;
-          return true;
-        }
-
-        return true;
-      };
-    }
-
-    var warnUnknownProperties = function (type, props, canUseEventSystem) {
-      var unknownProps = [];
-
-      for (var key in props) {
-        var isValid = validateProperty$1(type, key, props[key], canUseEventSystem);
-
-        if (!isValid) {
-          unknownProps.push(key);
-        }
-      }
-
-      var unknownPropString = unknownProps.map(function (prop) {
-        return '`' + prop + '`';
-      }).join(', ');
-
-      if (unknownProps.length === 1) {
-        warning$1(false, 'Invalid value for prop %s on <%s> tag. Either remove it from the element, ' + 'or pass a string or number value to keep it in the DOM. ' + 'For details, see https://fb.me/react-attribute-behavior', unknownPropString, type);
-      } else if (unknownProps.length > 1) {
-        warning$1(false, 'Invalid values for props %s on <%s> tag. Either remove them from the element, ' + 'or pass a string or number value to keep them in the DOM. ' + 'For details, see https://fb.me/react-attribute-behavior', unknownPropString, type);
-      }
-    };
-
-    function validateProperties$2(type, props, canUseEventSystem) {
-      if (isCustomComponent(type, props)) {
-        return;
-      }
-
-      warnUnknownProperties(type, props, canUseEventSystem);
-    }
-
-    function _classCallCheck(instance, Constructor) {
-      if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-      }
-    } // Based on reading the React.Children implementation. TODO: type this somewhere?
-
-
-    var toArray = React.Children.toArray; // This is only used in DEV.
-    // Each entry is `this.stack` from a currently executing renderer instance.
-    // (There may be more than one because ReactDOMServer is reentrant).
-    // Each stack is an array of frames which may contain nested stacks of elements.
-
-    var currentDebugStacks = [];
-    var ReactCurrentDispatcher = ReactSharedInternals.ReactCurrentDispatcher;
-    var ReactDebugCurrentFrame = void 0;
-    var prevGetCurrentStackImpl = null;
-
-    var getCurrentServerStackImpl = function () {
-      return '';
-    };
-
-    var describeStackFrame = function (element) {
-      return '';
-    };
-
-    var validatePropertiesInDevelopment = function (type, props) {};
-
-    var pushCurrentDebugStack = function (stack) {};
-
-    var pushElementToDebugStack = function (element) {};
-
-    var popCurrentDebugStack = function () {};
-
-    var hasWarnedAboutUsingContextAsConsumer = false;
-    {
-      ReactDebugCurrentFrame = ReactSharedInternals.ReactDebugCurrentFrame;
-
-      validatePropertiesInDevelopment = function (type, props) {
-        validateProperties(type, props);
-        validateProperties$1(type, props);
-        validateProperties$2(type, props,
-        /* canUseEventSystem */
-        false);
-      };
-
-      describeStackFrame = function (element) {
-        var source = element._source;
-        var type = element.type;
-        var name = getComponentName(type);
-        var ownerName = null;
-        return describeComponentFrame(name, source, ownerName);
-      };
-
-      pushCurrentDebugStack = function (stack) {
-        currentDebugStacks.push(stack);
-
-        if (currentDebugStacks.length === 1) {
-          // We are entering a server renderer.
-          // Remember the previous (e.g. client) global stack implementation.
-          prevGetCurrentStackImpl = ReactDebugCurrentFrame.getCurrentStack;
-          ReactDebugCurrentFrame.getCurrentStack = getCurrentServerStackImpl;
-        }
-      };
-
-      pushElementToDebugStack = function (element) {
-        // For the innermost executing ReactDOMServer call,
-        var stack = currentDebugStacks[currentDebugStacks.length - 1]; // Take the innermost executing frame (e.g. <Foo>),
-
-        var frame = stack[stack.length - 1]; // and record that it has one more element associated with it.
-
-        frame.debugElementStack.push(element); // We only need this because we tail-optimize single-element
-        // children and directly handle them in an inner loop instead of
-        // creating separate frames for them.
-      };
-
-      popCurrentDebugStack = function () {
-        currentDebugStacks.pop();
-
-        if (currentDebugStacks.length === 0) {
-          // We are exiting the server renderer.
-          // Restore the previous (e.g. client) global stack implementation.
-          ReactDebugCurrentFrame.getCurrentStack = prevGetCurrentStackImpl;
-          prevGetCurrentStackImpl = null;
-        }
-      };
-
-      getCurrentServerStackImpl = function () {
-        if (currentDebugStacks.length === 0) {
-          // Nothing is currently rendering.
-          return '';
-        } // ReactDOMServer is reentrant so there may be multiple calls at the same time.
-        // Take the frames from the innermost call which is the last in the array.
-
-
-        var frames = currentDebugStacks[currentDebugStacks.length - 1];
-        var stack = ''; // Go through every frame in the stack from the innermost one.
-
-        for (var i = frames.length - 1; i >= 0; i--) {
-          var frame = frames[i]; // Every frame might have more than one debug element stack entry associated with it.
-          // This is because single-child nesting doesn't create materialized frames.
-          // Instead it would push them through `pushElementToDebugStack()`.
-
-          var _debugElementStack = frame.debugElementStack;
-
-          for (var ii = _debugElementStack.length - 1; ii >= 0; ii--) {
-            stack += describeStackFrame(_debugElementStack[ii]);
-          }
-        }
-
-        return stack;
-      };
-    }
-    var didWarnDefaultInputValue = false;
-    var didWarnDefaultChecked = false;
-    var didWarnDefaultSelectValue = false;
-    var didWarnDefaultTextareaValue = false;
-    var didWarnInvalidOptionChildren = false;
-    var didWarnAboutNoopUpdateForComponent = {};
-    var didWarnAboutBadClass = {};
-    var didWarnAboutDeprecatedWillMount = {};
-    var didWarnAboutUndefinedDerivedState = {};
-    var didWarnAboutUninitializedState = {};
-    var valuePropNames = ['value', 'defaultValue'];
-    var newlineEatingTags = {
-      listing: true,
-      pre: true,
-      textarea: true
-    }; // We accept any tag to be rendered but since this gets injected into arbitrary
-    // HTML, we want to make sure that it's a safe tag.
-    // http://www.w3.org/TR/REC-xml/#NT-Name
-
-    var VALID_TAG_REGEX = /^[a-zA-Z][a-zA-Z:_\.\-\d]*$/; // Simplified subset
-
-    var validatedTagCache = {};
-
-    function validateDangerousTag(tag) {
-      if (!validatedTagCache.hasOwnProperty(tag)) {
-        !VALID_TAG_REGEX.test(tag) ? invariant(false, 'Invalid tag: %s', tag) : void 0;
-        validatedTagCache[tag] = true;
-      }
-    }
-
-    var styleNameCache = {};
-
-    var processStyleName = function (styleName) {
-      if (styleNameCache.hasOwnProperty(styleName)) {
-        return styleNameCache[styleName];
-      }
-
-      var result = hyphenateStyleName(styleName);
-      styleNameCache[styleName] = result;
-      return result;
-    };
-
-    function createMarkupForStyles(styles) {
-      var serialized = '';
-      var delimiter = '';
-
-      for (var styleName in styles) {
-        if (!styles.hasOwnProperty(styleName)) {
-          continue;
-        }
-
-        var isCustomProperty = styleName.indexOf('--') === 0;
-        var styleValue = styles[styleName];
-        {
-          if (!isCustomProperty) {
-            warnValidStyle$1(styleName, styleValue);
-          }
-        }
-
-        if (styleValue != null) {
-          serialized += delimiter + processStyleName(styleName) + ':';
-          serialized += dangerousStyleValue(styleName, styleValue, isCustomProperty);
-          delimiter = ';';
-        }
-      }
-
-      return serialized || null;
-    }
-
-    function warnNoop(publicInstance, callerName) {
-      {
-        var _constructor = publicInstance.constructor;
-        var componentName = _constructor && getComponentName(_constructor) || 'ReactClass';
-        var warningKey = componentName + '.' + callerName;
-
-        if (didWarnAboutNoopUpdateForComponent[warningKey]) {
-          return;
-        }
-
-        warningWithoutStack$1(false, '%s(...): Can only update a mounting component. ' + 'This usually means you called %s() outside componentWillMount() on the server. ' + 'This is a no-op.\n\nPlease check the code for the %s component.', callerName, callerName, componentName);
-        didWarnAboutNoopUpdateForComponent[warningKey] = true;
-      }
-    }
-
-    function shouldConstruct(Component) {
-      return Component.prototype && Component.prototype.isReactComponent;
-    }
-
-    function getNonChildrenInnerMarkup(props) {
-      var innerHTML = props.dangerouslySetInnerHTML;
-
-      if (innerHTML != null) {
-        if (innerHTML.__html != null) {
-          return innerHTML.__html;
-        }
-      } else {
-        var content = props.children;
-
-        if (typeof content === 'string' || typeof content === 'number') {
-          return escapeTextForBrowser(content);
-        }
-      }
-
-      return null;
-    }
-
-    function flattenTopLevelChildren(children) {
-      if (!React.isValidElement(children)) {
-        return toArray(children);
-      }
-
-      var element = children;
-
-      if (element.type !== REACT_FRAGMENT_TYPE) {
-        return [element];
-      }
-
-      var fragmentChildren = element.props.children;
-
-      if (!React.isValidElement(fragmentChildren)) {
-        return toArray(fragmentChildren);
-      }
-
-      var fragmentChildElement = fragmentChildren;
-      return [fragmentChildElement];
-    }
-
-    function flattenOptionChildren(children) {
-      if (children === undefined || children === null) {
-        return children;
-      }
-
-      var content = ''; // Flatten children and warn if they aren't strings or numbers;
-      // invalid types are ignored.
-
-      React.Children.forEach(children, function (child) {
-        if (child == null) {
-          return;
-        }
-
-        content += child;
-        {
-          if (!didWarnInvalidOptionChildren && typeof child !== 'string' && typeof child !== 'number') {
-            didWarnInvalidOptionChildren = true;
-            warning$1(false, 'Only strings and numbers are supported as <option> children.');
-          }
-        }
+    return function () {
+      setResult({
+        loading: true
       });
-      return content;
-    }
-
-    var hasOwnProperty = Object.prototype.hasOwnProperty;
-    var STYLE = 'style';
-    var RESERVED_PROPS = {
-      children: null,
-      dangerouslySetInnerHTML: null,
-      suppressContentEditableWarning: null,
-      suppressHydrationWarning: null
+      subscription.unsubscribe();
     };
+  }, [query, options && Object(_utils__WEBPACK_IMPORTED_MODULE_3__["objToKey"])(options)]);
+  return result;
+}
 
-    function createOpenTagMarkup(tagVerbatim, tagLowercase, props, namespace, makeStaticMarkup, isRootElement) {
-      var ret = '<' + tagVerbatim;
+/***/ }),
 
-      for (var propKey in props) {
-        if (!hasOwnProperty.call(props, propKey)) {
-          continue;
-        }
+/***/ "./node_modules/react-apollo-hooks/es/utils.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/react-apollo-hooks/es/utils.js ***!
+  \*****************************************************/
+/*! exports provided: objToKey, isPromiseLike, compact */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-        var propValue = props[propKey];
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "objToKey", function() { return objToKey; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isPromiseLike", function() { return isPromiseLike; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compact", function() { return compact; });
+/* harmony import */ var lodash_isPlainObject__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash/isPlainObject */ "./node_modules/lodash/isPlainObject.js");
+/* harmony import */ var lodash_isPlainObject__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash_isPlainObject__WEBPACK_IMPORTED_MODULE_0__);
 
-        if (propValue == null) {
-          continue;
-        }
+function objToKey(obj) {
+  if (!lodash_isPlainObject__WEBPACK_IMPORTED_MODULE_0___default()(obj)) {
+    return obj;
+  }
 
-        if (propKey === STYLE) {
-          propValue = createMarkupForStyles(propValue);
-        }
-
-        var markup = null;
-
-        if (isCustomComponent(tagLowercase, props)) {
-          if (!RESERVED_PROPS.hasOwnProperty(propKey)) {
-            markup = createMarkupForCustomAttribute(propKey, propValue);
-          }
-        } else {
-          markup = createMarkupForProperty(propKey, propValue);
-        }
-
-        if (markup) {
-          ret += ' ' + markup;
-        }
-      } // For static pages, no need to put React ID and checksum. Saves lots of
-      // bytes.
-
-
-      if (makeStaticMarkup) {
-        return ret;
-      }
-
-      if (isRootElement) {
-        ret += ' ' + createMarkupForRoot();
-      }
-
-      return ret;
+  var sortedObj = Object.keys(obj).sort().reduce(function (result, key) {
+    result[key] = objToKey(obj[key]);
+    return result;
+  }, {});
+  return JSON.stringify(sortedObj);
+}
+function isPromiseLike(value) {
+  return value != null && typeof value.then === 'function';
+}
+function compact(obj) {
+  return Object.keys(obj).reduce(function (acc, key) {
+    if (obj[key] !== undefined) {
+      acc[key] = obj[key];
     }
 
-    function validateRenderResult(child, type) {
-      if (child === undefined) {
-        invariant(false, '%s(...): Nothing was returned from render. This usually means a return statement is missing. Or, to render nothing, return null.', getComponentName(type) || 'Component');
-      }
-    }
-
-    function resolve(child, context, threadID) {
-      while (React.isValidElement(child)) {
-        // Safe because we just checked it's an element.
-        var element = child;
-        var Component = element.type;
-        {
-          pushElementToDebugStack(element);
-        }
-
-        if (typeof Component !== 'function') {
-          break;
-        }
-
-        processChild(element, Component);
-      } // Extra closure so queue and replace can be captured properly
-
-
-      function processChild(element, Component) {
-        var publicContext = processContext(Component, context, threadID);
-        var queue = [];
-        var replace = false;
-        var updater = {
-          isMounted: function (publicInstance) {
-            return false;
-          },
-          enqueueForceUpdate: function (publicInstance) {
-            if (queue === null) {
-              warnNoop(publicInstance, 'forceUpdate');
-              return null;
-            }
-          },
-          enqueueReplaceState: function (publicInstance, completeState) {
-            replace = true;
-            queue = [completeState];
-          },
-          enqueueSetState: function (publicInstance, currentPartialState) {
-            if (queue === null) {
-              warnNoop(publicInstance, 'setState');
-              return null;
-            }
-
-            queue.push(currentPartialState);
-          }
-        };
-        var inst = void 0;
-
-        if (shouldConstruct(Component)) {
-          inst = new Component(element.props, publicContext, updater);
-
-          if (typeof Component.getDerivedStateFromProps === 'function') {
-            {
-              if (inst.state === null || inst.state === undefined) {
-                var componentName = getComponentName(Component) || 'Unknown';
-
-                if (!didWarnAboutUninitializedState[componentName]) {
-                  warningWithoutStack$1(false, '`%s` uses `getDerivedStateFromProps` but its initial state is ' + '%s. This is not recommended. Instead, define the initial state by ' + 'assigning an object to `this.state` in the constructor of `%s`. ' + 'This ensures that `getDerivedStateFromProps` arguments have a consistent shape.', componentName, inst.state === null ? 'null' : 'undefined', componentName);
-                  didWarnAboutUninitializedState[componentName] = true;
-                }
-              }
-            }
-            var partialState = Component.getDerivedStateFromProps.call(null, element.props, inst.state);
-            {
-              if (partialState === undefined) {
-                var _componentName = getComponentName(Component) || 'Unknown';
-
-                if (!didWarnAboutUndefinedDerivedState[_componentName]) {
-                  warningWithoutStack$1(false, '%s.getDerivedStateFromProps(): A valid state object (or null) must be returned. ' + 'You have returned undefined.', _componentName);
-                  didWarnAboutUndefinedDerivedState[_componentName] = true;
-                }
-              }
-            }
-
-            if (partialState != null) {
-              inst.state = _assign({}, inst.state, partialState);
-            }
-          }
-        } else {
-          {
-            if (Component.prototype && typeof Component.prototype.render === 'function') {
-              var _componentName2 = getComponentName(Component) || 'Unknown';
-
-              if (!didWarnAboutBadClass[_componentName2]) {
-                warningWithoutStack$1(false, "The <%s /> component appears to have a render method, but doesn't extend React.Component. " + 'This is likely to cause errors. Change %s to extend React.Component instead.', _componentName2, _componentName2);
-                didWarnAboutBadClass[_componentName2] = true;
-              }
-            }
-          }
-          var componentIdentity = {};
-          prepareToUseHooks(componentIdentity);
-          inst = Component(element.props, publicContext, updater);
-          inst = finishHooks(Component, element.props, inst, publicContext);
-
-          if (inst == null || inst.render == null) {
-            child = inst;
-            validateRenderResult(child, Component);
-            return;
-          }
-        }
-
-        inst.props = element.props;
-        inst.context = publicContext;
-        inst.updater = updater;
-        var initialState = inst.state;
-
-        if (initialState === undefined) {
-          inst.state = initialState = null;
-        }
-
-        if (typeof inst.UNSAFE_componentWillMount === 'function' || typeof inst.componentWillMount === 'function') {
-          if (typeof inst.componentWillMount === 'function') {
-            {
-              if (warnAboutDeprecatedLifecycles && inst.componentWillMount.__suppressDeprecationWarning !== true) {
-                var _componentName3 = getComponentName(Component) || 'Unknown';
-
-                if (!didWarnAboutDeprecatedWillMount[_componentName3]) {
-                  lowPriorityWarning$1(false, '%s: componentWillMount() is deprecated and will be ' + 'removed in the next major version. Read about the motivations ' + 'behind this change: ' + 'https://fb.me/react-async-component-lifecycle-hooks' + '\n\n' + 'As a temporary workaround, you can rename to ' + 'UNSAFE_componentWillMount instead.', _componentName3);
-                  didWarnAboutDeprecatedWillMount[_componentName3] = true;
-                }
-              }
-            } // In order to support react-lifecycles-compat polyfilled components,
-            // Unsafe lifecycles should not be invoked for any component with the new gDSFP.
-
-            if (typeof Component.getDerivedStateFromProps !== 'function') {
-              inst.componentWillMount();
-            }
-          }
-
-          if (typeof inst.UNSAFE_componentWillMount === 'function' && typeof Component.getDerivedStateFromProps !== 'function') {
-            // In order to support react-lifecycles-compat polyfilled components,
-            // Unsafe lifecycles should not be invoked for any component with the new gDSFP.
-            inst.UNSAFE_componentWillMount();
-          }
-
-          if (queue.length) {
-            var oldQueue = queue;
-            var oldReplace = replace;
-            queue = null;
-            replace = false;
-
-            if (oldReplace && oldQueue.length === 1) {
-              inst.state = oldQueue[0];
-            } else {
-              var nextState = oldReplace ? oldQueue[0] : inst.state;
-              var dontMutate = true;
-
-              for (var i = oldReplace ? 1 : 0; i < oldQueue.length; i++) {
-                var partial = oldQueue[i];
-
-                var _partialState = typeof partial === 'function' ? partial.call(inst, nextState, element.props, publicContext) : partial;
-
-                if (_partialState != null) {
-                  if (dontMutate) {
-                    dontMutate = false;
-                    nextState = _assign({}, nextState, _partialState);
-                  } else {
-                    _assign(nextState, _partialState);
-                  }
-                }
-              }
-
-              inst.state = nextState;
-            }
-          } else {
-            queue = null;
-          }
-        }
-
-        child = inst.render();
-        {
-          if (child === undefined && inst.render._isMockFunction) {
-            // This is probably bad practice. Consider warning here and
-            // deprecating this convenience.
-            child = null;
-          }
-        }
-        validateRenderResult(child, Component);
-        var childContext = void 0;
-
-        if (typeof inst.getChildContext === 'function') {
-          var childContextTypes = Component.childContextTypes;
-
-          if (typeof childContextTypes === 'object') {
-            childContext = inst.getChildContext();
-
-            for (var contextKey in childContext) {
-              !(contextKey in childContextTypes) ? invariant(false, '%s.getChildContext(): key "%s" is not defined in childContextTypes.', getComponentName(Component) || 'Unknown', contextKey) : void 0;
-            }
-          } else {
-            warningWithoutStack$1(false, '%s.getChildContext(): childContextTypes must be defined in order to ' + 'use getChildContext().', getComponentName(Component) || 'Unknown');
-          }
-        }
-
-        if (childContext) {
-          context = _assign({}, context, childContext);
-        }
-      }
-
-      return {
-        child: child,
-        context: context
-      };
-    }
-
-    var ReactDOMServerRenderer = function () {
-      // DEV-only
-      // TODO: type this more strictly:
-      function ReactDOMServerRenderer(children, makeStaticMarkup) {
-        _classCallCheck(this, ReactDOMServerRenderer);
-
-        var flatChildren = flattenTopLevelChildren(children);
-        var topFrame = {
-          type: null,
-          // Assume all trees start in the HTML namespace (not totally true, but
-          // this is what we did historically)
-          domNamespace: Namespaces.html,
-          children: flatChildren,
-          childIndex: 0,
-          context: emptyObject,
-          footer: ''
-        };
-        {
-          topFrame.debugElementStack = [];
-        }
-        this.threadID = allocThreadID();
-        this.stack = [topFrame];
-        this.exhausted = false;
-        this.currentSelectValue = null;
-        this.previousWasTextNode = false;
-        this.makeStaticMarkup = makeStaticMarkup;
-        this.suspenseDepth = 0; // Context (new API)
-
-        this.contextIndex = -1;
-        this.contextStack = [];
-        this.contextValueStack = [];
-        {
-          this.contextProviderStack = [];
-        }
-      }
-
-      ReactDOMServerRenderer.prototype.destroy = function destroy() {
-        if (!this.exhausted) {
-          this.exhausted = true;
-          this.clearProviders();
-          freeThreadID(this.threadID);
-        }
-      };
-      /**
-       * Note: We use just two stacks regardless of how many context providers you have.
-       * Providers are always popped in the reverse order to how they were pushed
-       * so we always know on the way down which provider you'll encounter next on the way up.
-       * On the way down, we push the current provider, and its context value *before*
-       * we mutated it, onto the stacks. Therefore, on the way up, we always know which
-       * provider needs to be "restored" to which value.
-       * https://github.com/facebook/react/pull/12985#issuecomment-396301248
-       */
-
-
-      ReactDOMServerRenderer.prototype.pushProvider = function pushProvider(provider) {
-        var index = ++this.contextIndex;
-        var context = provider.type._context;
-        var threadID = this.threadID;
-        validateContextBounds(context, threadID);
-        var previousValue = context[threadID]; // Remember which value to restore this context to on our way up.
-
-        this.contextStack[index] = context;
-        this.contextValueStack[index] = previousValue;
-        {
-          // Only used for push/pop mismatch warnings.
-          this.contextProviderStack[index] = provider;
-        } // Mutate the current value.
-
-        context[threadID] = provider.props.value;
-      };
-
-      ReactDOMServerRenderer.prototype.popProvider = function popProvider(provider) {
-        var index = this.contextIndex;
-        {
-          !(index > -1 && provider === this.contextProviderStack[index]) ? warningWithoutStack$1(false, 'Unexpected pop.') : void 0;
-        }
-        var context = this.contextStack[index];
-        var previousValue = this.contextValueStack[index]; // "Hide" these null assignments from Flow by using `any`
-        // because conceptually they are deletions--as long as we
-        // promise to never access values beyond `this.contextIndex`.
-
-        this.contextStack[index] = null;
-        this.contextValueStack[index] = null;
-        {
-          this.contextProviderStack[index] = null;
-        }
-        this.contextIndex--; // Restore to the previous value we stored as we were walking down.
-        // We've already verified that this context has been expanded to accommodate
-        // this thread id, so we don't need to do it again.
-
-        context[this.threadID] = previousValue;
-      };
-
-      ReactDOMServerRenderer.prototype.clearProviders = function clearProviders() {
-        // Restore any remaining providers on the stack to previous values
-        for (var index = this.contextIndex; index >= 0; index--) {
-          var _context = this.contextStack[index];
-          var previousValue = this.contextValueStack[index];
-          _context[this.threadID] = previousValue;
-        }
-      };
-
-      ReactDOMServerRenderer.prototype.read = function read(bytes) {
-        if (this.exhausted) {
-          return null;
-        }
-
-        var prevThreadID = currentThreadID;
-        setCurrentThreadID(this.threadID);
-        var prevDispatcher = ReactCurrentDispatcher.current;
-        ReactCurrentDispatcher.current = Dispatcher;
-
-        try {
-          // Markup generated within <Suspense> ends up buffered until we know
-          // nothing in that boundary suspended
-          var out = [''];
-          var suspended = false;
-
-          while (out[0].length < bytes) {
-            if (this.stack.length === 0) {
-              this.exhausted = true;
-              freeThreadID(this.threadID);
-              break;
-            }
-
-            var frame = this.stack[this.stack.length - 1];
-
-            if (suspended || frame.childIndex >= frame.children.length) {
-              var _footer = frame.footer;
-
-              if (_footer !== '') {
-                this.previousWasTextNode = false;
-              }
-
-              this.stack.pop();
-
-              if (frame.type === 'select') {
-                this.currentSelectValue = null;
-              } else if (frame.type != null && frame.type.type != null && frame.type.type.$$typeof === REACT_PROVIDER_TYPE) {
-                var provider = frame.type;
-                this.popProvider(provider);
-              } else if (frame.type === REACT_SUSPENSE_TYPE) {
-                this.suspenseDepth--;
-                var buffered = out.pop();
-
-                if (suspended) {
-                  suspended = false; // If rendering was suspended at this boundary, render the fallbackFrame
-
-                  var _fallbackFrame = frame.fallbackFrame;
-                  !_fallbackFrame ? invariant(false, 'suspense fallback not found, something is broken') : void 0;
-                  this.stack.push(_fallbackFrame); // Skip flushing output since we're switching to the fallback
-
-                  continue;
-                } else {
-                  out[this.suspenseDepth] += buffered;
-                }
-              } // Flush output
-
-
-              out[this.suspenseDepth] += _footer;
-              continue;
-            }
-
-            var child = frame.children[frame.childIndex++];
-            var outBuffer = '';
-            {
-              pushCurrentDebugStack(this.stack); // We're starting work on this frame, so reset its inner stack.
-
-              frame.debugElementStack.length = 0;
-            }
-
-            try {
-              outBuffer += this.render(child, frame.context, frame.domNamespace);
-            } catch (err) {
-              if (enableSuspenseServerRenderer && typeof err.then === 'function') {
-                suspended = true;
-              } else {
-                throw err;
-              }
-            } finally {
-              {
-                popCurrentDebugStack();
-              }
-            }
-
-            if (out.length <= this.suspenseDepth) {
-              out.push('');
-            }
-
-            out[this.suspenseDepth] += outBuffer;
-          }
-
-          return out[0];
-        } finally {
-          ReactCurrentDispatcher.current = prevDispatcher;
-          setCurrentThreadID(prevThreadID);
-        }
-      };
-
-      ReactDOMServerRenderer.prototype.render = function render(child, context, parentNamespace) {
-        if (typeof child === 'string' || typeof child === 'number') {
-          var text = '' + child;
-
-          if (text === '') {
-            return '';
-          }
-
-          if (this.makeStaticMarkup) {
-            return escapeTextForBrowser(text);
-          }
-
-          if (this.previousWasTextNode) {
-            return '<!-- -->' + escapeTextForBrowser(text);
-          }
-
-          this.previousWasTextNode = true;
-          return escapeTextForBrowser(text);
-        } else {
-          var nextChild = void 0;
-
-          var _resolve = resolve(child, context, this.threadID);
-
-          nextChild = _resolve.child;
-          context = _resolve.context;
-
-          if (nextChild === null || nextChild === false) {
-            return '';
-          } else if (!React.isValidElement(nextChild)) {
-            if (nextChild != null && nextChild.$$typeof != null) {
-              // Catch unexpected special types early.
-              var $$typeof = nextChild.$$typeof;
-              !($$typeof !== REACT_PORTAL_TYPE) ? invariant(false, 'Portals are not currently supported by the server renderer. Render them conditionally so that they only appear on the client render.') : void 0; // Catch-all to prevent an infinite loop if React.Children.toArray() supports some new type.
-
-              invariant(false, 'Unknown element-like object type: %s. This is likely a bug in React. Please file an issue.', $$typeof.toString());
-            }
-
-            var nextChildren = toArray(nextChild);
-            var frame = {
-              type: null,
-              domNamespace: parentNamespace,
-              children: nextChildren,
-              childIndex: 0,
-              context: context,
-              footer: ''
-            };
-            {
-              frame.debugElementStack = [];
-            }
-            this.stack.push(frame);
-            return '';
-          } // Safe because we just checked it's an element.
-
-
-          var nextElement = nextChild;
-          var elementType = nextElement.type;
-
-          if (typeof elementType === 'string') {
-            return this.renderDOM(nextElement, context, parentNamespace);
-          }
-
-          switch (elementType) {
-            case REACT_STRICT_MODE_TYPE:
-            case REACT_CONCURRENT_MODE_TYPE:
-            case REACT_PROFILER_TYPE:
-            case REACT_FRAGMENT_TYPE:
-              {
-                var _nextChildren = toArray(nextChild.props.children);
-
-                var _frame = {
-                  type: null,
-                  domNamespace: parentNamespace,
-                  children: _nextChildren,
-                  childIndex: 0,
-                  context: context,
-                  footer: ''
-                };
-                {
-                  _frame.debugElementStack = [];
-                }
-                this.stack.push(_frame);
-                return '';
-              }
-
-            case REACT_SUSPENSE_TYPE:
-              {
-                if (enableSuspenseServerRenderer) {
-                  var fallback = nextChild.props.fallback;
-
-                  if (fallback === undefined) {
-                    // If there is no fallback, then this just behaves as a fragment.
-                    var _nextChildren3 = toArray(nextChild.props.children);
-
-                    var _frame3 = {
-                      type: null,
-                      domNamespace: parentNamespace,
-                      children: _nextChildren3,
-                      childIndex: 0,
-                      context: context,
-                      footer: ''
-                    };
-                    {
-                      _frame3.debugElementStack = [];
-                    }
-                    this.stack.push(_frame3);
-                    return '';
-                  }
-
-                  var fallbackChildren = toArray(fallback);
-
-                  var _nextChildren2 = toArray(nextChild.props.children);
-
-                  var _fallbackFrame2 = {
-                    type: null,
-                    domNamespace: parentNamespace,
-                    children: fallbackChildren,
-                    childIndex: 0,
-                    context: context,
-                    footer: '',
-                    out: ''
-                  };
-                  var _frame2 = {
-                    fallbackFrame: _fallbackFrame2,
-                    type: REACT_SUSPENSE_TYPE,
-                    domNamespace: parentNamespace,
-                    children: _nextChildren2,
-                    childIndex: 0,
-                    context: context,
-                    footer: '<!--/$-->'
-                  };
-                  {
-                    _frame2.debugElementStack = [];
-                    _fallbackFrame2.debugElementStack = [];
-                  }
-                  this.stack.push(_frame2);
-                  this.suspenseDepth++;
-                  return '<!--$-->';
-                } else {
-                  invariant(false, 'ReactDOMServer does not yet support Suspense.');
-                }
-              }
-            // eslint-disable-next-line-no-fallthrough
-
-            default:
-              break;
-          }
-
-          if (typeof elementType === 'object' && elementType !== null) {
-            switch (elementType.$$typeof) {
-              case REACT_FORWARD_REF_TYPE:
-                {
-                  var element = nextChild;
-
-                  var _nextChildren4 = void 0;
-
-                  var componentIdentity = {};
-                  prepareToUseHooks(componentIdentity);
-                  _nextChildren4 = elementType.render(element.props, element.ref);
-                  _nextChildren4 = finishHooks(elementType.render, element.props, _nextChildren4, element.ref);
-                  _nextChildren4 = toArray(_nextChildren4);
-                  var _frame4 = {
-                    type: null,
-                    domNamespace: parentNamespace,
-                    children: _nextChildren4,
-                    childIndex: 0,
-                    context: context,
-                    footer: ''
-                  };
-                  {
-                    _frame4.debugElementStack = [];
-                  }
-                  this.stack.push(_frame4);
-                  return '';
-                }
-
-              case REACT_MEMO_TYPE:
-                {
-                  var _element = nextChild;
-                  var _nextChildren5 = [React.createElement(elementType.type, _assign({
-                    ref: _element.ref
-                  }, _element.props))];
-                  var _frame5 = {
-                    type: null,
-                    domNamespace: parentNamespace,
-                    children: _nextChildren5,
-                    childIndex: 0,
-                    context: context,
-                    footer: ''
-                  };
-                  {
-                    _frame5.debugElementStack = [];
-                  }
-                  this.stack.push(_frame5);
-                  return '';
-                }
-
-              case REACT_PROVIDER_TYPE:
-                {
-                  var provider = nextChild;
-                  var nextProps = provider.props;
-
-                  var _nextChildren6 = toArray(nextProps.children);
-
-                  var _frame6 = {
-                    type: provider,
-                    domNamespace: parentNamespace,
-                    children: _nextChildren6,
-                    childIndex: 0,
-                    context: context,
-                    footer: ''
-                  };
-                  {
-                    _frame6.debugElementStack = [];
-                  }
-                  this.pushProvider(provider);
-                  this.stack.push(_frame6);
-                  return '';
-                }
-
-              case REACT_CONTEXT_TYPE:
-                {
-                  var reactContext = nextChild.type; // The logic below for Context differs depending on PROD or DEV mode. In
-                  // DEV mode, we create a separate object for Context.Consumer that acts
-                  // like a proxy to Context. This proxy object adds unnecessary code in PROD
-                  // so we use the old behaviour (Context.Consumer references Context) to
-                  // reduce size and overhead. The separate object references context via
-                  // a property called "_context", which also gives us the ability to check
-                  // in DEV mode if this property exists or not and warn if it does not.
-
-                  {
-                    if (reactContext._context === undefined) {
-                      // This may be because it's a Context (rather than a Consumer).
-                      // Or it may be because it's older React where they're the same thing.
-                      // We only want to warn if we're sure it's a new React.
-                      if (reactContext !== reactContext.Consumer) {
-                        if (!hasWarnedAboutUsingContextAsConsumer) {
-                          hasWarnedAboutUsingContextAsConsumer = true;
-                          warning$1(false, 'Rendering <Context> directly is not supported and will be removed in ' + 'a future major release. Did you mean to render <Context.Consumer> instead?');
-                        }
-                      }
-                    } else {
-                      reactContext = reactContext._context;
-                    }
-                  }
-                  var _nextProps = nextChild.props;
-                  var threadID = this.threadID;
-                  validateContextBounds(reactContext, threadID);
-                  var nextValue = reactContext[threadID];
-
-                  var _nextChildren7 = toArray(_nextProps.children(nextValue));
-
-                  var _frame7 = {
-                    type: nextChild,
-                    domNamespace: parentNamespace,
-                    children: _nextChildren7,
-                    childIndex: 0,
-                    context: context,
-                    footer: ''
-                  };
-                  {
-                    _frame7.debugElementStack = [];
-                  }
-                  this.stack.push(_frame7);
-                  return '';
-                }
-
-              case REACT_LAZY_TYPE:
-                invariant(false, 'ReactDOMServer does not yet support lazy-loaded components.');
-            }
-          }
-
-          var info = '';
-          {
-            var owner = nextElement._owner;
-
-            if (elementType === undefined || typeof elementType === 'object' && elementType !== null && Object.keys(elementType).length === 0) {
-              info += ' You likely forgot to export your component from the file ' + "it's defined in, or you might have mixed up default and " + 'named imports.';
-            }
-
-            var ownerName = owner ? getComponentName(owner) : null;
-
-            if (ownerName) {
-              info += '\n\nCheck the render method of `' + ownerName + '`.';
-            }
-          }
-          invariant(false, 'Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s', elementType == null ? elementType : typeof elementType, info);
-        }
-      };
-
-      ReactDOMServerRenderer.prototype.renderDOM = function renderDOM(element, context, parentNamespace) {
-        var tag = element.type.toLowerCase();
-        var namespace = parentNamespace;
-
-        if (parentNamespace === Namespaces.html) {
-          namespace = getIntrinsicNamespace(tag);
-        }
-
-        {
-          if (namespace === Namespaces.html) {
-            // Should this check be gated by parent namespace? Not sure we want to
-            // allow <SVG> or <mATH>.
-            !(tag === element.type) ? warning$1(false, '<%s /> is using incorrect casing. ' + 'Use PascalCase for React components, ' + 'or lowercase for HTML elements.', element.type) : void 0;
-          }
-        }
-        validateDangerousTag(tag);
-        var props = element.props;
-
-        if (tag === 'input') {
-          {
-            ReactControlledValuePropTypes.checkPropTypes('input', props);
-
-            if (props.checked !== undefined && props.defaultChecked !== undefined && !didWarnDefaultChecked) {
-              warning$1(false, '%s contains an input of type %s with both checked and defaultChecked props. ' + 'Input elements must be either controlled or uncontrolled ' + '(specify either the checked prop, or the defaultChecked prop, but not ' + 'both). Decide between using a controlled or uncontrolled input ' + 'element and remove one of these props. More info: ' + 'https://fb.me/react-controlled-components', 'A component', props.type);
-              didWarnDefaultChecked = true;
-            }
-
-            if (props.value !== undefined && props.defaultValue !== undefined && !didWarnDefaultInputValue) {
-              warning$1(false, '%s contains an input of type %s with both value and defaultValue props. ' + 'Input elements must be either controlled or uncontrolled ' + '(specify either the value prop, or the defaultValue prop, but not ' + 'both). Decide between using a controlled or uncontrolled input ' + 'element and remove one of these props. More info: ' + 'https://fb.me/react-controlled-components', 'A component', props.type);
-              didWarnDefaultInputValue = true;
-            }
-          }
-          props = _assign({
-            type: undefined
-          }, props, {
-            defaultChecked: undefined,
-            defaultValue: undefined,
-            value: props.value != null ? props.value : props.defaultValue,
-            checked: props.checked != null ? props.checked : props.defaultChecked
-          });
-        } else if (tag === 'textarea') {
-          {
-            ReactControlledValuePropTypes.checkPropTypes('textarea', props);
-
-            if (props.value !== undefined && props.defaultValue !== undefined && !didWarnDefaultTextareaValue) {
-              warning$1(false, 'Textarea elements must be either controlled or uncontrolled ' + '(specify either the value prop, or the defaultValue prop, but not ' + 'both). Decide between using a controlled or uncontrolled textarea ' + 'and remove one of these props. More info: ' + 'https://fb.me/react-controlled-components');
-              didWarnDefaultTextareaValue = true;
-            }
-          }
-          var initialValue = props.value;
-
-          if (initialValue == null) {
-            var defaultValue = props.defaultValue; // TODO (yungsters): Remove support for children content in <textarea>.
-
-            var textareaChildren = props.children;
-
-            if (textareaChildren != null) {
-              {
-                warning$1(false, 'Use the `defaultValue` or `value` props instead of setting ' + 'children on <textarea>.');
-              }
-              !(defaultValue == null) ? invariant(false, 'If you supply `defaultValue` on a <textarea>, do not pass children.') : void 0;
-
-              if (Array.isArray(textareaChildren)) {
-                !(textareaChildren.length <= 1) ? invariant(false, '<textarea> can only have at most one child.') : void 0;
-                textareaChildren = textareaChildren[0];
-              }
-
-              defaultValue = '' + textareaChildren;
-            }
-
-            if (defaultValue == null) {
-              defaultValue = '';
-            }
-
-            initialValue = defaultValue;
-          }
-
-          props = _assign({}, props, {
-            value: undefined,
-            children: '' + initialValue
-          });
-        } else if (tag === 'select') {
-          {
-            ReactControlledValuePropTypes.checkPropTypes('select', props);
-
-            for (var i = 0; i < valuePropNames.length; i++) {
-              var propName = valuePropNames[i];
-
-              if (props[propName] == null) {
-                continue;
-              }
-
-              var isArray = Array.isArray(props[propName]);
-
-              if (props.multiple && !isArray) {
-                warning$1(false, 'The `%s` prop supplied to <select> must be an array if ' + '`multiple` is true.', propName);
-              } else if (!props.multiple && isArray) {
-                warning$1(false, 'The `%s` prop supplied to <select> must be a scalar ' + 'value if `multiple` is false.', propName);
-              }
-            }
-
-            if (props.value !== undefined && props.defaultValue !== undefined && !didWarnDefaultSelectValue) {
-              warning$1(false, 'Select elements must be either controlled or uncontrolled ' + '(specify either the value prop, or the defaultValue prop, but not ' + 'both). Decide between using a controlled or uncontrolled select ' + 'element and remove one of these props. More info: ' + 'https://fb.me/react-controlled-components');
-              didWarnDefaultSelectValue = true;
-            }
-          }
-          this.currentSelectValue = props.value != null ? props.value : props.defaultValue;
-          props = _assign({}, props, {
-            value: undefined
-          });
-        } else if (tag === 'option') {
-          var selected = null;
-          var selectValue = this.currentSelectValue;
-          var optionChildren = flattenOptionChildren(props.children);
-
-          if (selectValue != null) {
-            var value = void 0;
-
-            if (props.value != null) {
-              value = props.value + '';
-            } else {
-              value = optionChildren;
-            }
-
-            selected = false;
-
-            if (Array.isArray(selectValue)) {
-              // multiple
-              for (var j = 0; j < selectValue.length; j++) {
-                if ('' + selectValue[j] === value) {
-                  selected = true;
-                  break;
-                }
-              }
-            } else {
-              selected = '' + selectValue === value;
-            }
-
-            props = _assign({
-              selected: undefined,
-              children: undefined
-            }, props, {
-              selected: selected,
-              children: optionChildren
-            });
-          }
-        }
-
-        {
-          validatePropertiesInDevelopment(tag, props);
-        }
-        assertValidProps(tag, props);
-        var out = createOpenTagMarkup(element.type, tag, props, namespace, this.makeStaticMarkup, this.stack.length === 1);
-        var footer = '';
-
-        if (omittedCloseTags.hasOwnProperty(tag)) {
-          out += '/>';
-        } else {
-          out += '>';
-          footer = '</' + element.type + '>';
-        }
-
-        var children = void 0;
-        var innerMarkup = getNonChildrenInnerMarkup(props);
-
-        if (innerMarkup != null) {
-          children = [];
-
-          if (newlineEatingTags[tag] && innerMarkup.charAt(0) === '\n') {
-            // text/html ignores the first character in these tags if it's a newline
-            // Prefer to break application/xml over text/html (for now) by adding
-            // a newline specifically to get eaten by the parser. (Alternately for
-            // textareas, replacing "^\n" with "\r\n" doesn't get eaten, and the first
-            // \r is normalized out by HTMLTextAreaElement#value.)
-            // See: <http://www.w3.org/TR/html-polyglot/#newlines-in-textarea-and-pre>
-            // See: <http://www.w3.org/TR/html5/syntax.html#element-restrictions>
-            // See: <http://www.w3.org/TR/html5/syntax.html#newlines>
-            // See: Parsing of "textarea" "listing" and "pre" elements
-            //  from <http://www.w3.org/TR/html5/syntax.html#parsing-main-inbody>
-            out += '\n';
-          }
-
-          out += innerMarkup;
-        } else {
-          children = toArray(props.children);
-        }
-
-        var frame = {
-          domNamespace: getChildNamespace(parentNamespace, element.type),
-          type: tag,
-          children: children,
-          childIndex: 0,
-          context: context,
-          footer: footer
-        };
-        {
-          frame.debugElementStack = [];
-        }
-        this.stack.push(frame);
-        this.previousWasTextNode = false;
-        return out;
-      };
-
-      return ReactDOMServerRenderer;
-    }();
-    /**
-     * Render a ReactElement to its initial HTML. This should only be used on the
-     * server.
-     * See https://reactjs.org/docs/react-dom-server.html#rendertostring
-     */
-
-
-    function renderToString(element) {
-      var renderer = new ReactDOMServerRenderer(element, false);
-
-      try {
-        var markup = renderer.read(Infinity);
-        return markup;
-      } finally {
-        renderer.destroy();
-      }
-    }
-    /**
-     * Similar to renderToString, except this doesn't create extra DOM attributes
-     * such as data-react-id that React uses internally.
-     * See https://reactjs.org/docs/react-dom-server.html#rendertostaticmarkup
-     */
-
-
-    function renderToStaticMarkup(element) {
-      var renderer = new ReactDOMServerRenderer(element, true);
-
-      try {
-        var markup = renderer.read(Infinity);
-        return markup;
-      } finally {
-        renderer.destroy();
-      }
-    }
-
-    function renderToNodeStream() {
-      invariant(false, 'ReactDOMServer.renderToNodeStream(): The streaming API is not available in the browser. Use ReactDOMServer.renderToString() instead.');
-    }
-
-    function renderToStaticNodeStream() {
-      invariant(false, 'ReactDOMServer.renderToStaticNodeStream(): The streaming API is not available in the browser. Use ReactDOMServer.renderToStaticMarkup() instead.');
-    } // Note: when changing this, also consider https://github.com/facebook/react/issues/11526
-
-
-    var ReactDOMServerBrowser = {
-      renderToString: renderToString,
-      renderToStaticMarkup: renderToStaticMarkup,
-      renderToNodeStream: renderToNodeStream,
-      renderToStaticNodeStream: renderToStaticNodeStream,
-      version: ReactVersion
-    };
-    var ReactDOMServerBrowser$1 = Object.freeze({
-      default: ReactDOMServerBrowser
-    });
-    var ReactDOMServer = ReactDOMServerBrowser$1 && ReactDOMServerBrowser || ReactDOMServerBrowser$1; // TODO: decide on the top-level export form.
-    // This is hacky but makes it work with both Rollup and Jest
-
-    var server_browser = ReactDOMServer.default || ReactDOMServer;
-    module.exports = server_browser;
-  })();
+    return acc;
+  }, {});
 }
 
 /***/ }),
@@ -43191,289 +35961,6 @@ function checkDCE() {
 
 if (false) {} else {
   module.exports = __webpack_require__(/*! ./cjs/react-dom.development.js */ "./node_modules/react-dom/cjs/react-dom.development.js");
-}
-
-/***/ }),
-
-/***/ "./node_modules/react-dom/server.browser.js":
-/*!**************************************************!*\
-  !*** ./node_modules/react-dom/server.browser.js ***!
-  \**************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-if (false) {} else {
-  module.exports = __webpack_require__(/*! ./cjs/react-dom-server.browser.development.js */ "./node_modules/react-dom/cjs/react-dom-server.browser.development.js");
-}
-
-/***/ }),
-
-/***/ "./node_modules/react-is/cjs/react-is.development.js":
-/*!***********************************************************!*\
-  !*** ./node_modules/react-is/cjs/react-is.development.js ***!
-  \***********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/** @license React v16.8.6
- * react-is.development.js
- *
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-
-if (true) {
-  (function () {
-    'use strict';
-
-    Object.defineProperty(exports, '__esModule', {
-      value: true
-    }); // The Symbol used to tag the ReactElement-like types. If there is no native Symbol
-    // nor polyfill, then a plain number is used for performance.
-
-    var hasSymbol = typeof Symbol === 'function' && Symbol.for;
-    var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for('react.element') : 0xeac7;
-    var REACT_PORTAL_TYPE = hasSymbol ? Symbol.for('react.portal') : 0xeaca;
-    var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
-    var REACT_STRICT_MODE_TYPE = hasSymbol ? Symbol.for('react.strict_mode') : 0xeacc;
-    var REACT_PROFILER_TYPE = hasSymbol ? Symbol.for('react.profiler') : 0xead2;
-    var REACT_PROVIDER_TYPE = hasSymbol ? Symbol.for('react.provider') : 0xeacd;
-    var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace;
-    var REACT_ASYNC_MODE_TYPE = hasSymbol ? Symbol.for('react.async_mode') : 0xeacf;
-    var REACT_CONCURRENT_MODE_TYPE = hasSymbol ? Symbol.for('react.concurrent_mode') : 0xeacf;
-    var REACT_FORWARD_REF_TYPE = hasSymbol ? Symbol.for('react.forward_ref') : 0xead0;
-    var REACT_SUSPENSE_TYPE = hasSymbol ? Symbol.for('react.suspense') : 0xead1;
-    var REACT_MEMO_TYPE = hasSymbol ? Symbol.for('react.memo') : 0xead3;
-    var REACT_LAZY_TYPE = hasSymbol ? Symbol.for('react.lazy') : 0xead4;
-
-    function isValidElementType(type) {
-      return typeof type === 'string' || typeof type === 'function' || // Note: its typeof might be other than 'symbol' or 'number' if it's a polyfill.
-      type === REACT_FRAGMENT_TYPE || type === REACT_CONCURRENT_MODE_TYPE || type === REACT_PROFILER_TYPE || type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || typeof type === 'object' && type !== null && (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE);
-    }
-    /**
-     * Forked from fbjs/warning:
-     * https://github.com/facebook/fbjs/blob/e66ba20ad5be433eb54423f2b097d829324d9de6/packages/fbjs/src/__forks__/warning.js
-     *
-     * Only change is we use console.warn instead of console.error,
-     * and do nothing when 'console' is not supported.
-     * This really simplifies the code.
-     * ---
-     * Similar to invariant but only logs a warning if the condition is not met.
-     * This can be used to log issues in development environments in critical
-     * paths. Removing the logging code for production environments will keep the
-     * same logic and follow the same code paths.
-     */
-
-
-    var lowPriorityWarning = function () {};
-
-    {
-      var printWarning = function (format) {
-        for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-          args[_key - 1] = arguments[_key];
-        }
-
-        var argIndex = 0;
-        var message = 'Warning: ' + format.replace(/%s/g, function () {
-          return args[argIndex++];
-        });
-
-        if (typeof console !== 'undefined') {
-          console.warn(message);
-        }
-
-        try {
-          // --- Welcome to debugging React ---
-          // This error was thrown as a convenience so that you can use this stack
-          // to find the callsite that caused this warning to fire.
-          throw new Error(message);
-        } catch (x) {}
-      };
-
-      lowPriorityWarning = function (condition, format) {
-        if (format === undefined) {
-          throw new Error('`lowPriorityWarning(condition, format, ...args)` requires a warning ' + 'message argument');
-        }
-
-        if (!condition) {
-          for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
-            args[_key2 - 2] = arguments[_key2];
-          }
-
-          printWarning.apply(undefined, [format].concat(args));
-        }
-      };
-    }
-    var lowPriorityWarning$1 = lowPriorityWarning;
-
-    function typeOf(object) {
-      if (typeof object === 'object' && object !== null) {
-        var $$typeof = object.$$typeof;
-
-        switch ($$typeof) {
-          case REACT_ELEMENT_TYPE:
-            var type = object.type;
-
-            switch (type) {
-              case REACT_ASYNC_MODE_TYPE:
-              case REACT_CONCURRENT_MODE_TYPE:
-              case REACT_FRAGMENT_TYPE:
-              case REACT_PROFILER_TYPE:
-              case REACT_STRICT_MODE_TYPE:
-              case REACT_SUSPENSE_TYPE:
-                return type;
-
-              default:
-                var $$typeofType = type && type.$$typeof;
-
-                switch ($$typeofType) {
-                  case REACT_CONTEXT_TYPE:
-                  case REACT_FORWARD_REF_TYPE:
-                  case REACT_PROVIDER_TYPE:
-                    return $$typeofType;
-
-                  default:
-                    return $$typeof;
-                }
-
-            }
-
-          case REACT_LAZY_TYPE:
-          case REACT_MEMO_TYPE:
-          case REACT_PORTAL_TYPE:
-            return $$typeof;
-        }
-      }
-
-      return undefined;
-    } // AsyncMode is deprecated along with isAsyncMode
-
-
-    var AsyncMode = REACT_ASYNC_MODE_TYPE;
-    var ConcurrentMode = REACT_CONCURRENT_MODE_TYPE;
-    var ContextConsumer = REACT_CONTEXT_TYPE;
-    var ContextProvider = REACT_PROVIDER_TYPE;
-    var Element = REACT_ELEMENT_TYPE;
-    var ForwardRef = REACT_FORWARD_REF_TYPE;
-    var Fragment = REACT_FRAGMENT_TYPE;
-    var Lazy = REACT_LAZY_TYPE;
-    var Memo = REACT_MEMO_TYPE;
-    var Portal = REACT_PORTAL_TYPE;
-    var Profiler = REACT_PROFILER_TYPE;
-    var StrictMode = REACT_STRICT_MODE_TYPE;
-    var Suspense = REACT_SUSPENSE_TYPE;
-    var hasWarnedAboutDeprecatedIsAsyncMode = false; // AsyncMode should be deprecated
-
-    function isAsyncMode(object) {
-      {
-        if (!hasWarnedAboutDeprecatedIsAsyncMode) {
-          hasWarnedAboutDeprecatedIsAsyncMode = true;
-          lowPriorityWarning$1(false, 'The ReactIs.isAsyncMode() alias has been deprecated, ' + 'and will be removed in React 17+. Update your code to use ' + 'ReactIs.isConcurrentMode() instead. It has the exact same API.');
-        }
-      }
-      return isConcurrentMode(object) || typeOf(object) === REACT_ASYNC_MODE_TYPE;
-    }
-
-    function isConcurrentMode(object) {
-      return typeOf(object) === REACT_CONCURRENT_MODE_TYPE;
-    }
-
-    function isContextConsumer(object) {
-      return typeOf(object) === REACT_CONTEXT_TYPE;
-    }
-
-    function isContextProvider(object) {
-      return typeOf(object) === REACT_PROVIDER_TYPE;
-    }
-
-    function isElement(object) {
-      return typeof object === 'object' && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;
-    }
-
-    function isForwardRef(object) {
-      return typeOf(object) === REACT_FORWARD_REF_TYPE;
-    }
-
-    function isFragment(object) {
-      return typeOf(object) === REACT_FRAGMENT_TYPE;
-    }
-
-    function isLazy(object) {
-      return typeOf(object) === REACT_LAZY_TYPE;
-    }
-
-    function isMemo(object) {
-      return typeOf(object) === REACT_MEMO_TYPE;
-    }
-
-    function isPortal(object) {
-      return typeOf(object) === REACT_PORTAL_TYPE;
-    }
-
-    function isProfiler(object) {
-      return typeOf(object) === REACT_PROFILER_TYPE;
-    }
-
-    function isStrictMode(object) {
-      return typeOf(object) === REACT_STRICT_MODE_TYPE;
-    }
-
-    function isSuspense(object) {
-      return typeOf(object) === REACT_SUSPENSE_TYPE;
-    }
-
-    exports.typeOf = typeOf;
-    exports.AsyncMode = AsyncMode;
-    exports.ConcurrentMode = ConcurrentMode;
-    exports.ContextConsumer = ContextConsumer;
-    exports.ContextProvider = ContextProvider;
-    exports.Element = Element;
-    exports.ForwardRef = ForwardRef;
-    exports.Fragment = Fragment;
-    exports.Lazy = Lazy;
-    exports.Memo = Memo;
-    exports.Portal = Portal;
-    exports.Profiler = Profiler;
-    exports.StrictMode = StrictMode;
-    exports.Suspense = Suspense;
-    exports.isValidElementType = isValidElementType;
-    exports.isAsyncMode = isAsyncMode;
-    exports.isConcurrentMode = isConcurrentMode;
-    exports.isContextConsumer = isContextConsumer;
-    exports.isContextProvider = isContextProvider;
-    exports.isElement = isElement;
-    exports.isForwardRef = isForwardRef;
-    exports.isFragment = isFragment;
-    exports.isLazy = isLazy;
-    exports.isMemo = isMemo;
-    exports.isPortal = isPortal;
-    exports.isProfiler = isProfiler;
-    exports.isStrictMode = isStrictMode;
-    exports.isSuspense = isSuspense;
-  })();
-}
-
-/***/ }),
-
-/***/ "./node_modules/react-is/index.js":
-/*!****************************************!*\
-  !*** ./node_modules/react-is/index.js ***!
-  \****************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-if (false) {} else {
-  module.exports = __webpack_require__(/*! ./cjs/react-is.development.js */ "./node_modules/react-is/cjs/react-is.development.js");
 }
 
 /***/ }),

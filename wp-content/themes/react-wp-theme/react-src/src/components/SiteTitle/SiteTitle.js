@@ -1,5 +1,5 @@
 import React from "react";
-import { Query } from "react-apollo";
+import { useQuery } from "react-apollo-hooks";
 import gql from "graphql-tag";
 
 const GET_SITE_TITLE = gql`
@@ -11,16 +11,17 @@ const GET_SITE_TITLE = gql`
 `;
 
 const SiteTitle = () => {
-  return (
-    <Query query={GET_SITE_TITLE}>
-      {({ data, loading, error }) => {
-        if (loading) return <p>Loading...</p>;
-        if (error) return <p>Error: {error.message}</p>;
+  const { data, error, loading } = useQuery(GET_SITE_TITLE);
 
-        return <h1>{data.generalSettings.title}</h1>;
-      }}
-    </Query>
-  );
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error! {error.message}</div>;
+  }
+
+  return <h1>{data.generalSettings.title}</h1>;
 };
 
 export default SiteTitle;

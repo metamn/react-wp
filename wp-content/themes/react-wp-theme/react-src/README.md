@@ -15,6 +15,7 @@ const client = new ApolloClient({
 ## Install
 
 - https://www.apollographql.com/docs/react/essentials/get-started
+- Hooks: https://github.com/trojanowski/react-apollo-hooks
 
 ## Tutorial
 

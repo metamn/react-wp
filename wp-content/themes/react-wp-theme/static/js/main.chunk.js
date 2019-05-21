@@ -39,75 +39,166 @@ const App = () => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _home_cs_work_react_wp_wp_content_themes_react_wp_theme_react_src_node_modules_babel_preset_react_app_node_modules_babel_runtime_helpers_esm_taggedTemplateLiteral__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/babel-preset-react-app/node_modules/@babel/runtime/helpers/esm/taggedTemplateLiteral */ "./node_modules/babel-preset-react-app/node_modules/@babel/runtime/helpers/esm/taggedTemplateLiteral.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var react_relay__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-relay */ "./node_modules/react-relay/index.js");
-/* harmony import */ var react_relay__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_relay__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _environment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./../../environment */ "./src/environment.js");
-
-var _jsxFileName = "/home/cs/work/react-wp/wp-content/themes/react-wp-theme/react-src/src/components/SiteTitle/SiteTitle.js";
-
-function _templateObject() {
-  const data = Object(_home_cs_work_react_wp_wp_content_themes_react_wp_theme_react_src_node_modules_babel_preset_react_app_node_modules_babel_runtime_helpers_esm_taggedTemplateLiteral__WEBPACK_IMPORTED_MODULE_0__["default"])(["\n        query SiteTitleQuery {\n          generalSettings {\n            title\n          }\n        }\n      "]);
-
-  _templateObject = function () {
-    return data;
-  };
-
-  return data;
-}
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react_relay__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-relay */ "./node_modules/react-relay/index.js");
+/* harmony import */ var react_relay__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_relay__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _environment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./../../environment */ "./src/environment.js");
+var _graphql,
+    _jsxFileName = "/home/cs/work/react-wp/wp-content/themes/react-wp-theme/react-src/src/components/SiteTitle/SiteTitle.js";
 
 
 
 
 
 const SiteTitle = () => {
-  return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_relay__WEBPACK_IMPORTED_MODULE_2__["QueryRenderer"], {
-    environment: _environment__WEBPACK_IMPORTED_MODULE_3__["default"],
-    query: Object(react_relay__WEBPACK_IMPORTED_MODULE_2__["graphql"])(_templateObject()),
+  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_relay__WEBPACK_IMPORTED_MODULE_1__["QueryRenderer"], {
+    environment: _environment__WEBPACK_IMPORTED_MODULE_2__["default"],
+    query: _graphql || (_graphql = function () {
+      const node = __webpack_require__(/*! ./__generated__/SiteTitleQuery.graphql */ "./src/components/SiteTitle/__generated__/SiteTitleQuery.graphql.js");
+
+      if (node.hash && node.hash !== "63dfcb3e5253d4f66e6c9f9589420ca6") {
+        console.error("The definition of 'SiteTitleQuery' appears to have changed. Run `relay-compiler` to update the generated files to receive the expected data.");
+      }
+
+      return __webpack_require__(/*! ./__generated__/SiteTitleQuery.graphql */ "./src/components/SiteTitle/__generated__/SiteTitleQuery.graphql.js");
+    }),
     variables: {},
     render: ({
       error,
       props
     }) => {
       if (error) {
-        return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 19
+            lineNumber: 20
           },
           __self: undefined
         }, "Error!");
       }
 
       if (!props) {
-        return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 22
+            lineNumber: 23
           },
           __self: undefined
         }, "Loading...");
       }
 
-      return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 24
+          lineNumber: 25
         },
         __self: undefined
       }, props.generalSettings.title);
     },
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 7
+      lineNumber: 8
     },
     __self: undefined
   });
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (SiteTitle);
+
+/***/ }),
+
+/***/ "./src/components/SiteTitle/__generated__/SiteTitleQuery.graphql.js":
+/*!**************************************************************************!*\
+  !*** ./src/components/SiteTitle/__generated__/SiteTitleQuery.graphql.js ***!
+  \**************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * 
+ * @relayHash 4608103a20771668e6c055f7b78dc664
+ */
+
+/* eslint-disable */
+
+/*::
+import type { ConcreteRequest } from 'relay-runtime';
+export type SiteTitleQueryVariables = {||};
+export type SiteTitleQueryResponse = {|
+  +generalSettings: ?{|
+    +title: ?string
+  |}
+|};
+export type SiteTitleQuery = {|
+  variables: SiteTitleQueryVariables,
+  response: SiteTitleQueryResponse,
+|};
+*/
+
+/*
+query SiteTitleQuery {
+  generalSettings {
+    title
+  }
+}
+*/
+
+const node
+/*: ConcreteRequest*/
+= function () {
+  var v0 = [{
+    "kind": "LinkedField",
+    "alias": null,
+    "name": "generalSettings",
+    "storageKey": null,
+    "args": null,
+    "concreteType": "GeneralSettings",
+    "plural": false,
+    "selections": [{
+      "kind": "ScalarField",
+      "alias": null,
+      "name": "title",
+      "args": null,
+      "storageKey": null
+    }]
+  }];
+  return {
+    "kind": "Request",
+    "fragment": {
+      "kind": "Fragment",
+      "name": "SiteTitleQuery",
+      "type": "RootQuery",
+      "metadata": null,
+      "argumentDefinitions": [],
+      "selections": v0
+      /*: any*/
+
+    },
+    "operation": {
+      "kind": "Operation",
+      "name": "SiteTitleQuery",
+      "argumentDefinitions": [],
+      "selections": v0
+      /*: any*/
+
+    },
+    "params": {
+      "operationKind": "query",
+      "name": "SiteTitleQuery",
+      "id": null,
+      "text": "query SiteTitleQuery {\n  generalSettings {\n    title\n  }\n}\n",
+      "metadata": {}
+    }
+  };
+}(); // prettier-ignore
+
+
+node
+/*: any*/
+.hash = '63dfcb3e5253d4f66e6c9f9589420ca6';
+module.exports = node;
 
 /***/ }),
 

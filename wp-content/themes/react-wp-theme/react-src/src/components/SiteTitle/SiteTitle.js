@@ -1,5 +1,6 @@
 import React from "react";
-import { graphql, QueryRenderer } from "react-relay";
+import { QueryRenderer } from "react-relay";
+import graphql from "babel-plugin-relay/macro";
 import environment from "./../../environment";
 
 const SiteTitle = () => {
@@ -21,7 +22,7 @@ const SiteTitle = () => {
         if (!props) {
           return <div>Loading...</div>;
         }
-        return <div>{props.generalSettings.title}</div>;
+        return <h1>{props.generalSettings.title}</h1>;
       }}
     />
   );

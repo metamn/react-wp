@@ -13,12 +13,14 @@
 # Ignore everything in the "wp-content" directory, except the "plugins"
 # and "themes" directories.
 wp-content/*
-!wp-content/plugins/
+wp-content/plugins/
 !wp-content/themes/
 
 wp-content/plugins/akismet/
 wp-content/plugins/hide-admin-bar/
 wp-content/plugins/wordpress-importer/
+wp-content/plugins/wp-graphql-0.3.3
+
 wp-content/themes/twentyseventeen
 wp-content/themes/twentysixteen
 wp-content/themes/twentynineteen

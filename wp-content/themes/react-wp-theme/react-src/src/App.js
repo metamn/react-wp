@@ -1,13 +1,18 @@
 import React from "react";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Welcome, WP!</h1>
-      </header>
+import ApolloClient from "apollo-boost";
+import { ApolloProvider } from "react-apollo";
+
+const client = new ApolloClient({
+  uri: "/graphql"
+});
+
+const App = () => (
+  <ApolloProvider client={client}>
+    <div>
+      <h2>My first Apollo app 🚀</h2>
     </div>
-  );
-}
+  </ApolloProvider>
+);
 
 export default App;

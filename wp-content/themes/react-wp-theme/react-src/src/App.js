@@ -1,7 +1,8 @@
 import React from "react";
 
 import ApolloClient from "apollo-boost";
-import { ApolloProvider } from "react-apollo-hooks";
+import { ApolloProvider } from "react-apollo";
+import { ApolloProvider as ApolloHooksProvider } from "react-apollo-hooks";
 
 import SiteTitle from "./components/SiteTitle";
 
@@ -11,9 +12,11 @@ const client = new ApolloClient({
 
 const App = () => (
   <ApolloProvider client={client}>
-    <>
-      <SiteTitle />
-    </>
+    <ApolloHooksProvider client={client}>
+      <>
+        <SiteTitle />
+      </>
+    </ApolloHooksProvider>
   </ApolloProvider>
 );
 

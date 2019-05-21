@@ -16,6 +16,7 @@ const client = new ApolloClient({
 
 - https://www.apollographql.com/docs/react/essentials/get-started
 - Hooks: https://github.com/trojanowski/react-apollo-hooks
+- Typescript (Apollo doesn't support Flow): https://www.apollographql.com/docs/react/recipes/static-typing
 
 ## Tutorial
 

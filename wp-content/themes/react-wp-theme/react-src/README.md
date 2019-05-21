@@ -16,5 +16,5 @@
 
 ## GraphQL clients
 
-- Apollo: in the `apollo` branch
-- Relay: in the `relay` branch
+- Apollo: in the `apollo` branch: works
+- Relay: in the `relay` branch: works

@@ -2,9 +2,13 @@
 
 ## Built on
 
-- Create React App
-- WPGraphQL
+- [Create React App / WPTheme](https://github.com/devloco/create-react-wptheme)
+- [WPGraphQL](https://www.wpgraphql.com/)
 
-## Created with
+## WP GraphQL
 
-- https://github.com/devloco/create-react-wptheme
+- Endpoint: http://localhost/react-wp/graphql
+- Schema docs (in the WP GraphiQL plugin / explorer): http://localhost/react-wp/wp-admin/admin.php?page=wp-graphiql%2Fwp-graphiql.php
+- Plugin docs: https://docs.wpgraphql.com/getting-started/posts
+- Live queries: https://docs.wpgraphql.com/guides/the-graphql-query-language
+- Notable extensions: ACF, WooCommerce,

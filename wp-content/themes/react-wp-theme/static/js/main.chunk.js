@@ -104,29 +104,13 @@ function App() {
       lineNumber: 9
     },
     __self: this
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
+  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", {
     __source: {
       fileName: _jsxFileName,
       lineNumber: 10
     },
     __self: this
-  }, "Edit ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("code", {
-    __source: {
-      fileName: _jsxFileName,
-      lineNumber: 11
-    },
-    __self: this
-  }, "react-src/src/App.js"), " and save to reload."), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-    className: "App-link",
-    href: "https://reactjs.org",
-    target: "_blank",
-    rel: "noopener noreferrer",
-    __source: {
-      fileName: _jsxFileName,
-      lineNumber: 13
-    },
-    __self: this
-  }, "Learn React")));
+  }, "Welcome, WP!")));
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (App);
@@ -320,5 +304,5 @@ module.exports = __webpack_require__(/*! /home/cs/work/react-wp/wp-content/theme
 
 /***/ })
 
-},[[0,"runtime~main",0]]]);
+},[[0,"runtime~main",1]]]);
 //# sourceMappingURL=main.chunk.js.map

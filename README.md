@@ -1,8 +1,8 @@
 # React WP
 
-React and WordPress.
+A React/GraphQL based WordPress theme.
 
-See the [theme README](wp-content/themes/react-wp-theme/react-src/README.md)
+See the [theme README.](wp-content/themes/react-wp-theme/react-src/README.md)
 
 ## Resources
 

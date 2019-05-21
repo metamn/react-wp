@@ -16,9 +16,12 @@ wp-content/*
 !wp-content/plugins/
 !wp-content/themes/
 
+wp-content/plugins/akismet/
 wp-content/plugins/hide-admin-bar/
 wp-content/plugins/wordpress-importer/
 wp-content/themes/twentyseventeen
+wp-content/themes/twentysixteen
+wp-content/themes/twentynineteen
 
 
 # WordPress defaults

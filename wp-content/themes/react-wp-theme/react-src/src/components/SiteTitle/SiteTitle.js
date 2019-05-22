@@ -1,8 +1,8 @@
 import React from "react";
-import { useQuery } from "react-apollo-hooks";
 import gql from "graphql-tag";
+import useQuery from "./../../hooks";
 
-const GET_SITE_TITLE = gql`
+const query = gql`
   query siteTitle {
     generalSettings {
       title
@@ -10,18 +10,13 @@ const GET_SITE_TITLE = gql`
   }
 `;
 
+const markup = data => {
+  const title = data.generalSettings.title;
+  return <h1>{title}</h1>;
+};
+
 const SiteTitle = () => {
-  const { data, error, loading } = useQuery(GET_SITE_TITLE);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error! {error.message}</div>;
-  }
-
-  return <h1>{data.generalSettings.title}</h1>;
+  return useQuery(query, markup);
 };
 
 export default SiteTitle;

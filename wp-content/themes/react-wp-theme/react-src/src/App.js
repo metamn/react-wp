@@ -1,6 +1,7 @@
 import React from "react";
 
 import ApolloClient from "apollo-boost";
+// TODO: Check why this double embedding is necessary ...
 import { ApolloProvider } from "react-apollo";
 import { ApolloProvider as ApolloHooksProvider } from "react-apollo-hooks";
 

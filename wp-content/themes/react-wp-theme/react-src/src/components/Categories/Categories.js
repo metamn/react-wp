@@ -17,16 +17,10 @@ const query = gql`
 `;
 
 const markup = data => {
-  const edges = data.categories.edges;
-  return (
-    <ul>
-      {edges.map(node => (
-        <li key={node.id}>
-          {node.name}-{node.categoryId}
-        </li>
-      ))}
-    </ul>
-  );
+  const items = data.categories.edges.map(edge => (
+    <li key={edge.node.id}>{edge.node.name}</li>
+  ));
+  return <ul>{items}</ul>;
 };
 
 const Categories = () => {

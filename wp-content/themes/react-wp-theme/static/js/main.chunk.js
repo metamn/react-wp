@@ -102,21 +102,21 @@ function _templateObject() {
 const query = graphql_tag__WEBPACK_IMPORTED_MODULE_2___default()(_templateObject());
 
 const markup = data => {
-  const edges = data.categories.edges;
+  const items = data.categories.edges.map(edge => react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
+    key: edge.node.id,
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 21
+    },
+    __self: undefined
+  }, edge.node.name));
   return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("ul", {
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 22
+      lineNumber: 23
     },
     __self: undefined
-  }, edges.map(node => react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
-    key: node.id,
-    __source: {
-      fileName: _jsxFileName,
-      lineNumber: 24
-    },
-    __self: undefined
-  }, node.name, "-", node.categoryId)));
+  }, items);
 };
 
 const Categories = () => {
@@ -335,9 +335,9 @@ const useQuery = (query, markup) => {
       },
       __self: undefined
     }, "Error! ", error.message);
-  } //console.log("useQuery:" + JSON.stringify(data));
+  }
 
-
+  console.log("useQuery:" + JSON.stringify(data));
   return markup(data);
 };
 
@@ -488,5 +488,5 @@ module.exports = __webpack_require__(/*! /home/cs/work/react-wp/wp-content/theme
 
 /***/ })
 
-},[[0,"runtime~main",1]]]);
+},[[0,"runtime~main",0]]]);
 //# sourceMappingURL=main.chunk.js.map

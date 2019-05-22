@@ -12,6 +12,8 @@ const useQuery = (query, markup) => {
     return <div>Error! {error.message}</div>;
   }
 
+  //console.log("useQuery:" + JSON.stringify(data));
+
   return markup(data);
 };
 

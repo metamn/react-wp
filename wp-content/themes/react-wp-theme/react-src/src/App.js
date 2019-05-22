@@ -6,6 +6,8 @@ import { ApolloProvider } from "react-apollo";
 import { ApolloProvider as ApolloHooksProvider } from "react-apollo-hooks";
 
 import SiteTitle from "./components/SiteTitle";
+import SiteDescription from "./components/SiteDescription";
+import Categories from "./components/Categories";
 
 const client = new ApolloClient({
   uri: "http://localhost/react-wp/graphql"
@@ -16,6 +18,8 @@ const App = () => (
     <ApolloHooksProvider client={client}>
       <>
         <SiteTitle />
+        <SiteDescription />
+        <Categories />
       </>
     </ApolloHooksProvider>
   </ApolloProvider>

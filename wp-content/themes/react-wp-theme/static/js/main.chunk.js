@@ -15,9 +15,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_apollo__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-apollo */ "./node_modules/react-apollo/react-apollo.esm.js");
 /* harmony import */ var react_apollo_hooks__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-apollo-hooks */ "./node_modules/react-apollo-hooks/es/index.js");
 /* harmony import */ var _components_SiteTitle__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/SiteTitle */ "./src/components/SiteTitle/index.js");
+/* harmony import */ var _components_SiteDescription__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/SiteDescription */ "./src/components/SiteDescription/index.js");
+/* harmony import */ var _components_Categories__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/Categories */ "./src/components/Categories/index.js");
 var _jsxFileName = "/home/cs/work/react-wp/wp-content/themes/react-wp-theme/react-src/src/App.js";
 
  // TODO: Check why this double embedding is necessary ...
+
+
 
 
 
@@ -30,25 +34,180 @@ const App = () => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(rea
   client: client,
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 15
+    lineNumber: 17
   },
   __self: undefined
 }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_apollo_hooks__WEBPACK_IMPORTED_MODULE_3__["ApolloProvider"], {
   client: client,
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 16
+    lineNumber: 18
   },
   __self: undefined
 }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_SiteTitle__WEBPACK_IMPORTED_MODULE_4__["default"], {
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 18
+    lineNumber: 20
+  },
+  __self: undefined
+}), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_SiteDescription__WEBPACK_IMPORTED_MODULE_5__["default"], {
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 21
+  },
+  __self: undefined
+}), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Categories__WEBPACK_IMPORTED_MODULE_6__["default"], {
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 22
   },
   __self: undefined
 }))));
 
 /* harmony default export */ __webpack_exports__["default"] = (App);
+
+/***/ }),
+
+/***/ "./src/components/Categories/Categories.js":
+/*!*************************************************!*\
+  !*** ./src/components/Categories/Categories.js ***!
+  \*************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _home_cs_work_react_wp_wp_content_themes_react_wp_theme_react_src_node_modules_babel_preset_react_app_node_modules_babel_runtime_helpers_esm_taggedTemplateLiteral__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/babel-preset-react-app/node_modules/@babel/runtime/helpers/esm/taggedTemplateLiteral */ "./node_modules/babel-preset-react-app/node_modules/@babel/runtime/helpers/esm/taggedTemplateLiteral.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! graphql-tag */ "./node_modules/graphql-tag/src/index.js");
+/* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(graphql_tag__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _hooks__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./../../hooks */ "./src/hooks/index.js");
+
+var _jsxFileName = "/home/cs/work/react-wp/wp-content/themes/react-wp-theme/react-src/src/components/Categories/Categories.js";
+
+function _templateObject() {
+  const data = Object(_home_cs_work_react_wp_wp_content_themes_react_wp_theme_react_src_node_modules_babel_preset_react_app_node_modules_babel_runtime_helpers_esm_taggedTemplateLiteral__WEBPACK_IMPORTED_MODULE_0__["default"])(["\n  query Categories {\n    categories {\n      edges {\n        node {\n          id\n          categoryId\n          name\n        }\n      }\n    }\n  }\n"]);
+
+  _templateObject = function () {
+    return data;
+  };
+
+  return data;
+}
+
+
+
+
+const query = graphql_tag__WEBPACK_IMPORTED_MODULE_2___default()(_templateObject());
+
+const markup = data => {
+  const edges = data.categories.edges;
+  return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("ul", {
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 22
+    },
+    __self: undefined
+  }, edges.map(node => react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
+    key: node.id,
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 24
+    },
+    __self: undefined
+  }, node.name, "-", node.categoryId)));
+};
+
+const Categories = () => {
+  return Object(_hooks__WEBPACK_IMPORTED_MODULE_3__["default"])(query, markup);
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (Categories);
+
+/***/ }),
+
+/***/ "./src/components/Categories/index.js":
+/*!********************************************!*\
+  !*** ./src/components/Categories/index.js ***!
+  \********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Categories__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Categories */ "./src/components/Categories/Categories.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _Categories__WEBPACK_IMPORTED_MODULE_0__["default"]; });
+
+
+
+/***/ }),
+
+/***/ "./src/components/SiteDescription/SiteDescription.js":
+/*!***********************************************************!*\
+  !*** ./src/components/SiteDescription/SiteDescription.js ***!
+  \***********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _home_cs_work_react_wp_wp_content_themes_react_wp_theme_react_src_node_modules_babel_preset_react_app_node_modules_babel_runtime_helpers_esm_taggedTemplateLiteral__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/babel-preset-react-app/node_modules/@babel/runtime/helpers/esm/taggedTemplateLiteral */ "./node_modules/babel-preset-react-app/node_modules/@babel/runtime/helpers/esm/taggedTemplateLiteral.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! graphql-tag */ "./node_modules/graphql-tag/src/index.js");
+/* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(graphql_tag__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _hooks__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./../../hooks */ "./src/hooks/index.js");
+
+var _jsxFileName = "/home/cs/work/react-wp/wp-content/themes/react-wp-theme/react-src/src/components/SiteDescription/SiteDescription.js";
+
+function _templateObject() {
+  const data = Object(_home_cs_work_react_wp_wp_content_themes_react_wp_theme_react_src_node_modules_babel_preset_react_app_node_modules_babel_runtime_helpers_esm_taggedTemplateLiteral__WEBPACK_IMPORTED_MODULE_0__["default"])(["\n  query siteDescription {\n    generalSettings {\n      description\n    }\n  }\n"]);
+
+  _templateObject = function () {
+    return data;
+  };
+
+  return data;
+}
+
+
+
+
+const query = graphql_tag__WEBPACK_IMPORTED_MODULE_2___default()(_templateObject());
+
+const markup = data => {
+  const description = data.generalSettings.description;
+  return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("p", {
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 15
+    },
+    __self: undefined
+  }, description);
+};
+
+const SiteDescription = () => {
+  return Object(_hooks__WEBPACK_IMPORTED_MODULE_3__["default"])(query, markup);
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (SiteDescription);
+
+/***/ }),
+
+/***/ "./src/components/SiteDescription/index.js":
+/*!*************************************************!*\
+  !*** ./src/components/SiteDescription/index.js ***!
+  \*************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _SiteDescription__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SiteDescription */ "./src/components/SiteDescription/SiteDescription.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _SiteDescription__WEBPACK_IMPORTED_MODULE_0__["default"]; });
+
+
 
 /***/ }),
 
@@ -176,7 +335,8 @@ const useQuery = (query, markup) => {
       },
       __self: undefined
     }, "Error! ", error.message);
-  }
+  } //console.log("useQuery:" + JSON.stringify(data));
+
 
   return markup(data);
 };
@@ -328,5 +488,5 @@ module.exports = __webpack_require__(/*! /home/cs/work/react-wp/wp-content/theme
 
 /***/ })
 
-},[[0,"runtime~main",0]]]);
+},[[0,"runtime~main",1]]]);
 //# sourceMappingURL=main.chunk.js.map
